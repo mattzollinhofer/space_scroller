@@ -1,6 +1,6 @@
 # Product Roadmap
 
-0. [ ] Development Environment Setup — Install Godot 4.3, configure editor
+0. [x] Development Environment Setup — Install Godot 4.3, configure editor
    settings, set up Web export template, and initialize the Godot project
    structure. Apple Developer account deferred until iOS export phase. `S`
 

@@ -11,7 +11,7 @@ follow. `S`
 2. [x] Side-Scrolling Environment — Implement auto-scrolling space background
    with parallax layers and basic ground/ceiling boundaries. `S`
 
-3. [ ] Obstacles System — Add static and moving obstacles (asteroids, space
+3. [x] Obstacles System — Add static and moving obstacles (asteroids, space
    debris) with collision detection and player damage/death handling. `M`
 
 4. [ ] Basic Enemies — Create 2-3 enemy types with simple movement patterns

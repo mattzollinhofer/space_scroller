@@ -62,26 +62,27 @@ Each slice delivers incremental user value and is tested end-to-end.
 
 #### Tasks
 
-- [ ] 2.1 Write integration test: patrol enemy takes 2 hits, flashes red on first hit
-- [ ] 2.2 Run test, verify expected failure
-- [ ] 2.3 Make smallest change possible to progress
-- [ ] 2.4 Run test, observe failure or success
-- [ ] 2.5 Document result and update task list
-- [ ] 2.6 Repeat 2.3-2.5 as necessary (expected iterations):
-  - Set patrol enemy health = 2 in scene or patrol_enemy.gd _ready()
-  - Add `hit_by_projectile` signal to BaseEnemy (audio placeholder) - DONE in Slice 1
-  - Add red flash effect in take_hit() when health > 0
-  - Store original sprite modulate, apply red tint Color(1.5, 0.3, 0.3, 1.0)
-  - Create tween to restore original modulate after 0.1-0.15s
-- [ ] 2.7 Refactor if needed (keep tests green)
-- [ ] 2.8 Run all slice tests (1 and 2) to verify no regressions
+- [x] 2.1 Write integration test: patrol enemy takes 2 hits, flashes red on first hit
+- [x] 2.2 Run test, verify expected failure
+  - [x] Iteration 1: "Patrol enemy health should be 2, but is 1" -> Expected failure
+- [x] 2.3 Make smallest change possible to progress
+- [x] 2.4 Run test, observe failure or success
+- [x] 2.5 Document result and update task list
+- [x] 2.6 Repeat 2.3-2.5 as necessary (completed iterations):
+  - [x] Iteration 1: Patrol enemy health = 1 -> Set health = 2 in patrol_enemy.gd _ready()
+  - [x] Iteration 2: "Red flash effect was not detected on first hit" -> Added _play_hit_flash() method in base_enemy.gd
+  - Success - Test passes
+- [x] 2.7 Refactor if needed (keep tests green)
+  - No refactoring needed - implementation clean
+- [x] 2.8 Run all slice tests (1 and 2) to verify no regressions
+  - Both tests pass: test_player_shooting.tscn and test_patrol_enemy_two_hits.tscn
 - [ ] 2.9 Commit working slice
 
 **Acceptance Criteria:**
-- Patrol enemy survives first hit
-- Red flash effect visible on first hit (0.1-0.15s duration)
-- Second hit destroys patrol enemy with explosion
-- Stationary enemies still die in one hit
+- [x] Patrol enemy survives first hit
+- [x] Red flash effect visible on first hit (0.12s duration)
+- [x] Second hit destroys patrol enemy with explosion
+- [x] Stationary enemies still die in one hit
 
 ---
 

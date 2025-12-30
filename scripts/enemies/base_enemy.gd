@@ -16,6 +16,9 @@ var scroll_speed: float = 180.0
 ## Whether the enemy is currently being destroyed (prevents double-processing)
 var _is_destroying: bool = false
 
+## Tween for flash effect (to avoid overlapping tweens)
+var _flash_tween: Tween = null
+
 ## Emitted when the enemy dies
 signal died()
 
@@ -70,14 +73,46 @@ func take_hit(damage: int) -> void:
 	# Emit signal for audio hook
 	hit_by_projectile.emit()
 
+	# Store health before damage to check if enemy survives
+	var health_before = health
+
 	# Reduce health
 	health -= damage
+
+	# Play red flash effect if enemy survived the hit (health > 0)
+	if health > 0:
+		_play_hit_flash()
+
+
+## Plays a red flash effect when enemy takes damage but survives
+func _play_hit_flash() -> void:
+	var sprite = get_node_or_null("Sprite2D")
+	if not sprite:
+		return
+
+	# Kill any existing flash tween to prevent overlap
+	if _flash_tween and _flash_tween.is_valid():
+		_flash_tween.kill()
+
+	# Store original modulate
+	var original_modulate: Color = sprite.modulate
+
+	# Apply red tint (high red, low green/blue for damage feedback)
+	sprite.modulate = Color(1.5, 0.3, 0.3, 1.0)
+
+	# Create tween to restore original color
+	_flash_tween = create_tween()
+	_flash_tween.tween_property(sprite, "modulate", original_modulate, 0.12)
 
 
 func _on_health_depleted() -> void:
 	if _is_destroying:
 		return
 	_is_destroying = true
+
+	# Kill flash tween if active
+	if _flash_tween and _flash_tween.is_valid():
+		_flash_tween.kill()
 
 	# Emit died signal before destruction
 	died.emit()

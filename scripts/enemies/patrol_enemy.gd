@@ -2,6 +2,7 @@ extends BaseEnemy
 class_name PatrolEnemy
 ## Patrol enemy that oscillates horizontally while scrolling left.
 ## Red/orange tinted variant of the base enemy.
+## Requires 2 hits to destroy (more health than stationary enemy).
 
 ## Horizontal patrol range (total distance from left to right)
 @export var patrol_range: float = 200.0
@@ -17,6 +18,8 @@ var _base_x: float = 0.0
 
 func _ready() -> void:
 	super._ready()
+	# Patrol enemies require 2 hits to destroy
+	health = 2
 	# Store initial X position as base for patrol calculation
 	_base_x = position.x
 

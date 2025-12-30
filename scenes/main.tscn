@@ -1,4 +1,4 @@
-[gd_scene load_steps=16 format=3 uid="uid://d0n8g3kv2kq7y"]
+[gd_scene load_steps=17 format=3 uid="uid://d0n8g3kv2kq7y"]
 
 [ext_resource type="Script" path="res://scripts/scroll_controller.gd" id="1_scroll"]
 [ext_resource type="Script" path="res://scripts/background/star_field.gd" id="2_starfield"]
@@ -13,6 +13,7 @@
 [ext_resource type="PackedScene" uid="uid://cstationary_enemy" path="res://scenes/enemies/stationary_enemy.tscn" id="12_stationary_enemy"]
 [ext_resource type="PackedScene" uid="uid://cpatrol_enemy" path="res://scenes/enemies/patrol_enemy.tscn" id="13_patrol_enemy"]
 [ext_resource type="Script" path="res://scripts/enemies/enemy_spawner.gd" id="14_enemy_spawner"]
+[ext_resource type="PackedScene" uid="uid://cfire_button_scene" path="res://scenes/ui/fire_button.tscn" id="15_fire_button"]
 
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_top"]
 size = Vector2(2048, 80)
@@ -85,6 +86,8 @@ position = Vector2(400, 768)
 [node name="UILayer" type="CanvasLayer" parent="."]
 
 [node name="VirtualJoystick" parent="UILayer" instance=ExtResource("8_joystick")]
+
+[node name="FireButton" parent="UILayer" instance=ExtResource("15_fire_button")]
 
 [node name="GameOverScreen" parent="." instance=ExtResource("10_gameover")]
 

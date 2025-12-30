@@ -98,29 +98,38 @@ Each slice delivers incremental user value and is tested end-to-end.
 
 #### Tasks
 
-- [ ] 3.1 Write integration test: touch input triggers continuous firing
-- [ ] 3.2 Run test, verify expected failure
-- [ ] 3.3 Make smallest change possible to progress
-- [ ] 3.4 Run test, observe failure or success
-- [ ] 3.5 Document result and update task list
-- [ ] 3.6 Repeat 3.3-3.5 as necessary (expected iterations):
-  - Create `scenes/ui/fire_button.tscn` (Control node)
-  - Create `scripts/ui/fire_button.gd` with touch handling
-  - Handle InputEventScreenTouch for touch press/release
-  - Handle InputEventMouseButton for desktop testing
-  - Add `is_pressed() -> bool` method for player to query
-  - Add FireButton to UILayer in main.tscn (right side of screen)
-  - Update player.gd to check fire button state alongside keyboard
-- [ ] 3.7 Refactor if needed (keep tests green)
-- [ ] 3.8 Run all slice tests (1, 2, and 3) to verify no regressions
+- [x] 3.1 Write integration test: touch input triggers continuous firing
+  - Created tests/test_touch_firing.gd and tests/test_touch_firing.tscn
+  - Test simulates fire button press for 0.5s, expects at least 3 projectiles
+- [x] 3.2 Run test, verify expected failure
+  - [x] Iteration 1: "Could not load fire button scene" -> Need to create fire_button.tscn
+- [x] 3.3 Make smallest change possible to progress
+- [x] 3.4 Run test, observe failure or success
+- [x] 3.5 Document result and update task list
+- [x] 3.6 Repeat 3.3-3.5 as necessary (completed iterations):
+  - [x] Created `scenes/ui/fire_button.tscn` (Control node, covers right 600px of screen)
+  - [x] Created `scripts/ui/fire_button.gd` with touch handling
+  - [x] Handle InputEventScreenTouch for touch press/release
+  - [x] Handle InputEventMouseButton for desktop testing
+  - [x] Add `is_pressed() -> bool` method for player to query
+  - [x] Add `_simulate_press()` method for testing
+  - [x] Add FireButton to UILayer in main.tscn (right side of screen)
+  - [x] Update player.gd to check fire button state alongside keyboard (set_fire_button, _find_fire_button)
+  - Success - Test passes (4 projectiles in 0.5s)
+- [x] 3.7 Refactor if needed (keep tests green)
+  - No refactoring needed - implementation follows virtual_joystick.gd pattern
+- [x] 3.8 Run all slice tests (1, 2, and 3) to verify no regressions
+  - test_player_shooting.tscn: PASSED
+  - test_patrol_enemy_two_hits.tscn: PASSED
+  - test_touch_firing.tscn: PASSED
 - [ ] 3.9 Commit working slice
 
 **Acceptance Criteria:**
-- Touching right side of screen fires projectiles
-- Holding touch continues firing at cooldown rate
-- Releasing touch stops firing
-- Keyboard spacebar still works (both input methods coexist)
-- Fire button does not interfere with virtual joystick
+- [x] Touching right side of screen fires projectiles (fire button covers right 600px)
+- [x] Holding touch continues firing at cooldown rate (4 projectiles in 0.5s at 0.12s cooldown)
+- [x] Releasing touch stops firing (test confirms no projectiles after release)
+- [x] Keyboard spacebar still works (both input methods coexist - Slice 1 test still passes)
+- [x] Fire button does not interfere with virtual joystick (joystick at bottom-left, fire button at right)
 
 ---
 

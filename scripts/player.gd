@@ -30,6 +30,9 @@ signal projectile_fired()
 ## Reference to virtual joystick (auto-detected from scene tree)
 var virtual_joystick: Node = null
 
+## Reference to fire button for touch input (auto-detected from scene tree)
+var fire_button: Node = null
+
 ## Half the size of the player sprite for viewport clamping
 var _half_size: Vector2 = Vector2(32, 32)
 
@@ -58,6 +61,9 @@ func _ready() -> void:
 	# Find the virtual joystick in the scene tree
 	_find_virtual_joystick()
 
+	# Find the fire button in the scene tree
+	_find_fire_button()
+
 
 func _find_virtual_joystick() -> void:
 	# Look for VirtualJoystick in the UILayer
@@ -67,6 +73,21 @@ func _find_virtual_joystick() -> void:
 		var ui_layer = main.get_node_or_null("UILayer")
 		if ui_layer:
 			virtual_joystick = ui_layer.get_node_or_null("VirtualJoystick")
+
+
+func _find_fire_button() -> void:
+	# Look for FireButton in the UILayer
+	var root = get_tree().root
+	var main = root.get_node_or_null("Main")
+	if main:
+		var ui_layer = main.get_node_or_null("UILayer")
+		if ui_layer:
+			fire_button = ui_layer.get_node_or_null("FireButton")
+
+
+## Set the fire button reference (used by tests)
+func set_fire_button(button: Node) -> void:
+	fire_button = button
 
 
 func _physics_process(delta: float) -> void:
@@ -89,8 +110,12 @@ func _physics_process(delta: float) -> void:
 	if _fire_timer > 0:
 		_fire_timer -= delta
 
-	# Check for shooting input
-	if Input.is_action_pressed("shoot") and _fire_timer <= 0:
+	# Check for shooting input (keyboard or touch fire button)
+	var should_fire = Input.is_action_pressed("shoot")
+	if fire_button and fire_button.has_method("is_pressed"):
+		should_fire = should_fire or fire_button.is_pressed()
+
+	if should_fire and _fire_timer <= 0:
 		shoot()
 
 	# Get keyboard input direction (normalized)

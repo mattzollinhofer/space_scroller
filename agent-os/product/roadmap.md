@@ -14,7 +14,7 @@ follow. `S`
 3. [x] Obstacles System — Add static and moving obstacles (asteroids, space
    debris) with collision detection and player damage/death handling. `M`
 
-4. [ ] Basic Enemies — Create 2-3 enemy types with simple movement patterns
+4. [x] Basic Enemies — Create 2-3 enemy types with simple movement patterns
    (stationary, horizontal patrol, following) and collision-based combat. `M`
    - bad aliens
 

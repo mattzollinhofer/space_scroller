@@ -8,7 +8,7 @@
    controls (touch input for up/down/left/right) and smooth scrolling camera
 follow. `S`
 
-2. [ ] Side-Scrolling Environment — Implement auto-scrolling space background
+2. [x] Side-Scrolling Environment — Implement auto-scrolling space background
    with parallax layers and basic ground/ceiling boundaries. `S`
 
 3. [ ] Obstacles System — Add static and moving obstacles (asteroids, space

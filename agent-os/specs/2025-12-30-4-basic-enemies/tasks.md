@@ -27,28 +27,29 @@ Each slice delivers incremental user value and is tested end-to-end.
 
 #### Tasks
 
-- [ ] 1.1 Write integration test: stationary enemy scrolls on screen, player collides, enemy destroyed with animation, player takes damage
-- [ ] 1.2 Run test, verify expected failure
-- [ ] 1.3 Make smallest change possible to progress
-- [ ] 1.4 Run test, observe failure or success
-- [ ] 1.5 Document result and update task list
-- [ ] 1.6 Repeat 1.3-1.5 as necessary (expected iterations):
-  - [ ] Create base_enemy.gd script extending Area2D
-  - [ ] Add Sprite2D child node using enemy.png asset
-  - [ ] Set sprite scale (2-3x for visibility)
-  - [ ] Add health property with setter that checks for death
-  - [ ] Add died signal for enemy death event
-  - [ ] Create stationary_enemy.tscn scene with CollisionShape2D
-  - [ ] Set up collision layer 2 (obstacle) and mask 1 (player)
-  - [ ] Add _process for leftward movement at 180 px/s scroll speed
-  - [ ] Add despawn check (x < -100)
-  - [ ] Add body_entered signal connection for player collision
-  - [ ] On collision: call player.take_damage() and set enemy health to 0
-  - [ ] Add destroy() method triggered when health <= 0
-  - [ ] Create destruction animation using Tween (scale/fade over 0.3-0.5s)
-  - [ ] Remove enemy from scene after animation completes
-  - [ ] Add test enemy instance to main.tscn for manual testing
-- [ ] 1.7 Refactor if needed (keep tests green)
+- [x] 1.1 Write integration test: stationary enemy scrolls on screen, player collides, enemy destroyed with animation, player takes damage
+- [x] 1.2 Run test, verify expected failure
+- [x] 1.3 Make smallest change possible to progress
+- [x] 1.4 Run test, observe failure or success
+- [x] 1.5 Document result and update task list
+- [x] 1.6 Repeat 1.3-1.5 as necessary (expected iterations):
+  - [x] Create base_enemy.gd script extending Area2D
+  - [x] Add Sprite2D child node using enemy.png asset
+  - [x] Set sprite scale (2-3x for visibility)
+  - [x] Add health property with setter that checks for death
+  - [x] Add died signal for enemy death event
+  - [x] Create stationary_enemy.tscn scene with CollisionShape2D
+  - [x] Set up collision layer 2 (obstacle) and mask 1 (player)
+  - [x] Add _process for leftward movement at 180 px/s scroll speed
+  - [x] Add despawn check (x < -100)
+  - [x] Add body_entered signal connection for player collision
+  - [x] On collision: call player.take_damage() and set enemy health to 0
+  - [x] Add destroy() method triggered when health <= 0
+  - [x] Create destruction animation using Tween (scale/fade over 0.3-0.5s)
+  - [x] Remove enemy from scene after animation completes
+  - [x] Add test enemy instance to main.tscn for manual testing
+  - [x] Add green-screen shader for sprite transparency
+- [x] 1.7 Refactor if needed (keep tests green)
 - [ ] 1.8 Commit working slice
 
 **Acceptance Criteria:**

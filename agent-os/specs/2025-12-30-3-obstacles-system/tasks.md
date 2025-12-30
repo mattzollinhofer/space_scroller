@@ -7,6 +7,8 @@ Each slice delivers incremental user value and is tested end-to-end.
 
 **Feature Goal:** Add static asteroid obstacles that scroll with the world, with collision detection that damages the player and a lives system that triggers game over when all lives are lost.
 
+**Status: COMPLETE**
+
 ---
 
 ## Task List
@@ -119,7 +121,7 @@ Each slice delivers incremental user value and is tested end-to-end.
   - [x] Track active asteroids in array
 - [x] 3.7 Refactor if needed (keep tests green)
 - [x] 3.8 Run all slice tests (1, 2, and 3) to verify no regressions
-- [ ] 3.9 Commit working slice
+- [x] 3.9 Commit working slice
 
 **Acceptance Criteria:**
 - Asteroids spawn from right edge at random intervals (2-4 seconds)
@@ -156,7 +158,7 @@ Each slice delivers incremental user value and is tested end-to-end.
   - [x] Make initial_count configurable via @export
 - [x] 4.7 Refactor if needed (keep tests green)
 - [x] 4.8 Run all slice tests (1-4) to verify no regressions
-- [ ] 4.9 Commit working slice
+- [x] 4.9 Commit working slice
 
 **Acceptance Criteria:**
 - Asteroids are removed from scene when x position < -100
@@ -193,7 +195,7 @@ Each slice delivers incremental user value and is tested end-to-end.
   - [x] Verify all edge cases handled (rapid collisions, screen edges)
 - [x] 5.7 Refactor if needed (keep tests green)
 - [x] 5.8 Run all feature tests (slices 1-5) to verify everything works together
-- [ ] 5.9 Final commit
+- [x] 5.9 Final commit
 
 **Acceptance Criteria:**
 - Asteroids spawn with varied diameters (60-120 pixels)
@@ -207,7 +209,7 @@ Each slice delivers incremental user value and is tested end-to-end.
 
 ## Summary of Deliverables
 
-After all slices are complete:
+All slices complete:
 
 1. **asteroid.tscn / asteroid.gd** - Procedurally drawn asteroid with collision detection
 2. **obstacle_spawner.gd** - Manages asteroid spawning and lifecycle

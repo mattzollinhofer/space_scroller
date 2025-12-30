@@ -9,12 +9,13 @@ Remove solid color backgrounds from sprite images using ImageMagick, then resize
 3. Remove background with 20% fuzz tolerance for AI-generated color variance
 4. Resize to 64x64 pixels
 5. Output cleaned sprites to `assets/sprites/`
+6. Move processed originals to `assets/sprites/raw/completed/`
 
 ## Command
 
 ```bash
-# Ensure raw folder exists
-mkdir -p assets/sprites/raw
+# Ensure folders exist
+mkdir -p assets/sprites/raw/completed
 
 # Process all PNGs in raw folder
 for f in assets/sprites/raw/*.png; do
@@ -25,12 +26,14 @@ for f in assets/sprites/raw/*.png; do
     # Remove background and resize to 64x64
     magick "$f" -fuzz 20% -transparent "$bgcolor" -resize 64x64 "assets/sprites/$filename"
     echo "Cleaned: $filename (removed $bgcolor)"
+    # Move original to completed folder
+    mv "$f" "assets/sprites/raw/completed/"
   fi
 done
 ```
 
 ## Usage
 
-Drop AI-generated sprites into `assets/sprites/raw/`, then run `/clean-sprites`. Cleaned 64x64 transparent PNGs will appear in `assets/sprites/`.
+Drop AI-generated sprites into `assets/sprites/raw/`, then run `/clean-sprites`. Cleaned 64x64 transparent PNGs will appear in `assets/sprites/`. Originals are moved to `assets/sprites/raw/completed/`.
 
 $ARGUMENTS

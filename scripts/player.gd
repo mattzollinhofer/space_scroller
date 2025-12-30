@@ -15,8 +15,11 @@ extends CharacterBody2D
 ## Flashing interval during invincibility (seconds)
 @export var flash_interval: float = 0.1
 
-## Fire rate cooldown in seconds
-@export var fire_cooldown: float = 0.21
+## Fire rate cooldown for tapping (quick bursts)
+@export var tap_fire_cooldown: float = 0.12
+
+## Fire rate cooldown for holding (sustained spray)
+@export var hold_fire_cooldown: float = 0.25
 
 ## Projectile scene to spawn when shooting
 @export var projectile_scene: PackedScene
@@ -47,6 +50,9 @@ var _visible_state: bool = true
 
 ## Shooting cooldown timer
 var _fire_timer: float = 0.0
+
+## Track if fire was pressed last frame (for tap detection)
+var _was_firing: bool = false
 
 
 func _ready() -> void:
@@ -116,7 +122,11 @@ func _physics_process(delta: float) -> void:
 		should_fire = should_fire or fire_button.is_pressed()
 
 	if should_fire and _fire_timer <= 0:
-		shoot()
+		# Detect if this is a new tap (wasn't firing last frame) or a hold
+		var is_new_tap = not _was_firing
+		shoot(is_new_tap)
+
+	_was_firing = should_fire
 
 	# Get keyboard input direction (normalized)
 	var keyboard_input = Input.get_vector("move_left", "move_right", "move_up", "move_down")
@@ -154,13 +164,14 @@ func _clamp_to_viewport() -> void:
 
 
 ## Spawn a projectile from the player's position
-func shoot() -> void:
+func shoot(is_new_tap: bool = false) -> void:
 	if not projectile_scene:
 		push_warning("No projectile scene assigned to Player")
 		return
 
-	# Reset cooldown timer
-	_fire_timer = fire_cooldown
+	# Use faster tap rate for new presses, slower hold rate for continuous fire
+	var cooldown = tap_fire_cooldown if is_new_tap else hold_fire_cooldown
+	_fire_timer = cooldown
 
 	# Spawn projectile at player's position (offset slightly to the right)
 	var projectile = projectile_scene.instantiate()

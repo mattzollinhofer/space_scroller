@@ -16,7 +16,7 @@ extends CharacterBody2D
 @export var flash_interval: float = 0.1
 
 ## Fire rate cooldown in seconds
-@export var fire_cooldown: float = 0.12
+@export var fire_cooldown: float = 0.21
 
 ## Projectile scene to spawn when shooting
 @export var projectile_scene: PackedScene

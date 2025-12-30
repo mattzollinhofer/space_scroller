@@ -1,13 +1,7 @@
-[gd_scene load_steps=6 format=3 uid="uid://cpatrol_enemy"]
+[gd_scene load_steps=4 format=3 uid="uid://cpatrol_enemy"]
 
 [ext_resource type="Script" path="res://scripts/enemies/patrol_enemy.gd" id="1_enemy"]
-[ext_resource type="Texture2D" uid="uid://de4530ferkxfh" path="res://assets/sprites/raw/enemy.png" id="2_sprite"]
-[ext_resource type="Shader" path="res://shaders/green_to_transparent.gdshader" id="3_shader"]
-
-[sub_resource type="ShaderMaterial" id="ShaderMaterial_enemy"]
-shader = ExtResource("3_shader")
-shader_parameter/tolerance = 0.3
-shader_parameter/key_color = Vector3(0, 1, 0)
+[ext_resource type="Texture2D" path="res://assets/sprites/enemy.png" id="2_sprite"]
 
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_enemy"]
 size = Vector2(150, 100)
@@ -19,8 +13,7 @@ script = ExtResource("1_enemy")
 
 [node name="Sprite2D" type="Sprite2D" parent="."]
 modulate = Color(1.5, 0.6, 0.3, 1)
-material = SubResource("ShaderMaterial_enemy")
-scale = Vector2(2.5, 2.5)
+scale = Vector2(3, 3)
 texture = ExtResource("2_sprite")
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="."]

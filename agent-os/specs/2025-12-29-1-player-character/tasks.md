@@ -25,20 +25,20 @@ This is the first gameplay feature for "Solar System Showdown" - creating a cont
 
 #### Tasks
 
-- [ ] 1.1 Change project.godot display settings from portrait (1536x2048) to landscape (2048x1536)
+- [x] 1.1 Change project.godot display settings from portrait (1536x2048) to landscape (2048x1536)
   - Set viewport_width=2048, viewport_height=1536
   - Set window/handheld/orientation=0 (landscape)
-- [ ] 1.2 Create placeholder spacecraft sprite (right-pointing triangle PNG, ~64-96px)
+- [x] 1.2 Create placeholder spacecraft sprite (right-pointing triangle PNG, ~64-96px)
   - Save to assets/sprites/player.png
-- [ ] 1.3 Create player scene (scenes/player.tscn) with CharacterBody2D
+- [x] 1.3 Create player scene (scenes/player.tscn) with CharacterBody2D
   - Add Sprite2D child with placeholder sprite
   - Add CollisionShape2D with RectangleShape2D matching sprite bounds
-- [ ] 1.4 Create player movement script (scripts/player.gd)
+- [x] 1.4 Create player movement script (scripts/player.gd)
   - Use Input.get_vector() for normalized 4-directional input
   - Implement snappy movement with minimal inertia via velocity-based _physics_process
   - Export movement speed variable for tuning
   - Clamp position to viewport bounds using get_viewport_rect()
-- [ ] 1.5 Update main scene to instance player at center of screen
+- [x] 1.5 Update main scene to instance player at center of screen
 - [ ] 1.6 Run game and verify:
   - Game displays in landscape orientation
   - Spacecraft appears at center

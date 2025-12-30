@@ -161,15 +161,20 @@ Each slice delivers incremental user value and is tested end-to-end.
 
 #### Tasks
 
-- [ ] 4.1 Write integration test: verify player cannot move past top/bottom boundaries
-- [ ] 4.2 Run test, verify expected failure
-- [ ] 4.3 Make smallest change possible to progress
-- [ ] 4.4 Run test, observe failure or success
-- [ ] 4.5 Document result and update task list
-- [ ] 4.6 Repeat 4.3-4.5 as necessary
-- [ ] 4.7 Refactor if needed (keep tests green)
-- [ ] 4.8 Run all feature tests to verify everything works together
-- [ ] 4.9 Commit working slice
+- [x] 4.1 Write integration test: verify player cannot move past top/bottom boundaries
+- [x] 4.2 Run test, verify expected failure
+- [x] 4.3 Make smallest change possible to progress
+- [x] 4.4 Run test, observe failure or success
+- [x] 4.5 Document result and update task list
+- [x] 4.6 Repeat 4.3-4.5 as necessary
+  - Added TopBoundary and BottomBoundary StaticBody2D nodes to main.tscn
+  - RectangleShape2D (2048x80) positioned at y=40 (top) and y=1496 (bottom)
+  - Modified player.gd _clamp_to_viewport() to only clamp X-axis
+  - Y-axis now handled by physics collision with StaticBody2D boundaries
+  - Success: Headless test passes, player collides with asteroid boundaries
+- [x] 4.7 Refactor if needed (keep tests green)
+- [x] 4.8 Run all feature tests to verify everything works together
+- [x] 4.9 Commit working slice
 
 **Implementation Notes:**
 - Create 2 StaticBody2D nodes with CollisionShape2D children
@@ -194,12 +199,12 @@ Each slice delivers incremental user value and is tested end-to-end.
 ## Final Verification
 
 After all slices complete:
-- [ ] Run game and verify complete side-scrolling experience
-- [ ] Confirm scroll speed is configurable via @export
-- [ ] Test at both 100 and 150 px/sec scroll speeds
-- [ ] Verify player movement works correctly within boundaries
-- [ ] Check that parallax creates visible depth effect
-- [ ] Ensure no visual glitches or seams in scrolling layers
+- [x] Run game and verify complete side-scrolling experience
+- [x] Confirm scroll speed is configurable via @export
+- [x] Test at both 100 and 150 px/sec scroll speeds
+- [x] Verify player movement works correctly within boundaries
+- [x] Check that parallax creates visible depth effect
+- [x] Ensure no visual glitches or seams in scrolling layers
 
 ---
 

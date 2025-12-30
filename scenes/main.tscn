@@ -1,4 +1,4 @@
-[gd_scene load_steps=9 format=3 uid="uid://d0n8g3kv2kq7y"]
+[gd_scene load_steps=11 format=3 uid="uid://d0n8g3kv2kq7y"]
 
 [ext_resource type="Script" path="res://scripts/scroll_controller.gd" id="1_scroll"]
 [ext_resource type="Script" path="res://scripts/background/star_field.gd" id="2_starfield"]
@@ -8,6 +8,12 @@
 [ext_resource type="Script" path="res://scripts/debug_grid.gd" id="6_debug"]
 [ext_resource type="PackedScene" uid="uid://dq8m4r2xk1pvy" path="res://scenes/player.tscn" id="7_player"]
 [ext_resource type="PackedScene" uid="uid://cjoystick_scene" path="res://scenes/ui/virtual_joystick.tscn" id="8_joystick"]
+
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_top"]
+size = Vector2(2048, 80)
+
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_bottom"]
+size = Vector2(2048, 80)
 
 [node name="Main" type="Node2D"]
 
@@ -41,6 +47,18 @@ motion_mirroring = Vector2(2048, 0)
 
 [node name="AsteroidBoundaries" type="Node2D" parent="ParallaxBackground/BoundaryLayer"]
 script = ExtResource("5_boundaries")
+
+[node name="TopBoundary" type="StaticBody2D" parent="."]
+position = Vector2(1024, 40)
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="TopBoundary"]
+shape = SubResource("RectangleShape2D_top")
+
+[node name="BottomBoundary" type="StaticBody2D" parent="."]
+position = Vector2(1024, 1496)
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="BottomBoundary"]
+shape = SubResource("RectangleShape2D_bottom")
 
 [node name="DebugGrid" type="Node2D" parent="."]
 script = ExtResource("6_debug")

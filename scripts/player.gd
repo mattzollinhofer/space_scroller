@@ -1,6 +1,6 @@
 extends CharacterBody2D
 ## Player spacecraft with 4-directional movement using keyboard or virtual joystick.
-## Movement is snappy with minimal inertia. Position is clamped to viewport bounds.
+## Movement is snappy with minimal inertia. X-axis clamped to viewport, Y-axis uses collision boundaries.
 
 ## Movement speed in pixels per second
 @export var move_speed: float = 600.0
@@ -51,7 +51,7 @@ func _physics_process(_delta: float) -> void:
 
 	move_and_slide()
 
-	# Clamp position to viewport bounds
+	# Clamp X position to viewport bounds (Y-axis handled by collision boundaries)
 	_clamp_to_viewport()
 
 
@@ -61,8 +61,8 @@ func _clamp_to_viewport() -> void:
 		ProjectSettings.get_setting("display/window/size/viewport_width"),
 		ProjectSettings.get_setting("display/window/size/viewport_height")
 	)
-	var min_pos = _half_size
-	var max_pos = viewport_size - _half_size
+	var min_x = _half_size.x
+	var max_x = viewport_size.x - _half_size.x
 
-	position.x = clamp(position.x, min_pos.x, max_pos.x)
-	position.y = clamp(position.y, min_pos.y, max_pos.y)
+	# Only clamp X-axis - Y-axis is handled by StaticBody2D collision boundaries
+	position.x = clamp(position.x, min_x, max_x)

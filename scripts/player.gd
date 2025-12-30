@@ -5,7 +5,7 @@ extends CharacterBody2D
 ## Movement speed in pixels per second
 @export var move_speed: float = 600.0
 
-## Reference to virtual joystick (set by main scene if available)
+## Reference to virtual joystick (auto-detected from scene tree)
 var virtual_joystick: Node = null
 
 ## Half the size of the player sprite for viewport clamping
@@ -17,6 +17,19 @@ func _ready() -> void:
 	var sprite = $Sprite2D
 	if sprite and sprite.texture:
 		_half_size = sprite.texture.get_size() / 2.0
+
+	# Find the virtual joystick in the scene tree
+	_find_virtual_joystick()
+
+
+func _find_virtual_joystick() -> void:
+	# Look for VirtualJoystick in the UILayer
+	var root = get_tree().root
+	var main = root.get_node_or_null("Main")
+	if main:
+		var ui_layer = main.get_node_or_null("UILayer")
+		if ui_layer:
+			virtual_joystick = ui_layer.get_node_or_null("VirtualJoystick")
 
 
 func _physics_process(_delta: float) -> void:

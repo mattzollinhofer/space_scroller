@@ -73,12 +73,12 @@ This is the first gameplay feature for "Solar System Showdown" - creating a cont
   - Enable position_smoothing_enabled for smooth following
   - Configure reasonable smoothing speed (8.0)
   - Set as current camera (default behavior when attached to player)
-- [ ] 2.2 Run game and verify:
+- [x] 2.2 Run game and verify:
   - Camera follows player smoothly
   - No jittering or harsh movements
   - Screen bounds clamping still works correctly
-- [ ] 2.3 Run all tests from Slice 1 to verify no regressions
-- [ ] 2.4 Commit working slice
+- [x] 2.3 Run all tests from Slice 1 to verify no regressions
+- [x] 2.4 Commit working slice
 
 **Acceptance Criteria:**
 - Camera smoothly follows player movement
@@ -99,20 +99,21 @@ This is the first gameplay feature for "Solar System Showdown" - creating a cont
 
 #### Tasks
 
-- [ ] 3.1 Create virtual joystick scene (scenes/ui/virtual_joystick.tscn)
-  - Use Control or CanvasLayer as root for UI layer
+- [x] 3.1 Create virtual joystick scene (scenes/ui/virtual_joystick.tscn)
+  - Use Control as root for UI layer
   - Add base circle (semi-transparent) for joystick area
   - Add inner circle (thumb indicator) that moves with touch input
   - Position in bottom-left corner for comfortable thumb access on iPad
-- [ ] 3.2 Create virtual joystick script (scripts/ui/virtual_joystick.gd)
-  - Handle touch input events (_input or _unhandled_input)
+- [x] 3.2 Create virtual joystick script (scripts/ui/virtual_joystick.gd)
+  - Handle touch input events (_input)
   - Calculate normalized direction vector from center to touch position
-  - Expose direction as a property that player script can read
+  - Expose direction via get_direction() method
   - Visual feedback: move inner circle to show input direction
   - Reset to center when touch released
-- [ ] 3.3 Instance virtual joystick in main scene
+- [x] 3.3 Instance virtual joystick in main scene
   - Add as CanvasLayer child so it stays on screen regardless of camera
-- [ ] 3.4 Modify player.gd to combine keyboard and joystick input
+- [x] 3.4 Modify player.gd to combine keyboard and joystick input
+  - Auto-detect joystick in scene tree via _find_virtual_joystick()
   - Read joystick direction in addition to Input.get_vector()
   - Combine inputs so either method works (take strongest input)
   - Ensure no conflicts between input methods

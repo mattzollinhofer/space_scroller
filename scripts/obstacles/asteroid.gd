@@ -61,23 +61,23 @@ func _generate_asteroid_vertices(rng: RandomNumberGenerator, radius: float) -> P
 
 
 func _get_asteroid_color(rng: RandomNumberGenerator) -> Color:
-	# Rocky browns and grays (matching asteroid_boundaries.gd)
+	# Brighter rocky browns and grays for better visibility
 	var color_choice = rng.randi() % 4
-	var brightness = rng.randf_range(0.25, 0.5)
+	var brightness = rng.randf_range(0.45, 0.7)
 
 	match color_choice:
 		0:
-			# Dark brown
+			# Warm brown
 			return Color(brightness * 1.3, brightness * 0.9, brightness * 0.6)
 		1:
-			# Gray
-			return Color(brightness, brightness, brightness)
+			# Light gray
+			return Color(brightness * 1.1, brightness * 1.1, brightness * 1.1)
 		2:
 			# Reddish brown
-			return Color(brightness * 1.4, brightness * 0.7, brightness * 0.5)
+			return Color(brightness * 1.4, brightness * 0.75, brightness * 0.55)
 		3:
-			# Dark gray
-			return Color(brightness * 0.8, brightness * 0.85, brightness * 0.9)
+			# Blue-gray
+			return Color(brightness * 0.85, brightness * 0.9, brightness * 1.0)
 		_:
 			return Color(brightness, brightness, brightness)
 
@@ -99,15 +99,37 @@ func _draw() -> void:
 	for v in _vertices:
 		rotated_vertices.append(v.rotated(_rotation_angle))
 
+	# Draw outer glow effect (multiple layers, progressively larger and more transparent)
+	var glow_color = _color.lightened(0.3)
+	for glow_layer in range(3, 0, -1):
+		var glow_scale = 1.0 + (glow_layer * 0.15)
+		var glow_alpha = 0.15 / glow_layer
+		var glow_vertices = PackedVector2Array()
+		for v in rotated_vertices:
+			glow_vertices.append(v * glow_scale)
+		var layer_color = Color(glow_color.r, glow_color.g, glow_color.b, glow_alpha)
+		draw_colored_polygon(glow_vertices, layer_color)
+
 	# Draw the asteroid polygon
 	draw_colored_polygon(rotated_vertices, _color)
 
-	# Draw a slightly darker outline for depth
-	var outline_color = _color.darkened(0.3)
+	# Draw bright highlight outline for contrast
+	var outline_color = _color.lightened(0.5)
 	for i in range(rotated_vertices.size()):
 		var start = rotated_vertices[i]
 		var end = rotated_vertices[(i + 1) % rotated_vertices.size()]
-		draw_line(start, end, outline_color, 2.0)
+		draw_line(start, end, outline_color, 3.0)
+
+	# Draw inner dark edge for depth
+	var inner_color = _color.darkened(0.4)
+	var inner_scale = 0.85
+	var inner_vertices = PackedVector2Array()
+	for v in rotated_vertices:
+		inner_vertices.append(v * inner_scale)
+	for i in range(inner_vertices.size()):
+		var start = inner_vertices[i]
+		var end = inner_vertices[(i + 1) % inner_vertices.size()]
+		draw_line(start, end, inner_color, 1.5)
 
 
 func _on_body_entered(body: Node2D) -> void:

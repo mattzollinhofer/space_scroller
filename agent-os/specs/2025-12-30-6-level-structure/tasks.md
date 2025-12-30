@@ -27,17 +27,17 @@ visual feedback that the level has structure.
 
 #### Tasks
 
-- [ ] 1.1 Write integration test: verify progress bar exists and updates from 0% toward 100%
-- [ ] 1.2 Run test, verify expected failure
-- [ ] 1.3 Create `res://levels/level_1.json` with total_distance (e.g., 9000 pixels for ~50s)
-- [ ] 1.4 Create LevelManager script that loads level JSON and tracks progress
-- [ ] 1.5 Create progress_bar.tscn scene (CanvasLayer with ColorRect for bar background and fill)
-- [ ] 1.6 Create progress_bar.gd script with `set_progress(percent: float)` method
-- [ ] 1.7 Add ProgressBar and LevelManager to main.tscn
-- [ ] 1.8 Connect LevelManager to ScrollController to calculate progress percentage
-- [ ] 1.9 LevelManager updates ProgressBar each frame based on scroll_offset
-- [ ] 1.10 Run test, iterate until progress bar displays and updates
-- [ ] 1.11 Refactor if needed (keep tests green)
+- [x] 1.1 Write integration test: verify progress bar exists and updates from 0% toward 100%
+- [x] 1.2 Run test, verify expected failure [ProgressBar node not found] -> Created test
+- [x] 1.3 Create `res://levels/level_1.json` with total_distance (e.g., 9000 pixels for ~50s)
+- [x] 1.4 Create LevelManager script that loads level JSON and tracks progress
+- [x] 1.5 Create progress_bar.tscn scene (CanvasLayer with ColorRect for bar background and fill)
+- [x] 1.6 Create progress_bar.gd script with `set_progress(percent: float)` method
+- [x] 1.7 Add ProgressBar and LevelManager to main.tscn
+- [x] 1.8 Connect LevelManager to ScrollController to calculate progress percentage
+- [x] 1.9 LevelManager updates ProgressBar each frame based on scroll_offset
+- [x] 1.10 Run test, iterate until progress bar displays and updates - Success
+- [x] 1.11 Refactor if needed (keep tests green) - No refactoring needed
 - [ ] 1.12 Commit working slice
 
 **Acceptance Criteria:**

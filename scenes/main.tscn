@@ -1,4 +1,4 @@
-[gd_scene load_steps=17 format=3 uid="uid://d0n8g3kv2kq7y"]
+[gd_scene load_steps=19 format=3 uid="uid://d0n8g3kv2kq7y"]
 
 [ext_resource type="Script" path="res://scripts/scroll_controller.gd" id="1_scroll"]
 [ext_resource type="Script" path="res://scripts/background/star_field.gd" id="2_starfield"]
@@ -14,6 +14,8 @@
 [ext_resource type="PackedScene" uid="uid://cpatrol_enemy" path="res://scenes/enemies/patrol_enemy.tscn" id="13_patrol_enemy"]
 [ext_resource type="Script" path="res://scripts/enemies/enemy_spawner.gd" id="14_enemy_spawner"]
 [ext_resource type="PackedScene" uid="uid://cfire_button_scene" path="res://scenes/ui/fire_button.tscn" id="15_fire_button"]
+[ext_resource type="Script" path="res://scripts/level_manager.gd" id="16_level_manager"]
+[ext_resource type="PackedScene" uid="uid://progress_bar_scene" path="res://scenes/ui/progress_bar.tscn" id="17_progress_bar"]
 
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_top"]
 size = Vector2(2048, 80)
@@ -82,6 +84,13 @@ initial_count = 2
 
 [node name="Player" parent="." instance=ExtResource("7_player")]
 position = Vector2(400, 768)
+
+[node name="LevelManager" type="Node" parent="."]
+script = ExtResource("16_level_manager")
+scroll_controller_path = NodePath("../ParallaxBackground")
+progress_bar_path = NodePath("../ProgressBar")
+
+[node name="ProgressBar" parent="." instance=ExtResource("17_progress_bar")]
 
 [node name="UILayer" type="CanvasLayer" parent="."]
 

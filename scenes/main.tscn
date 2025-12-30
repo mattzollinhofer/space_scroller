@@ -1,12 +1,13 @@
-[gd_scene load_steps=8 format=3 uid="uid://d0n8g3kv2kq7y"]
+[gd_scene load_steps=9 format=3 uid="uid://d0n8g3kv2kq7y"]
 
 [ext_resource type="Script" path="res://scripts/scroll_controller.gd" id="1_scroll"]
 [ext_resource type="Script" path="res://scripts/background/star_field.gd" id="2_starfield"]
 [ext_resource type="Script" path="res://scripts/background/nebulae.gd" id="3_nebulae"]
 [ext_resource type="Script" path="res://scripts/background/debris.gd" id="4_debris"]
-[ext_resource type="Script" path="res://scripts/debug_grid.gd" id="5_debug"]
-[ext_resource type="PackedScene" uid="uid://dq8m4r2xk1pvy" path="res://scenes/player.tscn" id="6_player"]
-[ext_resource type="PackedScene" uid="uid://cjoystick_scene" path="res://scenes/ui/virtual_joystick.tscn" id="7_joystick"]
+[ext_resource type="Script" path="res://scripts/background/asteroid_boundaries.gd" id="5_boundaries"]
+[ext_resource type="Script" path="res://scripts/debug_grid.gd" id="6_debug"]
+[ext_resource type="PackedScene" uid="uid://dq8m4r2xk1pvy" path="res://scenes/player.tscn" id="7_player"]
+[ext_resource type="PackedScene" uid="uid://cjoystick_scene" path="res://scenes/ui/virtual_joystick.tscn" id="8_joystick"]
 
 [node name="Main" type="Node2D"]
 
@@ -34,12 +35,19 @@ motion_mirroring = Vector2(2048, 0)
 [node name="Debris" type="Node2D" parent="ParallaxBackground/DebrisLayer"]
 script = ExtResource("4_debris")
 
-[node name="DebugGrid" type="Node2D" parent="."]
-script = ExtResource("5_debug")
+[node name="BoundaryLayer" type="ParallaxLayer" parent="ParallaxBackground"]
+motion_scale = Vector2(1, 0)
+motion_mirroring = Vector2(2048, 0)
 
-[node name="Player" parent="." instance=ExtResource("6_player")]
+[node name="AsteroidBoundaries" type="Node2D" parent="ParallaxBackground/BoundaryLayer"]
+script = ExtResource("5_boundaries")
+
+[node name="DebugGrid" type="Node2D" parent="."]
+script = ExtResource("6_debug")
+
+[node name="Player" parent="." instance=ExtResource("7_player")]
 position = Vector2(1024, 768)
 
 [node name="UILayer" type="CanvasLayer" parent="."]
 
-[node name="VirtualJoystick" parent="UILayer" instance=ExtResource("7_joystick")]
+[node name="VirtualJoystick" parent="UILayer" instance=ExtResource("8_joystick")]

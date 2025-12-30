@@ -116,15 +116,20 @@ Each slice delivers incremental user value and is tested end-to-end.
 
 #### Tasks
 
-- [ ] 3.1 Write integration test: verify asteroid visuals at top and bottom edges
-- [ ] 3.2 Run test, verify expected failure
-- [ ] 3.3 Make smallest change possible to progress
-- [ ] 3.4 Run test, observe failure or success
-- [ ] 3.5 Document result and update task list
-- [ ] 3.6 Repeat 3.3-3.5 as necessary
-- [ ] 3.7 Refactor if needed (keep tests green)
-- [ ] 3.8 Run all slice tests to verify no regressions
-- [ ] 3.9 Commit working slice
+- [x] 3.1 Write integration test: verify asteroid visuals at top and bottom edges
+- [x] 3.2 Run test, verify expected failure
+- [x] 3.3 Make smallest change possible to progress
+- [x] 3.4 Run test, observe failure or success
+- [x] 3.5 Document result and update task list
+- [x] 3.6 Repeat 3.3-3.5 as necessary
+  - Created asteroid_boundaries.gd with 80px tall rocky strips at top/bottom edges
+  - Uses irregular polygon shapes (5-8 vertices) in brown/gray tones
+  - Background fill ensures no gaps between asteroids
+  - Added BoundaryLayer (motion_scale=1.0) to main.tscn for full world speed
+  - Success: Headless test passes, boundaries scroll with world
+- [x] 3.7 Refactor if needed (keep tests green)
+- [x] 3.8 Run all slice tests to verify no regressions
+- [x] 3.9 Commit working slice
 
 **Implementation Notes:**
 - Create separate ParallaxLayer for boundaries OR use foreground layer

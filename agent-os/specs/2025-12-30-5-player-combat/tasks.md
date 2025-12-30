@@ -76,7 +76,7 @@ Each slice delivers incremental user value and is tested end-to-end.
   - No refactoring needed - implementation clean
 - [x] 2.8 Run all slice tests (1 and 2) to verify no regressions
   - Both tests pass: test_player_shooting.tscn and test_patrol_enemy_two_hits.tscn
-- [ ] 2.9 Commit working slice
+- [x] 2.9 Commit working slice (commit: 2ae7cda)
 
 **Acceptance Criteria:**
 - [x] Patrol enemy survives first hit

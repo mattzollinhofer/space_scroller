@@ -6,19 +6,13 @@ extends Node2D
 @export var asteroid_scene: PackedScene
 
 ## Minimum spawn interval in seconds
-@export var spawn_rate_min: float = 2.0
+@export var spawn_rate_min: float = 4.0
 
 ## Maximum spawn interval in seconds
-@export var spawn_rate_max: float = 4.0
-
-## Minimum asteroid size
-@export var size_min: float = 60.0
-
-## Maximum asteroid size
-@export var size_max: float = 120.0
+@export var spawn_rate_max: float = 7.0
 
 ## Number of initial asteroids to spawn at game start
-@export var initial_count: int = 4
+@export var initial_count: int = 2
 
 ## Playable Y range (between asteroid belt boundaries)
 const PLAYABLE_Y_MIN: float = 80.0 + 60.0  # Top boundary + margin for asteroid size
@@ -92,10 +86,6 @@ func _spawn_asteroid() -> void:
 	var y_pos = _rng.randf_range(PLAYABLE_Y_MIN, PLAYABLE_Y_MAX)
 	asteroid.position = Vector2(x_pos, y_pos)
 
-	# Set random size
-	var size = _rng.randf_range(size_min, size_max)
-	asteroid.asteroid_size = size
-
 	# Add to scene and track
 	add_child(asteroid)
 	_active_asteroids.append(asteroid)
@@ -116,10 +106,6 @@ func _spawn_initial_asteroids() -> void:
 		var x_pos = _rng.randf_range(_viewport_width * 0.4, _viewport_width * 0.9)
 		var y_pos = _rng.randf_range(PLAYABLE_Y_MIN, PLAYABLE_Y_MAX)
 		asteroid.position = Vector2(x_pos, y_pos)
-
-		# Set random size
-		var size = _rng.randf_range(size_min, size_max)
-		asteroid.asteroid_size = size
 
 		# Add to scene and track
 		add_child(asteroid)

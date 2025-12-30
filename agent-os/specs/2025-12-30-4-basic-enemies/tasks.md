@@ -50,7 +50,7 @@ Each slice delivers incremental user value and is tested end-to-end.
   - [x] Add test enemy instance to main.tscn for manual testing
   - [x] Add green-screen shader for sprite transparency
 - [x] 1.7 Refactor if needed (keep tests green)
-- [ ] 1.8 Commit working slice
+- [x] 1.8 Commit working slice
 
 **Acceptance Criteria:**
 - Stationary enemy displays with gold/black sprite facing left
@@ -75,24 +75,24 @@ Each slice delivers incremental user value and is tested end-to-end.
 
 #### Tasks
 
-- [ ] 2.1 Write integration test: patrol enemy oscillates horizontally while scrolling left, player collision works same as stationary
-- [ ] 2.2 Run test, verify expected failure
-- [ ] 2.3 Make smallest change possible to progress
-- [ ] 2.4 Run test, observe failure or success
-- [ ] 2.5 Document result and update task list
-- [ ] 2.6 Repeat 2.3-2.5 as necessary (expected iterations):
-  - [ ] Create patrol_enemy.gd extending base_enemy.gd (or duplicate with modifications)
-  - [ ] Create patrol_enemy.tscn scene
-  - [ ] Apply red/orange modulate tint to Sprite2D (e.g., Color(1.5, 0.6, 0.3))
-  - [ ] Add patrol_range variable (default 200px)
-  - [ ] Add patrol_speed variable (configurable, smooth movement)
-  - [ ] Track patrol center position (relative to world scroll)
-  - [ ] Implement oscillation: move back/forth within patrol_range
-  - [ ] Combine patrol movement with world scroll in _process
-  - [ ] Verify collision and destruction work same as stationary enemy
-  - [ ] Add test patrol enemy to main.tscn for manual testing
-- [ ] 2.7 Refactor if needed (keep tests green)
-- [ ] 2.8 Run all slice tests (1 and 2) to verify no regressions
+- [x] 2.1 Write integration test: patrol enemy oscillates horizontally while scrolling left, player collision works same as stationary
+- [x] 2.2 Run test, verify expected failure
+- [x] 2.3 Make smallest change possible to progress
+- [x] 2.4 Run test, observe failure or success
+- [x] 2.5 Document result and update task list
+- [x] 2.6 Repeat 2.3-2.5 as necessary (expected iterations):
+  - [x] Create patrol_enemy.gd extending base_enemy.gd (or duplicate with modifications)
+  - [x] Create patrol_enemy.tscn scene
+  - [x] Apply red/orange modulate tint to Sprite2D (e.g., Color(1.5, 0.6, 0.3))
+  - [x] Add patrol_range variable (default 200px)
+  - [x] Add patrol_speed variable (configurable, smooth movement)
+  - [x] Track patrol center position (relative to world scroll)
+  - [x] Implement oscillation: move back/forth within patrol_range
+  - [x] Combine patrol movement with world scroll in _process
+  - [x] Verify collision and destruction work same as stationary enemy
+  - [x] Add test patrol enemy to main.tscn for manual testing
+- [x] 2.7 Refactor if needed (keep tests green)
+- [x] 2.8 Run all slice tests (1 and 2) to verify no regressions
 - [ ] 2.9 Commit working slice
 
 **Acceptance Criteria:**

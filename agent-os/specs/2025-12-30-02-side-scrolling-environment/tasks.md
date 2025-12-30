@@ -70,15 +70,19 @@ Each slice delivers incremental user value and is tested end-to-end.
 
 #### Tasks
 
-- [ ] 2.1 Write integration test: verify all 3 layers scroll at different rates
-- [ ] 2.2 Run test, verify expected failure
-- [ ] 2.3 Make smallest change possible to progress
-- [ ] 2.4 Run test, observe failure or success
-- [ ] 2.5 Document result and update task list
-- [ ] 2.6 Repeat 2.3-2.5 as necessary
-- [ ] 2.7 Refactor if needed (keep tests green)
-- [ ] 2.8 Run all slice tests (1 and 2) to verify no regressions
-- [ ] 2.9 Commit working slice
+- [x] 2.1 Write integration test: verify all 3 layers scroll at different rates
+- [x] 2.2 Run test, verify expected failure
+- [x] 2.3 Make smallest change possible to progress
+- [x] 2.4 Run test, observe failure or success
+- [x] 2.5 Document result and update task list
+- [x] 2.6 Repeat 2.3-2.5 as necessary
+  - Created nebulae.gd with 8 semi-transparent circles (100-300px) in purple/blue/pink
+  - Created debris.gd with 40 small irregular shapes (8-16px) in gray/brown tones
+  - Added NebulaLayer (motion_scale=0.5) and DebrisLayer (motion_scale=0.9) to main.tscn
+  - Success: Headless test passes, all 3 layers configured with proper z-ordering
+- [x] 2.7 Refactor if needed (keep tests green)
+- [x] 2.8 Run all slice tests (1 and 2) to verify no regressions
+- [x] 2.9 Commit working slice
 
 **Implementation Notes:**
 - Layer 2 (nebulae): `motion_scale = Vector2(0.5, 0)` (50% speed)

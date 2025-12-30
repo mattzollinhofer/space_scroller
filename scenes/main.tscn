@@ -1,10 +1,12 @@
-[gd_scene load_steps=6 format=3 uid="uid://d0n8g3kv2kq7y"]
+[gd_scene load_steps=8 format=3 uid="uid://d0n8g3kv2kq7y"]
 
 [ext_resource type="Script" path="res://scripts/scroll_controller.gd" id="1_scroll"]
 [ext_resource type="Script" path="res://scripts/background/star_field.gd" id="2_starfield"]
-[ext_resource type="Script" path="res://scripts/debug_grid.gd" id="3_debug"]
-[ext_resource type="PackedScene" uid="uid://dq8m4r2xk1pvy" path="res://scenes/player.tscn" id="4_player"]
-[ext_resource type="PackedScene" uid="uid://cjoystick_scene" path="res://scenes/ui/virtual_joystick.tscn" id="5_joystick"]
+[ext_resource type="Script" path="res://scripts/background/nebulae.gd" id="3_nebulae"]
+[ext_resource type="Script" path="res://scripts/background/debris.gd" id="4_debris"]
+[ext_resource type="Script" path="res://scripts/debug_grid.gd" id="5_debug"]
+[ext_resource type="PackedScene" uid="uid://dq8m4r2xk1pvy" path="res://scenes/player.tscn" id="6_player"]
+[ext_resource type="PackedScene" uid="uid://cjoystick_scene" path="res://scenes/ui/virtual_joystick.tscn" id="7_joystick"]
 
 [node name="Main" type="Node2D"]
 
@@ -18,12 +20,26 @@ motion_mirroring = Vector2(2048, 0)
 [node name="StarField" type="Node2D" parent="ParallaxBackground/StarFieldLayer"]
 script = ExtResource("2_starfield")
 
-[node name="DebugGrid" type="Node2D" parent="."]
-script = ExtResource("3_debug")
+[node name="NebulaLayer" type="ParallaxLayer" parent="ParallaxBackground"]
+motion_scale = Vector2(0.5, 0)
+motion_mirroring = Vector2(2048, 0)
 
-[node name="Player" parent="." instance=ExtResource("4_player")]
+[node name="Nebulae" type="Node2D" parent="ParallaxBackground/NebulaLayer"]
+script = ExtResource("3_nebulae")
+
+[node name="DebrisLayer" type="ParallaxLayer" parent="ParallaxBackground"]
+motion_scale = Vector2(0.9, 0)
+motion_mirroring = Vector2(2048, 0)
+
+[node name="Debris" type="Node2D" parent="ParallaxBackground/DebrisLayer"]
+script = ExtResource("4_debris")
+
+[node name="DebugGrid" type="Node2D" parent="."]
+script = ExtResource("5_debug")
+
+[node name="Player" parent="." instance=ExtResource("6_player")]
 position = Vector2(1024, 768)
 
 [node name="UILayer" type="CanvasLayer" parent="."]
 
-[node name="VirtualJoystick" parent="UILayer" instance=ExtResource("5_joystick")]
+[node name="VirtualJoystick" parent="UILayer" instance=ExtResource("7_joystick")]

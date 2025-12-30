@@ -7,5 +7,5 @@ extends ParallaxBackground
 
 
 func _process(delta: float) -> void:
-	# Scroll the background leftward (increasing scroll_offset.x moves layers left)
-	scroll_offset.x += scroll_speed * delta
+	# Scroll the background leftward (decreasing scroll_offset.x moves layers left)
+	scroll_offset.x -= scroll_speed * delta

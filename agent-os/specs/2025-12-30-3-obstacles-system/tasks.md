@@ -43,7 +43,7 @@ Each slice delivers incremental user value and is tested end-to-end.
   - [x] Add flashing effect (toggle visibility every 0.1s during invincibility)
   - [x] Add damage_taken signal to player
 - [x] 1.7 Refactor if needed (keep tests green)
-- [ ] 1.8 Commit working slice
+- [x] 1.8 Commit working slice
 
 **Acceptance Criteria:**
 - Single asteroid displays on screen with rocky procedural visuals
@@ -67,20 +67,20 @@ Each slice delivers incremental user value and is tested end-to-end.
 
 #### Tasks
 
-- [ ] 2.1 Write integration test: player collides with asteroid 3 times, game over screen appears
-- [ ] 2.2 Run test, verify expected failure
-- [ ] 2.3 Make smallest change possible to progress
-- [ ] 2.4 Run test, observe failure or success
-- [ ] 2.5 Document result and update task list
-- [ ] 2.6 Repeat 2.3-2.5 as necessary (expected iterations):
-  - Add lives_changed signal to player.gd
-  - Add died signal to player.gd (emitted when lives reach 0)
-  - Create game_over_screen.tscn with CanvasLayer and centered "Game Over" label
-  - Add GameOverScreen to main.tscn UILayer (initially hidden)
-  - Connect player.died signal to show game over screen
-  - Pause game tree or stop game logic on game over
-- [ ] 2.7 Refactor if needed (keep tests green)
-- [ ] 2.8 Run all slice tests (1 and 2) to verify no regressions
+- [x] 2.1 Write integration test: player collides with asteroid 3 times, game over screen appears
+- [x] 2.2 Run test, verify expected failure
+- [x] 2.3 Make smallest change possible to progress
+- [x] 2.4 Run test, observe failure or success
+- [x] 2.5 Document result and update task list
+- [x] 2.6 Repeat 2.3-2.5 as necessary (expected iterations):
+  - [x] Add lives_changed signal to player.gd (done in Slice 1)
+  - [x] Add died signal to player.gd (done in Slice 1)
+  - [x] Create game_over_screen.tscn with CanvasLayer and centered "Game Over" label
+  - [x] Add GameOverScreen to main.tscn (initially hidden)
+  - [x] Connect player.died signal to show game over screen
+  - [x] Pause game tree on game over
+- [x] 2.7 Refactor if needed (keep tests green)
+- [x] 2.8 Run all slice tests (1 and 2) to verify no regressions
 - [ ] 2.9 Commit working slice
 
 **Acceptance Criteria:**

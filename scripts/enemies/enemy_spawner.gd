@@ -9,16 +9,16 @@ extends Node2D
 @export var patrol_enemy_scene: PackedScene
 
 ## Minimum spawn interval in seconds
-@export var spawn_rate_min: float = 3.0
+@export var spawn_rate_min: float = 2.0
 
 ## Maximum spawn interval in seconds
-@export var spawn_rate_max: float = 6.0
+@export var spawn_rate_max: float = 4.0
 
 ## Probability of spawning a patrol enemy (0.0 - 1.0)
 @export var patrol_spawn_chance: float = 0.4
 
 ## Number of initial enemies to spawn at game start
-@export var initial_count: int = 2
+@export var initial_count: int = 3
 
 ## Playable Y range (between asteroid belt boundaries, accounting for enemy size)
 const PLAYABLE_Y_MIN: float = 140.0  # 80 + 60 margin

@@ -1,7 +1,7 @@
 extends Area2D
 class_name BaseEnemy
 ## Base enemy class with health system, collision detection, and destruction animation.
-## Scrolls left with the world and damages player on contact.
+## Moves in zigzag pattern while scrolling left. Damages player on contact.
 
 ## Health of the enemy
 @export var health: int = 1:
@@ -12,6 +12,16 @@ class_name BaseEnemy
 
 ## Movement speed (matches world scroll speed)
 var scroll_speed: float = 180.0
+
+## Vertical zigzag speed
+@export var zigzag_speed: float = 120.0
+
+## Y bounds for zigzag movement
+const Y_MIN: float = 140.0
+const Y_MAX: float = 1396.0
+
+## Current vertical direction (1 = down, -1 = up)
+var _zigzag_direction: float = 1.0
 
 ## Whether the enemy is currently being destroyed (prevents double-processing)
 var _is_destroying: bool = false
@@ -31,6 +41,8 @@ func _ready() -> void:
 	body_entered.connect(_on_body_entered)
 	# Connect signal for collision detection with projectiles (Area2D)
 	area_entered.connect(_on_area_entered)
+	# Randomize initial zigzag direction
+	_zigzag_direction = 1.0 if randf() > 0.5 else -1.0
 
 
 func _process(delta: float) -> void:
@@ -39,6 +51,17 @@ func _process(delta: float) -> void:
 
 	# Move enemy left at scroll speed
 	position.x -= scroll_speed * delta
+
+	# Zigzag vertical movement
+	position.y += _zigzag_direction * zigzag_speed * delta
+
+	# Bounce off Y bounds
+	if position.y >= Y_MAX:
+		position.y = Y_MAX
+		_zigzag_direction = -1.0
+	elif position.y <= Y_MIN:
+		position.y = Y_MIN
+		_zigzag_direction = 1.0
 
 	# Despawn when off-screen (left edge)
 	if position.x < -100:
@@ -84,7 +107,7 @@ func take_hit(damage: int) -> void:
 		_play_hit_flash()
 
 
-## Plays a red flash effect when enemy takes damage but survives
+## Plays a hit effect when enemy takes damage but survives
 func _play_hit_flash() -> void:
 	var sprite = get_node_or_null("Sprite2D")
 	if not sprite:
@@ -94,15 +117,19 @@ func _play_hit_flash() -> void:
 	if _flash_tween and _flash_tween.is_valid():
 		_flash_tween.kill()
 
-	# Store original modulate
+	# Store original values
 	var original_modulate: Color = sprite.modulate
+	var original_scale: Vector2 = sprite.scale
 
-	# Apply red tint (high red, low green/blue for damage feedback)
-	sprite.modulate = Color(1.5, 0.3, 0.3, 1.0)
+	# Apply bright white flash and scale up
+	sprite.modulate = Color(3.0, 3.0, 3.0, 1.0)
+	sprite.scale = original_scale * 1.3
 
-	# Create tween to restore original color
+	# Create tween to restore original state
 	_flash_tween = create_tween()
-	_flash_tween.tween_property(sprite, "modulate", original_modulate, 0.12)
+	_flash_tween.set_parallel(true)
+	_flash_tween.tween_property(sprite, "modulate", original_modulate, 0.2).set_ease(Tween.EASE_OUT)
+	_flash_tween.tween_property(sprite, "scale", original_scale, 0.2).set_ease(Tween.EASE_OUT).set_trans(Tween.TRANS_ELASTIC)
 
 
 func _on_health_depleted() -> void:

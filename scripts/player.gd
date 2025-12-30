@@ -56,8 +56,11 @@ func _physics_process(_delta: float) -> void:
 
 
 func _clamp_to_viewport() -> void:
-	# Use viewport size for fixed screen bounds (not affected by camera position)
-	var viewport_size = get_viewport_rect().size
+	# Get the actual viewport size (not affected by camera)
+	var viewport_size = Vector2(
+		ProjectSettings.get_setting("display/window/size/viewport_width"),
+		ProjectSettings.get_setting("display/window/size/viewport_height")
+	)
 	var min_pos = _half_size
 	var max_pos = viewport_size - _half_size
 

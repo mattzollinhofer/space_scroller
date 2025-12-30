@@ -1,13 +1,17 @@
-[gd_scene load_steps=3 format=3 uid="uid://d0n8g3kv2kq7y"]
+[gd_scene load_steps=4 format=3 uid="uid://d0n8g3kv2kq7y"]
 
-[ext_resource type="PackedScene" uid="uid://dq8m4r2xk1pvy" path="res://scenes/player.tscn" id="1_player"]
-[ext_resource type="PackedScene" uid="uid://cjoystick_scene" path="res://scenes/ui/virtual_joystick.tscn" id="2_joystick"]
+[ext_resource type="Script" path="res://scripts/debug_grid.gd" id="1_debug"]
+[ext_resource type="PackedScene" uid="uid://dq8m4r2xk1pvy" path="res://scenes/player.tscn" id="2_player"]
+[ext_resource type="PackedScene" uid="uid://cjoystick_scene" path="res://scenes/ui/virtual_joystick.tscn" id="3_joystick"]
 
 [node name="Main" type="Node2D"]
 
-[node name="Player" parent="." instance=ExtResource("1_player")]
+[node name="DebugGrid" type="Node2D" parent="."]
+script = ExtResource("1_debug")
+
+[node name="Player" parent="." instance=ExtResource("2_player")]
 position = Vector2(1024, 768)
 
 [node name="UILayer" type="CanvasLayer" parent="."]
 
-[node name="VirtualJoystick" parent="UILayer" instance=ExtResource("2_joystick")]
+[node name="VirtualJoystick" parent="UILayer" instance=ExtResource("3_joystick")]

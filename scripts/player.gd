@@ -56,9 +56,10 @@ func _physics_process(_delta: float) -> void:
 
 
 func _clamp_to_viewport() -> void:
-	var viewport_rect = get_viewport_rect()
-	var min_pos = viewport_rect.position + _half_size
-	var max_pos = viewport_rect.position + viewport_rect.size - _half_size
+	# Use viewport size for fixed screen bounds (not affected by camera position)
+	var viewport_size = get_viewport_rect().size
+	var min_pos = _half_size
+	var max_pos = viewport_size - _half_size
 
 	position.x = clamp(position.x, min_pos.x, max_pos.x)
 	position.y = clamp(position.y, min_pos.y, max_pos.y)

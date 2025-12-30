@@ -38,7 +38,7 @@ Each slice delivers incremental user value and is tested end-to-end.
   - Updated patrol_enemy.tscn collision_mask = 5 for consistency
   - Updated player.tscn to include projectile_scene reference
   - Added projectile.gd.uid file
-- [ ] 1.8 Commit working slice
+- [x] 1.8 Commit working slice (commit: 7ebb7ad)
 
 **Acceptance Criteria:**
 - [x] Player presses spacebar and projectile appears

@@ -122,7 +122,7 @@ Each slice delivers incremental user value and is tested end-to-end.
   - test_player_shooting.tscn: PASSED
   - test_patrol_enemy_two_hits.tscn: PASSED
   - test_touch_firing.tscn: PASSED
-- [ ] 3.9 Commit working slice
+- [x] 3.9 Commit working slice (commit: c63e4d3)
 
 **Acceptance Criteria:**
 - [x] Touching right side of screen fires projectiles (fire button covers right 600px)

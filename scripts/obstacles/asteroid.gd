@@ -18,7 +18,7 @@ var _rotation_angle: float = 0.0
 
 
 func _ready() -> void:
-	# Generate asteroid visuals
+	# Generate asteroid visuals based on configured size
 	var rng = RandomNumberGenerator.new()
 	rng.randomize()
 	_generate_asteroid(rng)
@@ -83,10 +83,11 @@ func _get_asteroid_color(rng: RandomNumberGenerator) -> Color:
 
 
 func _update_collision_shape() -> void:
-	if _collision_shape and _collision_shape.shape:
-		var circle_shape = _collision_shape.shape as CircleShape2D
-		if circle_shape:
-			circle_shape.radius = asteroid_size / 2.0
+	if _collision_shape:
+		# Create a new CircleShape2D with the correct radius
+		var circle_shape = CircleShape2D.new()
+		circle_shape.radius = asteroid_size / 2.0
+		_collision_shape.shape = circle_shape
 
 
 func _draw() -> void:
@@ -116,15 +117,4 @@ func _on_body_entered(body: Node2D) -> void:
 
 
 func _despawn() -> void:
-	# Emit signal before removing (for spawner tracking)
 	queue_free()
-
-
-## Set asteroid size and regenerate visuals
-func set_size(new_size: float) -> void:
-	asteroid_size = new_size
-	var rng = RandomNumberGenerator.new()
-	rng.randomize()
-	_generate_asteroid(rng)
-	_update_collision_shape()
-	queue_redraw()

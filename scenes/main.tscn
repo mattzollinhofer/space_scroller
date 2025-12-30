@@ -1,4 +1,4 @@
-[gd_scene load_steps=13 format=3 uid="uid://d0n8g3kv2kq7y"]
+[gd_scene load_steps=14 format=3 uid="uid://d0n8g3kv2kq7y"]
 
 [ext_resource type="Script" path="res://scripts/scroll_controller.gd" id="1_scroll"]
 [ext_resource type="Script" path="res://scripts/background/star_field.gd" id="2_starfield"]
@@ -10,6 +10,7 @@
 [ext_resource type="PackedScene" uid="uid://cjoystick_scene" path="res://scenes/ui/virtual_joystick.tscn" id="8_joystick"]
 [ext_resource type="PackedScene" uid="uid://asteroid_scene" path="res://scenes/obstacles/asteroid.tscn" id="9_asteroid"]
 [ext_resource type="PackedScene" uid="uid://game_over_screen" path="res://scenes/ui/game_over_screen.tscn" id="10_gameover"]
+[ext_resource type="Script" path="res://scripts/obstacles/obstacle_spawner.gd" id="11_spawner"]
 
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_top"]
 size = Vector2(2048, 80)
@@ -65,13 +66,13 @@ shape = SubResource("RectangleShape2D_bottom")
 [node name="DebugGrid" type="Node2D" parent="."]
 script = ExtResource("6_debug")
 
-[node name="Obstacles" type="Node2D" parent="."]
-
-[node name="TestAsteroid" parent="Obstacles" instance=ExtResource("9_asteroid")]
-position = Vector2(1200, 768)
+[node name="ObstacleSpawner" type="Node2D" parent="."]
+script = ExtResource("11_spawner")
+asteroid_scene = ExtResource("9_asteroid")
+initial_count = 4
 
 [node name="Player" parent="." instance=ExtResource("7_player")]
-position = Vector2(1024, 768)
+position = Vector2(400, 768)
 
 [node name="UILayer" type="CanvasLayer" parent="."]
 

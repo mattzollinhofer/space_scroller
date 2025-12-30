@@ -81,7 +81,7 @@ Each slice delivers incremental user value and is tested end-to-end.
   - [x] Pause game tree on game over
 - [x] 2.7 Refactor if needed (keep tests green)
 - [x] 2.8 Run all slice tests (1 and 2) to verify no regressions
-- [ ] 2.9 Commit working slice
+- [x] 2.9 Commit working slice
 
 **Acceptance Criteria:**
 - Lives counter starts at 3
@@ -104,21 +104,21 @@ Each slice delivers incremental user value and is tested end-to-end.
 
 #### Tasks
 
-- [ ] 3.1 Write integration test: after 3 seconds, new asteroid appears from right edge and moves left
-- [ ] 3.2 Run test, verify expected failure
-- [ ] 3.3 Make smallest change possible to progress
-- [ ] 3.4 Run test, observe failure or success
-- [ ] 3.5 Document result and update task list
-- [ ] 3.6 Repeat 3.3-3.5 as necessary (expected iterations):
-  - Create obstacle_spawner.gd script
-  - Add Timer for spawn interval (2-4 seconds random)
-  - Spawn asteroids at x = viewport_width + 100 (off right edge)
-  - Spawn at random y position within playable area (y=80 to y=1456)
-  - Add _process movement to asteroid.gd (move left at 120 px/s)
-  - Add ObstacleSpawner node to main.tscn
-  - Track active asteroids in array
-- [ ] 3.7 Refactor if needed (keep tests green)
-- [ ] 3.8 Run all slice tests (1, 2, and 3) to verify no regressions
+- [x] 3.1 Write integration test: after 3 seconds, new asteroid appears from right edge and moves left
+- [x] 3.2 Run test, verify expected failure
+- [x] 3.3 Make smallest change possible to progress
+- [x] 3.4 Run test, observe failure or success
+- [x] 3.5 Document result and update task list
+- [x] 3.6 Repeat 3.3-3.5 as necessary (expected iterations):
+  - [x] Create obstacle_spawner.gd script
+  - [x] Add Timer for spawn interval (2-4 seconds random)
+  - [x] Spawn asteroids at x = viewport_width + 100 (off right edge)
+  - [x] Spawn at random y position within playable area (y=80 to y=1456)
+  - [x] Add _process movement to asteroid.gd (move left at 120 px/s)
+  - [x] Add ObstacleSpawner node to main.tscn
+  - [x] Track active asteroids in array
+- [x] 3.7 Refactor if needed (keep tests green)
+- [x] 3.8 Run all slice tests (1, 2, and 3) to verify no regressions
 - [ ] 3.9 Commit working slice
 
 **Acceptance Criteria:**
@@ -142,20 +142,20 @@ Each slice delivers incremental user value and is tested end-to-end.
 
 #### Tasks
 
-- [ ] 4.1 Write integration test: asteroid scrolls off left edge and is removed from scene
-- [ ] 4.2 Run test, verify expected failure
-- [ ] 4.3 Make smallest change possible to progress
-- [ ] 4.4 Run test, observe failure or success
-- [ ] 4.5 Document result and update task list
-- [ ] 4.6 Repeat 4.3-4.5 as necessary (expected iterations):
-  - Add despawn check in asteroid.gd _process (when x < -100)
-  - Call queue_free() and notify spawner on despawn
-  - Remove asteroid reference from spawner's active array
-  - Add initial asteroid spawning in obstacle_spawner.gd _ready()
-  - Spawn 3-5 asteroids at random positions on screen at game start
-  - Make initial_count configurable via @export
-- [ ] 4.7 Refactor if needed (keep tests green)
-- [ ] 4.8 Run all slice tests (1-4) to verify no regressions
+- [x] 4.1 Write integration test: asteroid scrolls off left edge and is removed from scene
+- [x] 4.2 Run test, verify expected failure
+- [x] 4.3 Make smallest change possible to progress
+- [x] 4.4 Run test, observe failure or success
+- [x] 4.5 Document result and update task list
+- [x] 4.6 Repeat 4.3-4.5 as necessary (expected iterations):
+  - [x] Add despawn check in asteroid.gd _process (when x < -100)
+  - [x] Call queue_free() and notify spawner on despawn
+  - [x] Remove asteroid reference from spawner's active array
+  - [x] Add initial asteroid spawning in obstacle_spawner.gd _ready()
+  - [x] Spawn 3-5 asteroids at random positions on screen at game start
+  - [x] Make initial_count configurable via @export
+- [x] 4.7 Refactor if needed (keep tests green)
+- [x] 4.8 Run all slice tests (1-4) to verify no regressions
 - [ ] 4.9 Commit working slice
 
 **Acceptance Criteria:**
@@ -179,20 +179,20 @@ Each slice delivers incremental user value and is tested end-to-end.
 
 #### Tasks
 
-- [ ] 5.1 Write integration test: spawned asteroids have varied sizes within range
-- [ ] 5.2 Run test, verify expected failure
-- [ ] 5.3 Make smallest change possible to progress
-- [ ] 5.4 Run test, observe failure or success
-- [ ] 5.5 Document result and update task list
-- [ ] 5.6 Repeat 5.3-5.5 as necessary (expected iterations):
-  - Add size parameter to asteroid.gd (60-120 px range)
-  - Scale collision shape to match visual size
-  - Update spawner to pass random size on instantiation
-  - Add spawn_rate_min and spawn_rate_max @export variables
-  - Stop spawning when game is over
-  - Verify all edge cases handled (rapid collisions, screen edges)
-- [ ] 5.7 Refactor if needed (keep tests green)
-- [ ] 5.8 Run all feature tests (slices 1-5) to verify everything works together
+- [x] 5.1 Write integration test: spawned asteroids have varied sizes within range
+- [x] 5.2 Run test, verify expected failure
+- [x] 5.3 Make smallest change possible to progress
+- [x] 5.4 Run test, observe failure or success
+- [x] 5.5 Document result and update task list
+- [x] 5.6 Repeat 5.3-5.5 as necessary (expected iterations):
+  - [x] Add size parameter to asteroid.gd (60-120 px range)
+  - [x] Scale collision shape to match visual size
+  - [x] Update spawner to pass random size on instantiation
+  - [x] Add spawn_rate_min and spawn_rate_max @export variables
+  - [x] Stop spawning when game is over
+  - [x] Verify all edge cases handled (rapid collisions, screen edges)
+- [x] 5.7 Refactor if needed (keep tests green)
+- [x] 5.8 Run all feature tests (slices 1-5) to verify everything works together
 - [ ] 5.9 Final commit
 
 **Acceptance Criteria:**

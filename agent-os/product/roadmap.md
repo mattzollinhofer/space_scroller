@@ -4,7 +4,7 @@
    settings, set up Web export template, and initialize the Godot project
    structure. Apple Developer account deferred until iOS export phase. `S`
 
-1. [ ] Player Character — Create the player spacecraft with basic movement
+1. [x] Player Character — Create the player spacecraft with basic movement
    controls (touch input for up/down/left/right) and smooth scrolling camera
 follow. `S`
 

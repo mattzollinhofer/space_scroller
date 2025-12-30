@@ -142,7 +142,7 @@ Each slice delivers incremental user value and is tested end-to-end.
   - [x] Remove test enemy instances from main.tscn (spawner handles spawning)
 - [x] 3.7 Refactor if needed (keep tests green)
 - [x] 3.8 Run all slice tests (1-3) to verify no regressions
-- [ ] 3.9 Commit working slice
+- [x] 3.9 Commit working slice
 
 **Acceptance Criteria:**
 - Enemies spawn from right edge (x = viewport_width + 100)
@@ -168,21 +168,22 @@ Each slice delivers incremental user value and is tested end-to-end.
 
 #### Tasks
 
-- [ ] 4.1 Verify enemy collisions respect player invincibility (no damage during flash)
-- [ ] 4.2 Run test, verify expected behavior
-- [ ] 4.3 Handle edge cases:
-  - [ ] Enemy destroyed during destruction animation (no double-free)
-  - [ ] Multiple enemies colliding with player rapidly
-  - [ ] Player dying while enemies are mid-animation
-  - [ ] Patrol enemy at screen edge (clamp patrol range if needed)
-- [ ] 4.4 Add initial enemy spawns at game start (optional, similar to asteroids)
-- [ ] 4.5 Verify all enemies cleaned up on game over
-- [ ] 4.6 Test sprite transparency/background (enemy.png green background)
-  - [ ] If green background visible, apply shader or process sprite
-- [ ] 4.7 Fine-tune spawn rates for balanced gameplay
-- [ ] 4.8 Run all feature tests to verify everything works together
-- [ ] 4.9 Remove test enemy instances from main.tscn (spawner handles spawning)
-- [ ] 4.10 Final commit
+- [x] 4.1 Verify enemy collisions respect player invincibility (no damage during flash)
+  - Player.take_damage() already checks _is_invincible flag before applying damage
+- [x] 4.2 Run test, verify expected behavior
+- [x] 4.3 Handle edge cases:
+  - [x] Enemy destroyed during destruction animation (no double-free) - _is_destroying flag prevents this
+  - [x] Multiple enemies colliding with player rapidly - Player invincibility handles this
+  - [x] Player dying while enemies are mid-animation - Enemies continue animation and clean up via tree_exiting
+  - [x] Patrol enemy at screen edge (clamp patrol range if needed) - Patrol range is relative, no clamping needed
+- [x] 4.4 Add initial enemy spawns at game start (optional, similar to asteroids) - Already implemented with initial_count = 2
+- [x] 4.5 Verify all enemies cleaned up on game over - tree_exiting signal handles cleanup tracking
+- [x] 4.6 Test sprite transparency/background (enemy.png green background)
+  - [x] Green-screen shader already implemented in Slice 1
+- [x] 4.7 Fine-tune spawn rates for balanced gameplay - Using 3-6s interval with 40% patrol/60% stationary mix
+- [x] 4.8 Run all feature tests to verify everything works together
+- [x] 4.9 Remove test enemy instances from main.tscn (spawner handles spawning) - Done in Slice 3
+- [x] 4.10 Final commit
 
 **Acceptance Criteria:**
 - Player invincibility respected (no damage during flash)
@@ -200,10 +201,11 @@ Each slice delivers incremental user value and is tested end-to-end.
 After all slices are complete:
 
 1. **base_enemy.gd** - Base enemy script with health, collision, and destruction
-2. **stationary_enemy.tscn / .gd** - Gold/black enemy that scrolls left
-3. **patrol_enemy.tscn / .gd** - Red/orange enemy that oscillates while scrolling
-4. **enemy_spawner.gd / .tscn** - Manages enemy spawning and lifecycle
-5. **main.tscn modifications** - EnemySpawner node added
+2. **stationary_enemy.tscn** - Gold/black enemy that scrolls left
+3. **patrol_enemy.tscn / patrol_enemy.gd** - Red/orange enemy that oscillates while scrolling
+4. **enemy_spawner.gd** - Manages enemy spawning and lifecycle
+5. **green_to_transparent.gdshader** - Handles green background removal from enemy sprite
+6. **main.tscn modifications** - EnemySpawner node added
 
 ## Technical Notes
 
@@ -211,8 +213,9 @@ After all slices are complete:
 - **Scroll Speed:** 180 px/s (matching current asteroid scroll speed)
 - **Playable Y Range:** 140 to 1396 pixels (accounting for enemy sprite size within 80-1456 boundaries)
 - **Viewport:** 2048x1536 pixels
-- **Enemy Sprite:** assets/sprites/raw/enemy.png - gold/black alien, may need green background removal
-- **Sprite Scale:** 2-3x for gameplay visibility (match player sprite scaling approach)
-- **Patrol Range:** 200px horizontal oscillation
-- **Destruction Animation:** 0.3-0.5 seconds using Tween (scale down + fade out)
+- **Enemy Sprite:** assets/sprites/raw/enemy.png - gold/black alien with green-screen shader
+- **Sprite Scale:** 2.5x for gameplay visibility
+- **Patrol Range:** 200px horizontal oscillation at 100px/s
+- **Destruction Animation:** 0.4 seconds using Tween (scale down + fade out)
 - **Health System:** Integer health property, setter checks <= 0 for death, died signal emitted
+- **Spawn Rate:** 3-6 seconds between spawns, 40% patrol / 60% stationary mix

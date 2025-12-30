@@ -93,7 +93,7 @@ Each slice delivers incremental user value and is tested end-to-end.
   - [x] Add test patrol enemy to main.tscn for manual testing
 - [x] 2.7 Refactor if needed (keep tests green)
 - [x] 2.8 Run all slice tests (1 and 2) to verify no regressions
-- [ ] 2.9 Commit working slice
+- [x] 2.9 Commit working slice
 
 **Acceptance Criteria:**
 - Patrol enemy displays with red/orange tinted sprite
@@ -120,28 +120,28 @@ Each slice delivers incremental user value and is tested end-to-end.
 
 #### Tasks
 
-- [ ] 3.1 Write integration test: after spawn interval, enemies appear from right edge at random Y positions
-- [ ] 3.2 Run test, verify expected failure
-- [ ] 3.3 Make smallest change possible to progress
-- [ ] 3.4 Run test, observe failure or success
-- [ ] 3.5 Document result and update task list
-- [ ] 3.6 Repeat 3.3-3.5 as necessary (expected iterations):
-  - [ ] Create enemy_spawner.gd script (modeled on obstacle_spawner.gd)
-  - [ ] Add @export for stationary_enemy_scene and patrol_enemy_scene
-  - [ ] Add configurable spawn rates for each enemy type
-  - [ ] Set spawn position: x = viewport_width + 100
-  - [ ] Set random Y within playable range (140-1396, accounting for enemy size)
-  - [ ] Implement _spawn_stationary_enemy() method
-  - [ ] Implement _spawn_patrol_enemy() method
-  - [ ] Add spawn timer logic in _process
-  - [ ] Randomly select enemy type on each spawn (or alternate)
-  - [ ] Track active enemies in array
-  - [ ] Connect to tree_exiting for cleanup tracking
-  - [ ] Create enemy_spawner.tscn scene
-  - [ ] Add EnemySpawner node to main.tscn
-  - [ ] Connect to player.died signal to stop spawning on game over
-- [ ] 3.7 Refactor if needed (keep tests green)
-- [ ] 3.8 Run all slice tests (1-3) to verify no regressions
+- [x] 3.1 Write integration test: after spawn interval, enemies appear from right edge at random Y positions
+- [x] 3.2 Run test, verify expected failure
+- [x] 3.3 Make smallest change possible to progress
+- [x] 3.4 Run test, observe failure or success
+- [x] 3.5 Document result and update task list
+- [x] 3.6 Repeat 3.3-3.5 as necessary (expected iterations):
+  - [x] Create enemy_spawner.gd script (modeled on obstacle_spawner.gd)
+  - [x] Add @export for stationary_enemy_scene and patrol_enemy_scene
+  - [x] Add configurable spawn rates for each enemy type
+  - [x] Set spawn position: x = viewport_width + 100
+  - [x] Set random Y within playable range (140-1396, accounting for enemy size)
+  - [x] Implement _spawn_stationary_enemy() method
+  - [x] Implement _spawn_patrol_enemy() method
+  - [x] Add spawn timer logic in _process
+  - [x] Randomly select enemy type on each spawn (or alternate)
+  - [x] Track active enemies in array
+  - [x] Connect to tree_exiting for cleanup tracking
+  - [x] Add EnemySpawner node to main.tscn (no separate scene needed)
+  - [x] Connect to player.died signal to stop spawning on game over
+  - [x] Remove test enemy instances from main.tscn (spawner handles spawning)
+- [x] 3.7 Refactor if needed (keep tests green)
+- [x] 3.8 Run all slice tests (1-3) to verify no regressions
 - [ ] 3.9 Commit working slice
 
 **Acceptance Criteria:**

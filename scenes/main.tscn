@@ -1,17 +1,29 @@
-[gd_scene load_steps=4 format=3 uid="uid://d0n8g3kv2kq7y"]
+[gd_scene load_steps=6 format=3 uid="uid://d0n8g3kv2kq7y"]
 
-[ext_resource type="Script" path="res://scripts/debug_grid.gd" id="1_debug"]
-[ext_resource type="PackedScene" uid="uid://dq8m4r2xk1pvy" path="res://scenes/player.tscn" id="2_player"]
-[ext_resource type="PackedScene" uid="uid://cjoystick_scene" path="res://scenes/ui/virtual_joystick.tscn" id="3_joystick"]
+[ext_resource type="Script" path="res://scripts/scroll_controller.gd" id="1_scroll"]
+[ext_resource type="Script" path="res://scripts/background/star_field.gd" id="2_starfield"]
+[ext_resource type="Script" path="res://scripts/debug_grid.gd" id="3_debug"]
+[ext_resource type="PackedScene" uid="uid://dq8m4r2xk1pvy" path="res://scenes/player.tscn" id="4_player"]
+[ext_resource type="PackedScene" uid="uid://cjoystick_scene" path="res://scenes/ui/virtual_joystick.tscn" id="5_joystick"]
 
 [node name="Main" type="Node2D"]
 
-[node name="DebugGrid" type="Node2D" parent="."]
-script = ExtResource("1_debug")
+[node name="ParallaxBackground" type="ParallaxBackground" parent="."]
+script = ExtResource("1_scroll")
 
-[node name="Player" parent="." instance=ExtResource("2_player")]
+[node name="StarFieldLayer" type="ParallaxLayer" parent="ParallaxBackground"]
+motion_scale = Vector2(0.15, 0)
+motion_mirroring = Vector2(2048, 0)
+
+[node name="StarField" type="Node2D" parent="ParallaxBackground/StarFieldLayer"]
+script = ExtResource("2_starfield")
+
+[node name="DebugGrid" type="Node2D" parent="."]
+script = ExtResource("3_debug")
+
+[node name="Player" parent="." instance=ExtResource("4_player")]
 position = Vector2(1024, 768)
 
 [node name="UILayer" type="CanvasLayer" parent="."]
 
-[node name="VirtualJoystick" parent="UILayer" instance=ExtResource("3_joystick")]
+[node name="VirtualJoystick" parent="UILayer" instance=ExtResource("5_joystick")]

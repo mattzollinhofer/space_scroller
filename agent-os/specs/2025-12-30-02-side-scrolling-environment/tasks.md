@@ -28,14 +28,18 @@ Each slice delivers incremental user value and is tested end-to-end.
 
 #### Tasks
 
-- [ ] 1.1 Create integration test: verify star field layer scrolls leftward over time
-- [ ] 1.2 Run test, verify expected failure
-- [ ] 1.3 Make smallest change possible to progress
-- [ ] 1.4 Run test, observe failure or success
-- [ ] 1.5 Document result and update task list
-- [ ] 1.6 Repeat 1.3-1.5 as necessary (expected iterations: ParallaxBackground node, ParallaxLayer, star field script, scroll controller, camera adjustments)
-- [ ] 1.7 Refactor if needed (keep tests green)
-- [ ] 1.8 Commit working slice
+- [x] 1.1 Create integration test: verify star field layer scrolls leftward over time
+- [x] 1.2 Run test, verify expected failure
+- [x] 1.3 Make smallest change possible to progress
+- [x] 1.4 Run test, observe failure or success
+- [x] 1.5 Document result and update task list
+- [x] 1.6 Repeat 1.3-1.5 as necessary (expected iterations: ParallaxBackground node, ParallaxLayer, star field script, scroll controller, camera adjustments)
+  - Created scroll_controller.gd with @export scroll_speed (default 120 px/sec)
+  - Created star_field.gd using _draw() with random 2-4px dots in white/pale yellow
+  - Added ParallaxBackground to main.tscn with StarFieldLayer (motion_scale=0.15, motion_mirroring=2048)
+  - Success: Headless test passes, scene loads without errors
+- [x] 1.7 Refactor if needed (keep tests green)
+- [x] 1.8 Commit working slice
 
 **Implementation Notes:**
 - Create `ParallaxBackground` node in main.tscn (should be early child for proper layering)

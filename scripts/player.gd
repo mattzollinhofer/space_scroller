@@ -13,10 +13,10 @@ var _half_size: Vector2 = Vector2(32, 32)
 
 
 func _ready() -> void:
-	# Get the sprite size for accurate viewport clamping
+	# Get the sprite size for accurate viewport clamping (accounting for scale)
 	var sprite = $Sprite2D
 	if sprite and sprite.texture:
-		_half_size = sprite.texture.get_size() / 2.0
+		_half_size = (sprite.texture.get_size() * sprite.scale) / 2.0
 
 	# Find the virtual joystick in the scene tree
 	_find_virtual_joystick()

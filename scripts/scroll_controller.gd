@@ -3,7 +3,7 @@ extends ParallaxBackground
 ## Scrolls the world leftward at a constant speed.
 
 ## Scroll speed in pixels per second
-@export var scroll_speed: float = 120.0
+@export var scroll_speed: float = 180.0
 
 
 func _process(delta: float) -> void:

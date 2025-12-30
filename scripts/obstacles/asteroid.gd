@@ -6,7 +6,7 @@ extends Area2D
 @export var asteroid_size: float = 90.0
 
 ## Movement speed (matches world scroll speed)
-var scroll_speed: float = 120.0
+var scroll_speed: float = 180.0
 
 ## Internal storage for visual data
 var _vertices: PackedVector2Array = PackedVector2Array()

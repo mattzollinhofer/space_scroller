@@ -19,10 +19,15 @@ var _is_destroying: bool = false
 ## Emitted when the enemy dies
 signal died()
 
+## Emitted when hit by projectile (audio placeholder hook)
+signal hit_by_projectile()
+
 
 func _ready() -> void:
-	# Connect signal for collision detection
+	# Connect signal for collision detection with player (CharacterBody2D)
 	body_entered.connect(_on_body_entered)
+	# Connect signal for collision detection with projectiles (Area2D)
+	area_entered.connect(_on_area_entered)
 
 
 func _process(delta: float) -> void:
@@ -48,6 +53,27 @@ func _on_body_entered(body: Node2D) -> void:
 		health = 0
 
 
+func _on_area_entered(area: Area2D) -> void:
+	if _is_destroying:
+		return
+
+	# Projectiles call take_hit on the enemy
+	# (handled by projectile.gd calling our take_hit method)
+	pass
+
+
+## Called when hit by a projectile
+func take_hit(damage: int) -> void:
+	if _is_destroying:
+		return
+
+	# Emit signal for audio hook
+	hit_by_projectile.emit()
+
+	# Reduce health
+	health -= damage
+
+
 func _on_health_depleted() -> void:
 	if _is_destroying:
 		return
@@ -65,15 +91,23 @@ func _play_destruction_animation() -> void:
 	set_deferred("monitoring", false)
 	set_deferred("monitorable", false)
 
-	# Create tween for scale down and fade out
+	# Hide the enemy sprite
+	var sprite = get_node_or_null("Sprite2D")
+	if sprite:
+		sprite.visible = false
+
+	# Create explosion sprite
+	var explosion_texture = load("res://assets/sprites/explosion.png")
+	var explosion = Sprite2D.new()
+	explosion.texture = explosion_texture
+	explosion.scale = Vector2(2, 2)
+	add_child(explosion)
+
+	# Animate explosion: scale up and fade out
 	var tween = create_tween()
 	tween.set_parallel(true)
-
-	# Scale down to 0
-	tween.tween_property(self, "scale", Vector2.ZERO, 0.4).set_ease(Tween.EASE_IN)
-
-	# Fade out
-	tween.tween_property(self, "modulate:a", 0.0, 0.4).set_ease(Tween.EASE_IN)
+	tween.tween_property(explosion, "scale", Vector2(4, 4), 0.4).set_ease(Tween.EASE_OUT)
+	tween.tween_property(explosion, "modulate:a", 0.0, 0.4).set_ease(Tween.EASE_IN)
 
 	# Queue free after animation completes
 	tween.chain().tween_callback(queue_free)

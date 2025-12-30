@@ -23,29 +23,29 @@ Each slice delivers incremental user value and is tested end-to-end.
 
 #### Tasks
 
-- [ ] 1.1 Write integration test: player shoots, projectile hits stationary enemy, enemy dies
-- [ ] 1.2 Run test, verify expected failure
-- [ ] 1.3 Make smallest change possible to progress
-- [ ] 1.4 Run test, observe failure or success
-- [ ] 1.5 Document result and update task list
-- [ ] 1.6 Repeat 1.3-1.5 as necessary (expected iterations):
-  - Create `scenes/projectile.tscn` (Area2D + Sprite2D + CollisionShape2D)
-  - Create `scripts/projectile.gd` with movement and despawn logic
-  - Set projectile collision_layer = 4, collision_mask = 2
-  - Update enemy scenes: add collision_mask = 4 (detect projectiles)
-  - Add `take_hit(damage: int)` method to BaseEnemy
-  - Add area_entered signal handling in BaseEnemy for projectiles
-  - Add shooting logic to player.gd (cooldown timer, spawn projectile)
-  - Add `projectile_fired` signal to player (audio placeholder)
-- [ ] 1.7 Refactor if needed (keep tests green)
+- [x] 1.1 Write integration test: player shoots, projectile hits stationary enemy, enemy dies
+- [x] 1.2 Run test, verify expected failure
+  - [x] Iteration 1: "Player does not have 'shoot' method" -> Added shoot() method to player.gd
+- [x] 1.3 Make smallest change possible to progress
+- [x] 1.4 Run test, observe failure or success
+- [x] 1.5 Document result and update task list
+- [x] 1.6 Repeat 1.3-1.5 as necessary (completed iterations):
+  - [x] Iteration 1: No shoot method -> Added shoot() to player.gd with projectile_scene export, fire_cooldown, projectile_fired signal
+  - [x] Iteration 2: No projectile scene assigned -> Created scenes/projectile.tscn and scripts/projectile.gd
+  - [x] Iteration 3: Projectile not hitting enemy -> Added take_hit() to BaseEnemy, updated collision_mask to 5 (1+4)
+  - Success - Test passes
+- [x] 1.7 Refactor if needed (keep tests green)
+  - Updated patrol_enemy.tscn collision_mask = 5 for consistency
+  - Updated player.tscn to include projectile_scene reference
+  - Added projectile.gd.uid file
 - [ ] 1.8 Commit working slice
 
 **Acceptance Criteria:**
-- Player presses spacebar and projectile appears
-- Projectile moves right at 800-1000 px/s
-- Projectile despawns at right screen edge
-- Projectile collides with enemy, enemy dies with explosion animation
-- Fire rate cooldown prevents spam (0.1-0.15s between shots)
+- [x] Player presses spacebar and projectile appears
+- [x] Projectile moves right at 800-1000 px/s (configured at 900 px/s)
+- [x] Projectile despawns at right screen edge (viewport_width + 100)
+- [x] Projectile collides with enemy, enemy dies with explosion animation
+- [x] Fire rate cooldown prevents spam (0.12s between shots)
 
 ---
 
@@ -69,7 +69,7 @@ Each slice delivers incremental user value and is tested end-to-end.
 - [ ] 2.5 Document result and update task list
 - [ ] 2.6 Repeat 2.3-2.5 as necessary (expected iterations):
   - Set patrol enemy health = 2 in scene or patrol_enemy.gd _ready()
-  - Add `hit_by_projectile` signal to BaseEnemy (audio placeholder)
+  - Add `hit_by_projectile` signal to BaseEnemy (audio placeholder) - DONE in Slice 1
   - Add red flash effect in take_hit() when health > 0
   - Store original sprite modulate, apply red tint Color(1.5, 0.3, 0.3, 1.0)
   - Create tween to restore original modulate after 0.1-0.15s

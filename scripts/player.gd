@@ -1,7 +1,7 @@
 extends CharacterBody2D
 ## Player spacecraft with 4-directional movement using keyboard or virtual joystick.
 ## Movement is snappy with minimal inertia. X-axis clamped to viewport, Y-axis uses collision boundaries.
-## Includes lives system with damage handling and invincibility.
+## Includes lives system with damage handling, invincibility, and shooting.
 
 ## Movement speed in pixels per second
 @export var move_speed: float = 600.0
@@ -15,10 +15,17 @@ extends CharacterBody2D
 ## Flashing interval during invincibility (seconds)
 @export var flash_interval: float = 0.1
 
+## Fire rate cooldown in seconds
+@export var fire_cooldown: float = 0.12
+
+## Projectile scene to spawn when shooting
+@export var projectile_scene: PackedScene
+
 ## Signals
 signal damage_taken()
 signal lives_changed(new_lives: int)
 signal died()
+signal projectile_fired()
 
 ## Reference to virtual joystick (auto-detected from scene tree)
 var virtual_joystick: Node = null
@@ -34,6 +41,9 @@ var _is_invincible: bool = false
 var _invincibility_timer: float = 0.0
 var _flash_timer: float = 0.0
 var _visible_state: bool = true
+
+## Shooting cooldown timer
+var _fire_timer: float = 0.0
 
 
 func _ready() -> void:
@@ -75,6 +85,14 @@ func _physics_process(delta: float) -> void:
 		if _invincibility_timer <= 0:
 			_end_invincibility()
 
+	# Handle fire cooldown timer
+	if _fire_timer > 0:
+		_fire_timer -= delta
+
+	# Check for shooting input
+	if Input.is_action_pressed("shoot") and _fire_timer <= 0:
+		shoot()
+
 	# Get keyboard input direction (normalized)
 	var keyboard_input = Input.get_vector("move_left", "move_right", "move_up", "move_down")
 
@@ -108,6 +126,26 @@ func _clamp_to_viewport() -> void:
 
 	# Only clamp X-axis - Y-axis is handled by StaticBody2D collision boundaries
 	position.x = clamp(position.x, min_x, max_x)
+
+
+## Spawn a projectile from the player's position
+func shoot() -> void:
+	if not projectile_scene:
+		push_warning("No projectile scene assigned to Player")
+		return
+
+	# Reset cooldown timer
+	_fire_timer = fire_cooldown
+
+	# Spawn projectile at player's position (offset slightly to the right)
+	var projectile = projectile_scene.instantiate()
+	projectile.position = position + Vector2(80, 0)  # Spawn ahead of player
+
+	# Add to parent (Main scene) so it persists independently
+	get_parent().add_child(projectile)
+
+	# Emit signal for audio hook
+	projectile_fired.emit()
 
 
 ## Called when player takes damage from an obstacle

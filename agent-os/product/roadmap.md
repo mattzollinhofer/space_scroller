@@ -18,7 +18,7 @@ follow. `S`
    (stationary, horizontal patrol, following) and collision-based combat. `M`
    - bad aliens
 
-5. [ ] Player Combat — Add player shooting mechanics with projectiles that can
+5. [x] Player Combat — Add player shooting mechanics with projectiles that can
    destroy enemies, including visual and audio feedback. `S`
 
 6. [ ] Level Structure — Build a complete first level with defined start,

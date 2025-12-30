@@ -1,11 +1,10 @@
-[gd_scene load_steps=14 format=3 uid="uid://d0n8g3kv2kq7y"]
+[gd_scene load_steps=13 format=3 uid="uid://d0n8g3kv2kq7y"]
 
 [ext_resource type="Script" path="res://scripts/scroll_controller.gd" id="1_scroll"]
 [ext_resource type="Script" path="res://scripts/background/star_field.gd" id="2_starfield"]
 [ext_resource type="Script" path="res://scripts/background/nebulae.gd" id="3_nebulae"]
 [ext_resource type="Script" path="res://scripts/background/debris.gd" id="4_debris"]
 [ext_resource type="Script" path="res://scripts/background/asteroid_boundaries.gd" id="5_boundaries"]
-[ext_resource type="Script" path="res://scripts/debug_grid.gd" id="6_debug"]
 [ext_resource type="PackedScene" uid="uid://dq8m4r2xk1pvy" path="res://scenes/player.tscn" id="7_player"]
 [ext_resource type="PackedScene" uid="uid://cjoystick_scene" path="res://scenes/ui/virtual_joystick.tscn" id="8_joystick"]
 [ext_resource type="PackedScene" uid="uid://asteroid_scene" path="res://scenes/obstacles/asteroid.tscn" id="9_asteroid"]
@@ -62,9 +61,6 @@ position = Vector2(1024, 1496)
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="BottomBoundary"]
 shape = SubResource("RectangleShape2D_bottom")
-
-[node name="DebugGrid" type="Node2D" parent="."]
-script = ExtResource("6_debug")
 
 [node name="ObstacleSpawner" type="Node2D" parent="."]
 script = ExtResource("11_spawner")

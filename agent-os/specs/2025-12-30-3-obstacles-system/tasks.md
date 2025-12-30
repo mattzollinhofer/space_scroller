@@ -27,22 +27,22 @@ Each slice delivers incremental user value and is tested end-to-end.
 
 #### Tasks
 
-- [ ] 1.1 Write integration test: player moves into asteroid, takes damage, flashes visually
-- [ ] 1.2 Run test, verify expected failure
-- [ ] 1.3 Make smallest change possible to progress
-- [ ] 1.4 Run test, observe failure or success
-- [ ] 1.5 Document result and update task list
-- [ ] 1.6 Repeat 1.3-1.5 as necessary (expected iterations):
-  - Create asteroid.gd script with procedural drawing (vertices, color, outline)
-  - Create asteroid.tscn scene with Area2D and CollisionShape2D
-  - Set up obstacle collision layer (separate from boundary layer)
-  - Add asteroid instance to main.tscn for testing
-  - Add lives tracking to player.gd (starts with 3)
-  - Add damage handling on Area2D body_entered signal
-  - Add invincibility timer (1.5 seconds)
-  - Add flashing effect (toggle visibility every 0.1s during invincibility)
-  - Add damage_taken signal to player
-- [ ] 1.7 Refactor if needed (keep tests green)
+- [x] 1.1 Write integration test: player moves into asteroid, takes damage, flashes visually
+- [x] 1.2 Run test, verify expected failure
+- [x] 1.3 Make smallest change possible to progress
+- [x] 1.4 Run test, observe failure or success
+- [x] 1.5 Document result and update task list
+- [x] 1.6 Repeat 1.3-1.5 as necessary (expected iterations):
+  - [x] Create asteroid.gd script with procedural drawing (vertices, color, outline)
+  - [x] Create asteroid.tscn scene with Area2D and CollisionShape2D
+  - [x] Set up obstacle collision layer (separate from boundary layer)
+  - [x] Add asteroid instance to main.tscn for testing
+  - [x] Add lives tracking to player.gd (starts with 3)
+  - [x] Add damage handling on Area2D body_entered signal
+  - [x] Add invincibility timer (1.5 seconds)
+  - [x] Add flashing effect (toggle visibility every 0.1s during invincibility)
+  - [x] Add damage_taken signal to player
+- [x] 1.7 Refactor if needed (keep tests green)
 - [ ] 1.8 Commit working slice
 
 **Acceptance Criteria:**

@@ -1,9 +1,24 @@
 extends CharacterBody2D
 ## Player spacecraft with 4-directional movement using keyboard or virtual joystick.
 ## Movement is snappy with minimal inertia. X-axis clamped to viewport, Y-axis uses collision boundaries.
+## Includes lives system with damage handling and invincibility.
 
 ## Movement speed in pixels per second
 @export var move_speed: float = 600.0
+
+## Starting number of lives
+@export var starting_lives: int = 3
+
+## Invincibility duration after taking damage (seconds)
+@export var invincibility_duration: float = 1.5
+
+## Flashing interval during invincibility (seconds)
+@export var flash_interval: float = 0.1
+
+## Signals
+signal damage_taken()
+signal lives_changed(new_lives: int)
+signal died()
 
 ## Reference to virtual joystick (auto-detected from scene tree)
 var virtual_joystick: Node = null
@@ -11,8 +26,20 @@ var virtual_joystick: Node = null
 ## Half the size of the player sprite for viewport clamping
 var _half_size: Vector2 = Vector2(32, 32)
 
+## Current lives
+var _lives: int = 3
+
+## Invincibility state
+var _is_invincible: bool = false
+var _invincibility_timer: float = 0.0
+var _flash_timer: float = 0.0
+var _visible_state: bool = true
+
 
 func _ready() -> void:
+	# Initialize lives
+	_lives = starting_lives
+
 	# Get the sprite size for accurate viewport clamping (accounting for scale)
 	var sprite = $Sprite2D
 	if sprite and sprite.texture:
@@ -32,7 +59,22 @@ func _find_virtual_joystick() -> void:
 			virtual_joystick = ui_layer.get_node_or_null("VirtualJoystick")
 
 
-func _physics_process(_delta: float) -> void:
+func _physics_process(delta: float) -> void:
+	# Handle invincibility timer and flashing
+	if _is_invincible:
+		_invincibility_timer -= delta
+		_flash_timer -= delta
+
+		# Toggle visibility for flashing effect
+		if _flash_timer <= 0:
+			_flash_timer = flash_interval
+			_visible_state = not _visible_state
+			_set_player_visibility(_visible_state)
+
+		# End invincibility
+		if _invincibility_timer <= 0:
+			_end_invincibility()
+
 	# Get keyboard input direction (normalized)
 	var keyboard_input = Input.get_vector("move_left", "move_right", "move_up", "move_down")
 
@@ -66,3 +108,55 @@ func _clamp_to_viewport() -> void:
 
 	# Only clamp X-axis - Y-axis is handled by StaticBody2D collision boundaries
 	position.x = clamp(position.x, min_x, max_x)
+
+
+## Called when player takes damage from an obstacle
+func take_damage() -> void:
+	# Ignore damage while invincible
+	if _is_invincible:
+		return
+
+	# Reduce lives
+	_lives -= 1
+	lives_changed.emit(_lives)
+	damage_taken.emit()
+
+	# Check for death
+	if _lives <= 0:
+		died.emit()
+		return
+
+	# Start invincibility
+	_start_invincibility()
+
+
+func _start_invincibility() -> void:
+	_is_invincible = true
+	_invincibility_timer = invincibility_duration
+	_flash_timer = flash_interval
+	_visible_state = true
+
+
+func _end_invincibility() -> void:
+	_is_invincible = false
+	_invincibility_timer = 0.0
+	_flash_timer = 0.0
+	_visible_state = true
+	_set_player_visibility(true)
+
+
+func _set_player_visibility(is_visible: bool) -> void:
+	# Toggle visibility of the sprite
+	var sprite = $Sprite2D
+	if sprite:
+		sprite.visible = is_visible
+
+
+## Get current lives count
+func get_lives() -> int:
+	return _lives
+
+
+## Check if player is currently invincible
+func is_invincible() -> bool:
+	return _is_invincible

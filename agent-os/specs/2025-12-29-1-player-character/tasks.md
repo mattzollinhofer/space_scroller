@@ -39,14 +39,14 @@ This is the first gameplay feature for "Solar System Showdown" - creating a cont
   - Export movement speed variable for tuning
   - Clamp position to viewport bounds using get_viewport_rect()
 - [x] 1.5 Update main scene to instance player at center of screen
-- [ ] 1.6 Run game and verify:
+- [x] 1.6 Run game and verify:
   - Game displays in landscape orientation
   - Spacecraft appears at center
   - WASD/arrow keys move spacecraft in all 4 directions
   - Movement feels snappy (immediate response, minimal drift)
   - Spacecraft cannot move off screen edges
-- [ ] 1.7 Tune movement speed if needed (adjust exported variable)
-- [ ] 1.8 Commit working slice
+- [x] 1.7 Tune movement speed if needed (adjust exported variable)
+- [x] 1.8 Commit working slice
 
 **Acceptance Criteria:**
 - Game launches in landscape orientation (2048x1536)
@@ -69,10 +69,10 @@ This is the first gameplay feature for "Solar System Showdown" - creating a cont
 
 #### Tasks
 
-- [ ] 2.1 Add Camera2D node as child of player in player.tscn
+- [x] 2.1 Add Camera2D node as child of player in player.tscn
   - Enable position_smoothing_enabled for smooth following
-  - Configure reasonable smoothing speed
-  - Set as current camera
+  - Configure reasonable smoothing speed (8.0)
+  - Set as current camera (default behavior when attached to player)
 - [ ] 2.2 Run game and verify:
   - Camera follows player smoothly
   - No jittering or harsh movements

@@ -35,6 +35,9 @@ var _attack_tween: Tween = null
 ## Tween for screen shake
 var _shake_tween: Tween = null
 
+## Tween for attack telegraph effect
+var _telegraph_tween: Tween = null
+
 ## Battle position (right third of screen)
 var _battle_position: Vector2 = Vector2.ZERO
 
@@ -176,6 +179,8 @@ func _process_attack_state(delta: float) -> void:
 			# Start wind-up for next attack
 			_attack_state = AttackState.WIND_UP
 			_attack_timer = wind_up_duration
+			# Play telegraph effect at start of wind-up
+			_play_attack_telegraph()
 
 		AttackState.WIND_UP:
 			_attack_timer -= delta
@@ -199,7 +204,54 @@ func _process_attack_state(delta: float) -> void:
 				_attack_state = AttackState.IDLE
 
 
+func _play_attack_telegraph() -> void:
+	## Play visual telegraph effect before attack fires
+	## Pulses sprite modulate with red tint to warn player
+	var sprite = get_node_or_null("AnimatedSprite2D")
+	if not sprite:
+		return
+
+	# Kill any existing telegraph tween
+	if _telegraph_tween and _telegraph_tween.is_valid():
+		_telegraph_tween.kill()
+
+	# Determine warning color based on attack type
+	# Charge attack (most dangerous) gets brighter warning
+	var attack_type = _enabled_attacks[_current_pattern] if _current_pattern < _enabled_attacks.size() else 0
+	var warning_color: Color
+	if attack_type == 2:  # Charge attack
+		warning_color = Color(2.0, 1.0, 1.0, 1.0)  # Brighter red tint
+	else:  # Barrage or sweep
+		warning_color = Color(1.5, 1.0, 1.0, 1.0)  # Subtle red tint
+
+	var normal_color = Color(1, 1, 1, 1)
+
+	# Create pulsing telegraph effect
+	_telegraph_tween = create_tween()
+	_telegraph_tween.set_loops()  # Loop until killed
+
+	# Pulse from normal to warning and back
+	var pulse_duration = 0.15  # Quick pulses during wind-up
+	_telegraph_tween.tween_property(sprite, "modulate", warning_color, pulse_duration).set_ease(Tween.EASE_IN_OUT)
+	_telegraph_tween.tween_property(sprite, "modulate", normal_color, pulse_duration).set_ease(Tween.EASE_IN_OUT)
+
+
+func _stop_attack_telegraph() -> void:
+	## Stop telegraph effect and reset modulate to normal
+	if _telegraph_tween and _telegraph_tween.is_valid():
+		_telegraph_tween.kill()
+		_telegraph_tween = null
+
+	# Reset sprite modulate to normal
+	var sprite = get_node_or_null("AnimatedSprite2D")
+	if sprite:
+		sprite.modulate = Color(1, 1, 1, 1)
+
+
 func _execute_attack() -> void:
+	# Clean up telegraph before attack fires
+	_stop_attack_telegraph()
+
 	# Get the actual attack type from enabled attacks array
 	var attack_type = _enabled_attacks[_current_pattern] if _current_pattern < _enabled_attacks.size() else 0
 	match attack_type:
@@ -451,6 +503,8 @@ func _on_health_depleted() -> void:
 		_entrance_tween.kill()
 	if _attack_tween and _attack_tween.is_valid():
 		_attack_tween.kill()
+	if _telegraph_tween and _telegraph_tween.is_valid():
+		_telegraph_tween.kill()
 
 	# Disable collision
 	set_deferred("monitoring", false)
@@ -552,6 +606,9 @@ func stop_attack_cycle() -> void:
 	if _attack_tween and _attack_tween.is_valid():
 		_attack_tween.kill()
 
+	# Stop telegraph effect
+	_stop_attack_telegraph()
+
 
 ## Reset boss health to full and reset attack state for player respawn
 func reset_health() -> void:
@@ -580,6 +637,8 @@ func reset_health() -> void:
 		_flash_tween.kill()
 	if _attack_tween and _attack_tween.is_valid():
 		_attack_tween.kill()
+	if _telegraph_tween and _telegraph_tween.is_valid():
+		_telegraph_tween.kill()
 
 	## Ensure sprite is visible
 	var sprite = get_node_or_null("AnimatedSprite2D")

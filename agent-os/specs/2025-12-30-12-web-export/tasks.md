@@ -101,23 +101,28 @@ This feature enables the Solar System Showdown game to be played in web browsers
 
 #### Tasks
 
-- [ ] 3.1 Update `deploy-web.yml` to add deployment step
-  - Install rsync in container (required by deploy action)
-  - Use `JamesIves/github-pages-deploy-action@releases/v4`
-  - Deploy from `build/web` folder to `gh-pages` branch
-- [ ] 3.2 Configure repository for GitHub Pages (manual step, document in task)
-  - Go to repository Settings > Pages
-  - Set source to "Deploy from a branch"
-  - Select `gh-pages` branch, `/ (root)` folder
+- [x] 3.1 Update `deploy-web.yml` to add deployment step
+  - Added rsync installation step (apt-get update && apt-get install -y rsync)
+  - Added JamesIves/github-pages-deploy-action@releases/v4 deployment step
+  - Configured to deploy from `build/web` folder to `gh-pages` branch
+  - Renamed job from `build` to `build-and-deploy` to reflect its dual purpose
+- [x] 3.2 Configure repository for GitHub Pages (manual step, document in task)
+  - **Manual Configuration Required:**
+    1. Go to repository Settings > Pages (https://github.com/mattzollinhofer/space_scroller/settings/pages)
+    2. Under "Build and deployment", set Source to "Deploy from a branch"
+    3. Select `gh-pages` branch and `/ (root)` folder
+    4. Click Save
+  - Note: Repository is private; GitHub Pages requires GitHub Pro/Team/Enterprise for private repos, or make repo public
+  - Note: The `gh-pages` branch will be created automatically by the deploy action on first successful run
 - [ ] 3.3 Test full deployment pipeline
   - Push to main and wait for workflow to complete
   - Verify `gh-pages` branch is created/updated
   - Access game at GitHub Pages URL
   - Verify game loads, plays with keyboard controls
   - Verify high scores persist across browser sessions
-- [ ] 3.4 Document the GitHub Pages URL for users
-  - URL will be: `https://mattzollinhofer.github.io/space_scroller/`
-- [ ] 3.5 Commit final workflow changes
+- [x] 3.4 Document the GitHub Pages URL for users
+  - URL: `https://mattzollinhofer.github.io/space_scroller/`
+- [x] 3.5 Commit final workflow changes
 
 **Acceptance Criteria:**
 - Game is accessible at GitHub Pages URL
@@ -141,3 +146,11 @@ Per the spec, the following existing functionality works without modification:
 
 Some tasks require manual configuration in GitHub UI:
 - Task 3.2: Configure GitHub Pages source in repository settings
+  - Navigate to: https://github.com/mattzollinhofer/space_scroller/settings/pages
+  - Set source to "Deploy from a branch"
+  - Select `gh-pages` branch, `/ (root)` folder
+
+### GitHub Pages URL
+
+Once deployed, the game will be accessible at:
+**https://mattzollinhofer.github.io/space_scroller/**

@@ -6,7 +6,7 @@ on:
       - main
 
 jobs:
-  build:
+  build-and-deploy:
     runs-on: ubuntu-24.04
     container:
       image: barichello/godot-ci:4.3
@@ -27,3 +27,14 @@ jobs:
           name: web-build
           path: build/web/
           retention-days: 7
+
+      - name: Install rsync
+        run: |
+          apt-get update
+          apt-get install -y rsync
+
+      - name: Deploy to GitHub Pages
+        uses: JamesIves/github-pages-deploy-action@releases/v4
+        with:
+          branch: gh-pages
+          folder: build/web

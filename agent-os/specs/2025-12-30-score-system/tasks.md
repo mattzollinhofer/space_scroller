@@ -124,23 +124,28 @@ Each slice delivers incremental user value and is tested end-to-end.
 
 #### Tasks
 
-- [ ] 4.1 Write integration test that verifies score is shown on Game Over screen
-- [ ] 4.2 Run test, verify expected failure
-- [ ] 4.3 Make smallest change possible to progress
-- [ ] 4.4 Run test, observe failure or success
-- [ ] 4.5 Document result and update task list
-- [ ] 4.6 Repeat 4.3-4.5 as necessary (add ScoreLabel to game_over_screen.tscn, update show_game_over() to accept score)
-- [ ] 4.7 Write integration test for Level Complete screen showing score
-- [ ] 4.8 Run test and iterate until passing (add ScoreLabel to level_complete_screen.tscn)
-- [ ] 4.9 Refactor if needed (keep tests green)
-- [ ] 4.10 Run all slice tests to verify no regressions
-- [ ] 4.11 Commit working slice
+- [x] 4.1 Write integration test that verifies score is shown on Game Over screen
+  - Created test_score_game_over.gd and test_score_game_over.tscn
+- [x] 4.2 Run test, verify expected failure [ScoreLabel not found in game over screen]
+- [x] 4.3-4.6 Red-green iterations for Game Over screen:
+  - [x] Iteration 1: [ScoreLabel not found] -> Added ScoreLabel node to game_over_screen.tscn
+  - [x] Iteration 2: [Score shows 0, expected 1,500] -> Updated game_over_screen.gd with _score_label reference, _update_score_display(), _format_number()
+  - Success: Test passes - Game Over screen shows "SCORE: 1,500" correctly formatted
+- [x] 4.7 Write integration test for Level Complete screen showing score
+  - Created test_score_level_complete_screen.gd and test_score_level_complete_screen.tscn
+- [x] 4.8 Red-green iterations for Level Complete screen:
+  - [x] Iteration 1: [ScoreLabel not found] -> Added ScoreLabel node to level_complete_screen.tscn
+  - [x] Iteration 2: [Score shows 0, expected 6,500] -> Updated level_complete_screen.gd with _score_label reference, _update_score_display(), _format_number()
+  - Success: Test passes - Level Complete screen shows "SCORE: 6,500" correctly formatted
+- [x] 4.9 Refactor if needed (keep tests green) - No refactoring needed, code follows same pattern as game_over_screen.gd
+- [x] 4.10 Run all slice tests to verify no regressions - All tests pass (slice 1-4)
+- [x] 4.11 Commit working slice
 
 **Acceptance Criteria:**
-- Game Over screen shows "SCORE: X,XXX" with player's final score
-- Level Complete screen shows "SCORE: X,XXX" (includes level bonus)
-- Score labels appear below the main title text
-- Score uses same comma-separated thousands format as HUD
+- [x] Game Over screen shows "SCORE: X,XXX" with player's final score
+- [x] Level Complete screen shows "SCORE: X,XXX" (includes level bonus)
+- [x] Score labels appear below the main title text
+- [x] Score uses same comma-separated thousands format as HUD
 
 ---
 

@@ -21,7 +21,7 @@ follow. `S`
 5. [x] Player Combat — Add player shooting mechanics with projectiles that can
    destroy enemies, including visual and audio feedback. `S`
 
-6. [ ] Level Structure — Build a complete first level with defined start,
+6. [x] Level Structure — Build a complete first level with defined start,
    obstacle sections, enemy placements, and level-end trigger. `M`
 
 7. [ ] Boss Battle — Create an end-of-level boss with health bar, attack

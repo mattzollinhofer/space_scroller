@@ -57,7 +57,7 @@ follow. `S`
 15. [x] Audio Integration — Add background music tracks, sound effects for
     actions (shooting, collecting, damage), and boss battle music. `M`
 
-16. [ ] Polish and Juice — Add screen shake, particle effects, animations, and
+16. [x] Polish and Juice — Add screen shake, particle effects, animations, and
     visual feedback to make gameplay feel responsive and satisfying. `M`
 
 17. [ ] iOS Export — Configure and test iOS/iPad build with proper touch

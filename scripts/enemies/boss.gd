@@ -45,7 +45,7 @@ var _battle_position: Vector2 = Vector2.ZERO
 enum AttackState { IDLE, WIND_UP, ATTACKING, COOLDOWN }
 var _attack_state: AttackState = AttackState.IDLE
 
-## Current attack pattern index (0 = barrage, 1 = sweep, 2 = charge, 3 = solar flare, 4 = heat wave)
+## Current attack pattern index (0 = barrage, 1 = sweep, 2 = charge, 3 = solar flare, 4 = heat wave, 5 = ice shards)
 var _current_pattern: int = 0
 
 ## Attack cooldown timer
@@ -100,7 +100,7 @@ var _charge_target_x: float = 0.0
 ## Shake node for screen shake effect
 var _shake_node: Node2D = null
 
-## Which attack patterns are enabled (0=barrage, 1=sweep, 2=charge, 3=solar_flare, 4=heat_wave)
+## Which attack patterns are enabled (0=barrage, 1=sweep, 2=charge, 3=solar_flare, 4=heat_wave, 5=ice_shards)
 var _enabled_attacks: Array[int] = [0, 1, 2]
 
 ## Number of attack patterns enabled
@@ -236,6 +236,8 @@ func _play_attack_telegraph() -> void:
 		warning_color = Color(2.0, 1.0, 1.0, 1.0)  # Brighter red tint
 	elif attack_type == 3 or attack_type == 4:  # Solar Flare or Heat Wave - orange/yellow tint for "hot" theme
 		warning_color = Color(2.0, 1.5, 0.5, 1.0)  # Orange-yellow tint
+	elif attack_type == 5 or attack_type == 6:  # Ice Shards or Frozen Nova - blue/cyan tint for "cold" theme
+		warning_color = Color(0.5, 1.0, 2.0, 1.0)  # Blue-cyan tint
 	else:  # Barrage or sweep
 		warning_color = Color(1.5, 1.0, 1.0, 1.0)  # Subtle red tint
 
@@ -280,6 +282,8 @@ func _execute_attack() -> void:
 			_attack_solar_flare()
 		4:
 			_attack_heat_wave()
+		5:
+			_attack_ice_shards()
 
 
 func _attack_horizontal_barrage() -> void:
@@ -527,6 +531,49 @@ func _on_heat_wave_complete() -> void:
 	_heat_wave_active = false
 	_attack_state = AttackState.COOLDOWN
 	_attack_timer = attack_cooldown
+
+
+func _attack_ice_shards() -> void:
+	## Ice Shards: Many slow-moving projectiles in a wide spread pattern
+	## Outer Solar System "cold/expansive" theme attack - numerous but slow
+	if not boss_projectile_scene:
+		push_warning("Boss projectile scene not assigned")
+		return
+
+	# Fire 15 projectiles in a wide spread (more than barrage's 5-7 for "numerous" feel)
+	var projectile_count = 15
+
+	# Wide spread angle: 120 degrees total (60 degrees up and 60 degrees down from straight left)
+	var spread_angle = deg_to_rad(120.0)
+	var angle_step = spread_angle / (projectile_count - 1) if projectile_count > 1 else 0.0
+	var start_angle = -spread_angle / 2.0
+
+	for i in range(projectile_count):
+		var projectile = boss_projectile_scene.instantiate()
+
+		# Position at boss location (slightly to the left of center)
+		projectile.position = position + Vector2(-100, 0)
+
+		# Calculate direction with wide spread (centered on straight left)
+		var angle = start_angle + (angle_step * i)
+		var direction = Vector2(-1, 0).rotated(angle)
+
+		# Set direction on projectile
+		if projectile.has_method("set_direction"):
+			projectile.set_direction(direction)
+		else:
+			projectile.direction = direction
+
+		# Ice Shards uses slower projectiles (450 vs default 750)
+		projectile.speed = 450.0
+
+		# Add to parent (main scene)
+		var parent = get_parent()
+		if parent:
+			parent.add_child(projectile)
+
+	attack_fired.emit()
+	_play_sfx("boss_attack")
 
 
 ## Setup boss at spawn position and start entrance animation
@@ -818,7 +865,7 @@ func configure(config: Dictionary) -> void:
 	if config.has("wind_up_duration"):
 		wind_up_duration = config.wind_up_duration
 
-	# Set enabled attacks (array of attack indices: 0=barrage, 1=sweep, 2=charge, 3=solar_flare, 4=heat_wave)
+	# Set enabled attacks (array of attack indices: 0=barrage, 1=sweep, 2=charge, 3=solar_flare, 4=heat_wave, 5=ice_shards)
 	if config.has("attacks"):
 		_enabled_attacks.clear()
 		for attack in config.attacks:

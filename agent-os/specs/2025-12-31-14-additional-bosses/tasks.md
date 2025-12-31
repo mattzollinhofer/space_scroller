@@ -116,7 +116,7 @@ sweeping arc, completing the Level 2 "hot" attack set.
 
 ---
 
-### Slice 3: Player fights Level 3 boss with Ice Shards attack
+### Slice 3: Player fights Level 3 boss with Ice Shards attack [COMPLETE]
 
 **What this delivers:** When fighting the Level 3 boss, the player encounters
 the new "Ice Shards" attack - many slow-moving projectiles in a wide spread
@@ -130,23 +130,38 @@ pattern, matching the Outer Solar System "cold/expansive" theme.
 
 #### Tasks
 
-- [ ] 3.1 Write integration test: verify boss uses attack index 5 (Ice Shards) when configured
-- [ ] 3.2 Run test, verify expected failure (attack 5 not implemented)
-- [ ] 3.3 Make smallest change possible to progress
-- [ ] 3.4 Run test, observe failure or success
-- [ ] 3.5 Document result and update task list
-- [ ] 3.6 Repeat 3.3-3.5 as necessary until Ice Shards fires many slow projectiles
-- [ ] 3.7 Verify projectiles use slower speed (400-500)
-- [ ] 3.8 Verify wide spread pattern with more projectiles than barrage
-- [ ] 3.9 Update level_3.json: attacks [0, 1, 5, 6] (placeholder 6), scale 9
-- [ ] 3.10 Run boss-related tests to verify no regressions
-- [ ] 3.11 Commit working slice
+- [x] 3.1 Write integration test: verify boss uses attack index 5 (Ice Shards) when configured
+  - Created test_boss_ice_shards.gd and test_boss_ice_shards.tscn
+  - Test verifies: many projectiles (10+), wide spread, slow speed (400-500)
+- [x] 3.2 Run test, verify expected failure (attack 5 not implemented)
+  - Test failed: "No projectiles spawned - Ice Shards attack not implemented"
+- [x] 3.3 Make smallest change possible to progress
+  - Added case 5 to _execute_attack() match statement
+  - Added _attack_ice_shards() method that fires 15 projectiles in 120-degree spread
+  - Set projectile speed to 450 (in range 400-500)
+  - Added blue/cyan telegraph color for Ice Shards attacks (attack 5 or 6)
+  - Updated comments to include ice_shards in attack index list
+- [x] 3.4 Run test, observe failure or success
+  - Success: Test passed on first implementation
+- [x] 3.5 Document result and update task list
+- [x] 3.6 Repeat 3.3-3.5 as necessary until Ice Shards fires many slow projectiles
+  - Not needed - worked on first try
+- [x] 3.7 Verify projectiles use slower speed (400-500)
+  - Verified: Average projectile speed is 450.0
+- [x] 3.8 Verify wide spread pattern with more projectiles than barrage
+  - Verified: 15 projectiles (vs barrage's 5-7), 120-degree spread
+- [x] 3.9 Update level_3.json: attacks [0, 1, 5, 6] (placeholder 6), scale 9
+  - Updated boss_config.attacks to [0, 1, 5, 6]
+  - Updated boss_config.scale to 9
+- [x] 3.10 Run boss-related tests to verify no regressions
+  - All 11 boss tests pass
+- [x] 3.11 Commit working slice
 
 **Acceptance Criteria:**
-- Level 3 boss uses Ice Shards attack (wide spread of slow projectiles)
-- Ice Shards projectiles are slower than default (speed 400-500)
-- More projectiles than standard barrage for "numerous" feel
-- Integration test for attack index 5 passes
+- [x] Level 3 boss uses Ice Shards attack (wide spread of slow projectiles)
+- [x] Ice Shards projectiles are slower than default (speed 400-500)
+- [x] More projectiles than standard barrage for "numerous" feel
+- [x] Integration test for attack index 5 passes
 
 ---
 

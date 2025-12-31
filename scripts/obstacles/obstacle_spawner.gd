@@ -14,6 +14,9 @@ extends Node2D
 ## Number of initial asteroids to spawn at game start
 @export var initial_count: int = 2
 
+## Color modulation for spawned obstacles (for level theming)
+@export var obstacle_modulate: Color = Color(1, 1, 1, 1)
+
 ## Playable Y range (between asteroid belt boundaries)
 const PLAYABLE_Y_MIN: float = 80.0 + 60.0  # Top boundary + margin for asteroid size
 const PLAYABLE_Y_MAX: float = 1456.0 - 60.0  # Bottom boundary - margin for asteroid size
@@ -93,6 +96,10 @@ func _spawn_asteroid() -> void:
 	var y_pos = _rng.randf_range(PLAYABLE_Y_MIN, PLAYABLE_Y_MAX)
 	asteroid.position = Vector2(x_pos, y_pos)
 
+	# Apply modulate color if set
+	if obstacle_modulate != Color(1, 1, 1, 1):
+		asteroid.modulate = obstacle_modulate
+
 	# Add to scene and track
 	add_child(asteroid)
 	_active_asteroids.append(asteroid)
@@ -113,6 +120,10 @@ func _spawn_initial_asteroids() -> void:
 		var x_pos = _rng.randf_range(_viewport_width * 0.4, _viewport_width * 0.9)
 		var y_pos = _rng.randf_range(PLAYABLE_Y_MIN, PLAYABLE_Y_MAX)
 		asteroid.position = Vector2(x_pos, y_pos)
+
+		# Apply modulate color if set
+		if obstacle_modulate != Color(1, 1, 1, 1):
+			asteroid.modulate = obstacle_modulate
 
 		# Add to scene and track
 		add_child(asteroid)
@@ -139,6 +150,15 @@ func set_density(level: String) -> void:
 		_next_spawn_time = _rng.randf_range(spawn_rate_min, spawn_rate_max)
 	else:
 		push_warning("Unknown density level: %s" % level)
+
+
+## Set the modulate color for newly spawned obstacles
+func set_modulate_color(color: Color) -> void:
+	obstacle_modulate = color
+	# Also update existing asteroids
+	for asteroid in _active_asteroids:
+		if is_instance_valid(asteroid):
+			asteroid.modulate = color
 
 
 ## Get count of active asteroids (for debugging/testing)

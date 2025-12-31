@@ -1,6 +1,7 @@
 extends Node2D
 ## Draws semi-transparent nebula shapes for the middle parallax layer.
 ## Uses _draw() for placeholder visuals - will be replaced with real artwork later.
+## Supports theme presets for different level backgrounds.
 
 ## Number of nebula shapes to draw
 @export var nebula_count: int = 8
@@ -13,6 +14,9 @@ extends Node2D
 
 ## Random seed for consistent nebula placement
 @export var random_seed: int = 54321
+
+## Theme preset: "default", "inner_solar", "outer_solar"
+@export var theme_preset: String = "default"
 
 ## Internal storage for nebula data (generated once)
 var _nebulae: Array = []
@@ -47,6 +51,16 @@ func _generate_nebulae() -> void:
 
 
 func _get_nebula_color(rng: RandomNumberGenerator) -> Color:
+	match theme_preset:
+		"inner_solar":
+			return _get_inner_solar_nebula_color(rng)
+		"outer_solar":
+			return _get_outer_solar_nebula_color(rng)
+		_:
+			return _get_default_nebula_color(rng)
+
+
+func _get_default_nebula_color(rng: RandomNumberGenerator) -> Color:
 	# Semi-transparent purple, blue, or pink nebula colors
 	var color_choice = rng.randi() % 3
 	var alpha = rng.randf_range(0.15, 0.35)
@@ -63,6 +77,53 @@ func _get_nebula_color(rng: RandomNumberGenerator) -> Color:
 			return Color(0.9, 0.4, 0.6, alpha)
 		_:
 			return Color(0.6, 0.3, 0.8, alpha)
+
+
+func _get_inner_solar_nebula_color(rng: RandomNumberGenerator) -> Color:
+	# Warm red/orange/amber nebula colors for inner solar system
+	var color_choice = rng.randi() % 4
+	var alpha = rng.randf_range(0.15, 0.35)
+
+	match color_choice:
+		0:
+			# Deep red nebula
+			return Color(0.9, 0.25, 0.15, alpha)
+		1:
+			# Orange nebula
+			return Color(0.95, 0.5, 0.2, alpha)
+		2:
+			# Amber/gold nebula
+			return Color(0.9, 0.7, 0.2, alpha)
+		_:
+			# Crimson nebula
+			return Color(0.85, 0.2, 0.25, alpha)
+
+
+func _get_outer_solar_nebula_color(rng: RandomNumberGenerator) -> Color:
+	# Cool blue/cyan/purple icy nebula colors for outer solar system
+	var color_choice = rng.randi() % 4
+	var alpha = rng.randf_range(0.15, 0.35)
+
+	match color_choice:
+		0:
+			# Ice blue nebula
+			return Color(0.4, 0.7, 0.95, alpha)
+		1:
+			# Cyan nebula
+			return Color(0.3, 0.85, 0.9, alpha)
+		2:
+			# Pale purple/ice nebula
+			return Color(0.6, 0.5, 0.9, alpha)
+		_:
+			# Deep blue nebula
+			return Color(0.2, 0.4, 0.85, alpha)
+
+
+## Set the theme and regenerate nebulae
+func set_theme(preset: String) -> void:
+	theme_preset = preset
+	_generate_nebulae()
+	queue_redraw()
 
 
 func _draw() -> void:

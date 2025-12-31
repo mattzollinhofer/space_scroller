@@ -41,6 +41,9 @@ signal boss_spawned()
 ## Level data loaded from JSON
 var _level_data: Dictionary = {}
 
+## Level metadata (scroll_speed, background_theme, etc.)
+var _level_metadata: Dictionary = {}
+
 ## Total distance of the level in pixels
 var _total_distance: float = 9000.0
 
@@ -106,6 +109,7 @@ func _ready() -> void:
 	_get_selected_level_from_game_state()
 	_load_level_data()
 	_setup_references()
+	_apply_level_metadata()
 	_setup_wave_based_spawning()
 	_connect_player_signals()
 	# Set initial section density and spawn first wave
@@ -140,6 +144,7 @@ func _load_level_data() -> void:
 	_level_data = json.data
 	_total_distance = _level_data.get("total_distance", 9000.0)
 	_sections = _level_data.get("sections", [])
+	_level_metadata = _level_data.get("metadata", {})
 
 
 func _setup_references() -> void:
@@ -188,6 +193,48 @@ func _setup_references() -> void:
 		_level_complete_screen = get_node_or_null(level_complete_screen_path)
 	if not _level_complete_screen:
 		_level_complete_screen = get_tree().root.get_node_or_null("Main/LevelCompleteScreen")
+
+
+func _apply_level_metadata() -> void:
+	## Apply level-specific metadata: scroll speed, background theme, obstacle modulate
+
+	# Apply scroll speed multiplier
+	if _scroll_controller and "scroll_speed" in _scroll_controller:
+		var multiplier = _level_metadata.get("scroll_speed_multiplier", 1.0)
+		_scroll_controller.scroll_speed = _original_scroll_speed * multiplier
+		# Update the stored original for boss fight restoration
+		_original_scroll_speed = _scroll_controller.scroll_speed
+
+	# Apply background theme
+	var background_theme = _level_metadata.get("background_theme", "default")
+	_apply_background_theme(background_theme)
+
+	# Apply obstacle modulate color
+	var obstacle_modulate = _level_metadata.get("obstacle_modulate", null)
+	if obstacle_modulate and _obstacle_spawner:
+		var color = Color(obstacle_modulate[0], obstacle_modulate[1], obstacle_modulate[2], obstacle_modulate[3])
+		if _obstacle_spawner.has_method("set_modulate_color"):
+			_obstacle_spawner.set_modulate_color(color)
+		elif "obstacle_modulate" in _obstacle_spawner:
+			_obstacle_spawner.obstacle_modulate = color
+
+	# Set progress bar level indicator
+	if _progress_bar and _progress_bar.has_method("set_level"):
+		_progress_bar.set_level(_level_number)
+
+
+func _apply_background_theme(theme: String) -> void:
+	## Apply theme to all background layer nodes
+	var parallax_bg = get_tree().root.get_node_or_null("Main/ParallaxBackground")
+	if not parallax_bg:
+		return
+
+	# Find all background layer nodes and apply theme
+	for layer in parallax_bg.get_children():
+		if layer is ParallaxLayer:
+			for child in layer.get_children():
+				if child.has_method("set_theme"):
+					child.set_theme(theme)
 
 
 func _setup_wave_based_spawning() -> void:
@@ -396,6 +443,11 @@ func _spawn_boss() -> void:
 	# Instantiate boss
 	_boss = boss_scene.instantiate()
 
+	# Apply boss sprite from level metadata if specified
+	var boss_sprite_path = _level_metadata.get("boss_sprite", "")
+	if boss_sprite_path != "" and _boss:
+		_apply_boss_sprite(_boss, boss_sprite_path)
+
 	# Position boss off right edge
 	var spawn_x = _viewport_width + 200
 	var spawn_y = _viewport_height / 2.0
@@ -440,6 +492,25 @@ func _spawn_boss() -> void:
 		_spawn_boss_health_bar()
 
 		boss_spawned.emit()
+
+
+func _apply_boss_sprite(boss: Node, sprite_path: String) -> void:
+	## Apply a custom boss sprite from the level metadata
+	var animated_sprite = boss.get_node_or_null("AnimatedSprite2D")
+	if not animated_sprite:
+		return
+
+	var texture = load(sprite_path)
+	if not texture:
+		push_warning("Could not load boss sprite: %s" % sprite_path)
+		return
+
+	# Get or create sprite frames
+	var frames = animated_sprite.sprite_frames
+	if frames:
+		# Update the first frame of the idle animation
+		if frames.has_animation("idle") and frames.get_frame_count("idle") > 0:
+			frames.set_frame("idle", 0, texture)
 
 
 func _stop_scrolling_for_boss_fight() -> void:
@@ -655,3 +726,8 @@ func get_boss() -> Node:
 ## Get reference to boss health bar
 func get_boss_health_bar() -> Node:
 	return _boss_health_bar
+
+
+## Get level metadata
+func get_metadata() -> Dictionary:
+	return _level_metadata

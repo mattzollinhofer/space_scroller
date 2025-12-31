@@ -1,6 +1,7 @@
 extends Node2D
 ## Draws a star field background with random small dots.
 ## Uses _draw() for placeholder visuals - will be replaced with real artwork later.
+## Supports theme presets for different level backgrounds.
 
 ## Number of stars to draw
 @export var star_count: int = 150
@@ -13,6 +14,9 @@ extends Node2D
 
 ## Random seed for consistent star placement
 @export var random_seed: int = 12345
+
+## Theme preset: "default", "inner_solar", "outer_solar"
+@export var theme_preset: String = "default"
 
 ## Internal storage for star data (generated once)
 var _stars: Array = []
@@ -47,6 +51,16 @@ func _generate_stars() -> void:
 
 
 func _get_star_color(rng: RandomNumberGenerator) -> Color:
+	match theme_preset:
+		"inner_solar":
+			return _get_inner_solar_star_color(rng)
+		"outer_solar":
+			return _get_outer_solar_star_color(rng)
+		_:
+			return _get_default_star_color(rng)
+
+
+func _get_default_star_color(rng: RandomNumberGenerator) -> Color:
 	# Mix of white and pale yellow stars
 	var brightness = rng.randf_range(0.7, 1.0)
 	if rng.randf() < 0.3:
@@ -55,6 +69,53 @@ func _get_star_color(rng: RandomNumberGenerator) -> Color:
 	else:
 		# White star
 		return Color(brightness, brightness, brightness)
+
+
+func _get_inner_solar_star_color(rng: RandomNumberGenerator) -> Color:
+	# Warm colors: orange, yellow, red-orange stars for inner solar system
+	var brightness = rng.randf_range(0.7, 1.0)
+	var color_choice = rng.randi() % 4
+
+	match color_choice:
+		0:
+			# Orange star
+			return Color(brightness, brightness * 0.6, brightness * 0.2)
+		1:
+			# Yellow-orange star
+			return Color(brightness, brightness * 0.8, brightness * 0.3)
+		2:
+			# Red-orange star
+			return Color(brightness, brightness * 0.4, brightness * 0.2)
+		_:
+			# Warm yellow star
+			return Color(brightness, brightness * 0.9, brightness * 0.5)
+
+
+func _get_outer_solar_star_color(rng: RandomNumberGenerator) -> Color:
+	# Cool colors: blue, cyan, white stars for outer solar system
+	var brightness = rng.randf_range(0.7, 1.0)
+	var color_choice = rng.randi() % 4
+
+	match color_choice:
+		0:
+			# Ice blue star
+			return Color(brightness * 0.7, brightness * 0.85, brightness)
+		1:
+			# Cyan star
+			return Color(brightness * 0.6, brightness * 0.9, brightness)
+		2:
+			# Cool white star
+			return Color(brightness * 0.9, brightness * 0.95, brightness)
+		_:
+			# Pale blue star
+			return Color(brightness * 0.8, brightness * 0.9, brightness)
+
+
+## Set the theme and regenerate stars
+func set_theme(preset: String) -> void:
+	theme_preset = preset
+	_generate_stars()
+	queue_redraw()
 
 
 func _draw() -> void:

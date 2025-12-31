@@ -1,0 +1,72 @@
+{
+  "total_distance": 16000,
+  "metadata": {
+    "scroll_speed_multiplier": 1.12,
+    "background_theme": "inner_solar",
+    "boss_sprite": "res://assets/sprites/boss-2.png",
+    "obstacle_modulate": [0.85, 0.55, 0.4, 1.0]
+  },
+  "sections": [
+    {
+      "name": "Mercury Approach",
+      "start_percent": 0,
+      "end_percent": 12,
+      "obstacle_density": "low",
+      "enemy_waves": [
+        { "enemy_type": "stationary", "count": 2 }
+      ]
+    },
+    {
+      "name": "Venus Passage",
+      "start_percent": 12,
+      "end_percent": 28,
+      "obstacle_density": "medium",
+      "enemy_waves": [
+        { "enemy_type": "stationary", "count": 2 },
+        { "enemy_type": "shooting", "count": 2 }
+      ]
+    },
+    {
+      "name": "Inner Belt",
+      "start_percent": 28,
+      "end_percent": 48,
+      "obstacle_density": "medium",
+      "enemy_waves": [
+        { "enemy_type": "patrol", "count": 2 },
+        { "enemy_type": "shooting", "count": 3 }
+      ]
+    },
+    {
+      "name": "Solar Flare Zone",
+      "start_percent": 48,
+      "end_percent": 68,
+      "obstacle_density": "high",
+      "enemy_waves": [
+        { "enemy_type": "shooting", "count": 3 },
+        { "enemy_type": "patrol", "count": 2 }
+      ]
+    },
+    {
+      "name": "Inferno Gauntlet",
+      "start_percent": 68,
+      "end_percent": 85,
+      "obstacle_density": "high",
+      "enemy_waves": [
+        { "enemy_type": "shooting", "count": 3 },
+        { "enemy_type": "charger", "count": 1 },
+        { "enemy_type": "patrol", "count": 2 }
+      ]
+    },
+    {
+      "name": "Core Breach",
+      "start_percent": 85,
+      "end_percent": 100,
+      "obstacle_density": "high",
+      "enemy_waves": [
+        { "enemy_type": "charger", "count": 2 },
+        { "enemy_type": "shooting", "count": 3 },
+        { "enemy_type": "patrol", "count": 1 }
+      ]
+    }
+  ]
+}

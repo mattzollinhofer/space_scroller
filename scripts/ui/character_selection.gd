@@ -6,7 +6,8 @@ extends Control
 @onready var _blue_blaster_button: Button = $CenterContainer/VBoxContainer/CharacterGrid/BlueBlasterButton
 @onready var _space_dragon_button: Button = $CenterContainer/VBoxContainer/CharacterGrid/SpaceDragonButton
 @onready var _cosmic_cat_button: Button = $CenterContainer/VBoxContainer/CharacterGrid/CosmicCatButton
-@onready var _back_button: Button = $CenterContainer/VBoxContainer/BackButton
+@onready var _back_button: Button = $CenterContainer/VBoxContainer/ButtonContainer/BackButton
+@onready var _ok_button: Button = $CenterContainer/VBoxContainer/ButtonContainer/OKButton
 
 ## Character button references for highlighting
 var _character_buttons: Dictionary = {}
@@ -25,6 +26,7 @@ func _ready() -> void:
 	_space_dragon_button.pressed.connect(_on_character_selected.bind(GameState.CHARACTER_SPACE_DRAGON))
 	_cosmic_cat_button.pressed.connect(_on_character_selected.bind(GameState.CHARACTER_COSMIC_CAT))
 	_back_button.pressed.connect(_on_back_pressed)
+	_ok_button.pressed.connect(_on_ok_pressed)
 
 	# Update highlight for currently selected character
 	_update_selection_highlight()
@@ -34,6 +36,17 @@ func _ready() -> void:
 func _on_character_selected(character_id: String) -> void:
 	GameState.set_selected_character(character_id)
 	_update_selection_highlight()
+
+
+## Handle OK button pressed - confirm selection and return to main menu
+func _on_ok_pressed() -> void:
+	# Selection is already saved in GameState when character is clicked
+	# Just navigate back to main menu
+	if has_node("/root/TransitionManager"):
+		var transition_manager = get_node("/root/TransitionManager")
+		transition_manager.transition_to_scene("res://scenes/ui/main_menu.tscn")
+	else:
+		get_tree().call_deferred("change_scene_to_file", "res://scenes/ui/main_menu.tscn")
 
 
 ## Handle back button pressed - return to main menu with transition

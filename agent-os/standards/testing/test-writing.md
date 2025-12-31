@@ -136,3 +136,21 @@ logic**, not implementation details like CSS classes, styling, or layout.
 - **Don't test framework behavior** - Standard Rails behavior (validations,
   associations, callbacks) is already tested by Rails. Trust the framework.
   Only test YOUR logic, not that `validates :name, presence: true` works.
+
+## Running Tests (Godot)
+
+Tests are standalone scenes in `tests/` that exit with code 0 (pass) or 1 (fail).
+
+### Single test
+
+```bash
+godot --headless --path . tests/test_foo.tscn
+```
+
+### All tests
+
+```bash
+timeout 180 bash -c 'failed=0; for t in tests/*.tscn; do echo "=== $t ==="; timeout 10 godot --headless --path . "$t" || ((failed++)); done; echo "Failed: $failed"; exit $failed'
+```
+
+**Important:** Use `timeout 10` per test, not 60. Tests should complete in 2-5 seconds. The 180-second global timeout caps the entire suite.

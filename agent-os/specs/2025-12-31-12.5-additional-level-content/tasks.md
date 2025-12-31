@@ -50,7 +50,7 @@ This feature extends Level 1 from 9000 to 13500 pixels, adds three distinct enem
 
 **What this delivers:** A new enemy type appears that shoots projectiles toward the player, adding ranged threat variety.
 
-**Dependencies:** Slice 1 (enemies must move properly)
+**Dependencies:** Slice 1 (enemies must move properly) - COMPLETED
 
 **Reference patterns:**
 - [@/Users/matt/dev/space_scroller/scripts/enemies/patrol_enemy.gd:1-10] - Pattern for extending BaseEnemy
@@ -60,29 +60,42 @@ This feature extends Level 1 from 9000 to 13500 pixels, adds three distinct enem
 
 #### Tasks
 
-- [ ] 2.1 Write integration test: spawn ShootingEnemy, verify it fires projectile within 5 seconds
-- [ ] 2.2 Run test, verify expected failure (class/scene does not exist)
-- [ ] 2.3 Make smallest change possible to progress
-- [ ] 2.4 Run test, observe failure or success
-- [ ] 2.5 Document result and update task list
-- [ ] 2.6 Repeat 2.3-2.5 as necessary
-- [ ] 2.7 Refactor if needed (keep tests green)
-- [ ] 2.8 Run zigzag test from Slice 1 to verify no regressions
-- [ ] 2.9 Commit working slice
-- [ ] 2.10 Add narrower tests: projectile damages player, projectile despawns off-screen
+- [x] 2.1 Write integration test: spawn ShootingEnemy, verify it fires projectile within 5 seconds
+  - Created `tests/test_shooting_enemy.gd` and `tests/test_shooting_enemy.tscn`
+- [x] 2.2 Run test, verify expected failure (class/scene does not exist)
+  - Test failed: "Could not load shooting enemy scene" - as expected
+- [x] 2.3 Make smallest change possible to progress
+  - Created `scripts/enemies/shooting_enemy.gd` extending BaseEnemy with fire_rate=4.0, health=1
+  - Created `scripts/enemies/enemy_projectile.gd` adapting boss_projectile with speed=400, enemy_projectiles group
+  - Created `scenes/enemies/enemy_projectile.tscn` with green modulate (Color(0.5, 1, 0.3, 1))
+  - Created `scenes/enemies/shooting_enemy.tscn` using enemy-2.png sprite
+- [x] 2.4 Run test, observe failure or success
+  - Test PASSED: "ShootingEnemy fired projectile within 2.007163 seconds"
+- [x] 2.5 Document result and update task list - Success on first iteration after creating all files
+- [x] 2.6 Repeat 2.3-2.5 as necessary - Not needed, passed first try
+- [x] 2.7 Refactor if needed (keep tests green) - No refactoring needed
+- [x] 2.8 Run zigzag test from Slice 1 to verify no regressions
+  - All enemy tests passed: test_enemy_zigzag.tscn, test_enemy_waves.tscn
+- [x] 2.9 Commit working slice
+- [x] 2.10 Add narrower tests: projectile damages player, projectile despawns off-screen
+  - Created `tests/test_enemy_projectile_damage.gd/.tscn` - PASSED
+  - Created `tests/test_enemy_projectile_despawn.gd/.tscn` - PASSED
 
-**Files to create:**
-- `scripts/enemies/shooting_enemy.gd` - ShootingEnemy class extending BaseEnemy
-- `scripts/enemies/enemy_projectile.gd` - EnemyProjectile class (adapt boss_projectile)
+**Files created:**
+- `scripts/enemies/shooting_enemy.gd` - ShootingEnemy class extending BaseEnemy (1 HP, fires every 4 seconds)
+- `scripts/enemies/enemy_projectile.gd` - EnemyProjectile class (speed 400, damages player, despawns off-screen)
 - `scenes/enemies/shooting_enemy.tscn` - Scene using enemy-2.png sprite
-- `scenes/enemies/enemy_projectile.tscn` - Projectile scene (green/yellow tint)
+- `scenes/enemies/enemy_projectile.tscn` - Projectile scene with green tint
+- `tests/test_shooting_enemy.gd` + `.tscn` - Integration test for shooting enemy
+- `tests/test_enemy_projectile_damage.gd` + `.tscn` - Test for projectile damaging player
+- `tests/test_enemy_projectile_despawn.gd` + `.tscn` - Test for projectile despawning
 
 **Acceptance Criteria:**
-- ShootingEnemy spawns and moves with zigzag
-- ShootingEnemy fires projectile every 4 seconds toward left
-- ShootingEnemy has 1 HP
-- Enemy projectile damages player on contact
-- Enemy projectile despawns when off-screen left
+- [x] ShootingEnemy spawns and moves with zigzag (inherits from BaseEnemy)
+- [x] ShootingEnemy fires projectile every 4 seconds toward left (fire_rate=4.0, initial delay=2.0)
+- [x] ShootingEnemy has 1 HP
+- [x] Enemy projectile damages player on contact (tested in test_enemy_projectile_damage)
+- [x] Enemy projectile despawns when off-screen left (tested in test_enemy_projectile_despawn)
 
 ---
 

@@ -1,0 +1,21 @@
+[gd_scene load_steps=4 format=3 uid="uid://cenemy_projectile_scene"]
+
+[ext_resource type="Script" path="res://scripts/enemies/enemy_projectile.gd" id="1_enemy_projectile"]
+[ext_resource type="Texture2D" path="res://assets/sprites/laser-bolt.png" id="2_sprite"]
+
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_enemy_projectile"]
+size = Vector2(32, 8)
+
+[node name="EnemyProjectile" type="Area2D"]
+collision_layer = 8
+collision_mask = 1
+script = ExtResource("1_enemy_projectile")
+
+[node name="Sprite2D" type="Sprite2D" parent="."]
+modulate = Color(0.5, 1, 0.3, 1)
+rotation = 3.14159
+scale = Vector2(2.5, 2.5)
+texture = ExtResource("2_sprite")
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="."]
+shape = SubResource("RectangleShape2D_enemy_projectile")

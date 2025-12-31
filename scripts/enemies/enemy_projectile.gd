@@ -1,0 +1,42 @@
+extends Area2D
+## Projectile fired by enemies. Travels left and damages player on contact.
+## Despawns when leaving the left edge of the screen.
+
+## Movement speed in pixels per second (slower than boss projectile)
+@export var speed: float = 400.0
+
+## Direction of movement (normalized vector)
+var direction: Vector2 = Vector2(-1, 0)
+
+## Left edge for despawn check
+var _despawn_x: float = -100.0
+
+
+func _ready() -> void:
+	# Connect body_entered signal for player collision (CharacterBody2D)
+	body_entered.connect(_on_body_entered)
+
+	# Add to enemy_projectiles group for tracking
+	add_to_group("enemy_projectiles")
+
+
+func _process(delta: float) -> void:
+	# Move in the specified direction
+	position += direction * speed * delta
+
+	# Despawn when off left edge
+	if position.x < _despawn_x:
+		queue_free()
+
+
+func _on_body_entered(body: Node2D) -> void:
+	# Check if it's the player
+	if body.has_method("take_damage"):
+		body.take_damage()
+		# Destroy projectile on hit
+		queue_free()
+
+
+## Set the movement direction (for spread patterns)
+func set_direction(dir: Vector2) -> void:
+	direction = dir.normalized()

@@ -37,28 +37,28 @@ follow. `S`
     bonus, providing assistance to the player (e.g., extra firepower, shield,
     or collecting pickups). `M`
 
-11. [ ] GitHub Pages Hosting — Deploy the web export to GitHub Pages for public
+11. [ ] Web Export — Configure and test HTML5 build with keyboard/mouse fallback
+    controls and web-optimized performance. `S`
+
+12. [ ] GitHub Pages Hosting — Deploy the web export to GitHub Pages for public
     play. Use localStorage for personal high score persistence. Future: upgrade
     to Firebase for global leaderboards. `S`
 
-11.5. [ ] Additional level through length and enemy difficulty. More enemies,
+12.5. [ ] Additional level through length and enemy difficulty. More enemies,
       different enemies. Shooting enemy. Longer time span. Different boss.
 
-12. [ ] Additional Levels — Create 2-3 more levels with unique visual themes
+13. [ ] Additional Levels — Create 2-3 more levels with unique visual themes
     (different planets/areas of solar system), new obstacles, and escalating
     difficulty. `L`
 
-13. [ ] Additional Bosses — Design unique boss encounters for each additional
+14. [ ] Additional Bosses — Design unique boss encounters for each additional
     level with distinct attack patterns and mechanics. `L`
 
-14. [ ] Audio Integration — Add background music tracks, sound effects for
+15. [ ] Audio Integration — Add background music tracks, sound effects for
     actions (shooting, collecting, damage), and boss battle music. `M`
 
-15. [ ] Polish and Juice — Add screen shake, particle effects, animations, and
+16. [ ] Polish and Juice — Add screen shake, particle effects, animations, and
     visual feedback to make gameplay feel responsive and satisfying. `M`
-
-16. [ ] Web Export — Configure and test HTML5 build with keyboard/mouse fallback
-    controls and web-optimized performance. `S`
 
 17. [ ] iOS Export — Configure and test iOS/iPad build with proper touch
     controls, App Store assets, Apple Developer account, and performance
@@ -71,6 +71,6 @@ follow. `S`
 >   bosses)
 > - Each item represents a complete, testable feature slice
 > - Items 1-9 form the MVP with one complete level
-> - Items 10-15 expand content and polish
-> - Item 16 releases to Web
+> - Items 10, 13-16 expand content and polish
+> - Items 11-12 release to Web
 > - Item 17 adds iOS/App Store (requires Apple Developer account)

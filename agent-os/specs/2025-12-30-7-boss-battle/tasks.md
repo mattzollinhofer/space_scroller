@@ -134,36 +134,42 @@ The boss battle feature adds an end-of-level boss encounter with health bar, thr
 
 #### Tasks
 
-- [ ] 3.1 Write integration test: boss fires projectiles that can hit player
+- [x] 3.1 Write integration test: boss fires projectiles that can hit player
   - Start boss fight, wait for attack
   - Verify projectiles spawn and move left
   - Verify projectile can trigger player.take_damage()
-- [ ] 3.2 Run test, verify expected failure
-- [ ] 3.3 Create boss projectile scene (scenes/enemies/boss_projectile.tscn)
+- [x] 3.2 Run test, verify expected failure
+  - [failure: Boss does not have start_attack_cycle method] -> Implemented attack state machine
+- [x] 3.3 Create boss projectile scene (scenes/enemies/boss_projectile.tscn)
   - Area2D with CollisionShape2D
-  - Sprite2D with different color/style than player projectiles
-  - Collision layer set to interact with player
-- [ ] 3.4 Create boss projectile script (scripts/enemies/boss_projectile.gd)
-  - Move left (negative x direction) at configurable speed
+  - Sprite2D with red tint to distinguish from player projectiles
+  - Collision layer 8 (boss projectiles), mask 1 (player)
+- [x] 3.4 Create boss projectile script (scripts/enemies/boss_projectile.gd)
+  - Move left (negative x direction) at 600 px/s
   - Despawn at left edge (x < -100)
   - Call player.take_damage() on collision with CharacterBody2D
-- [ ] 3.5 Add attack state machine to boss.gd
-  - States: IDLE, ATTACKING, COOLDOWN
-  - Attack cooldown timer between patterns
+- [x] 3.5 Add attack state machine to boss.gd
+  - States: IDLE, WIND_UP, ATTACKING, COOLDOWN
+  - Attack cooldown timer between patterns (2.0s)
+  - Wind-up delay before firing (0.5s)
   - Track current attack pattern index
-- [ ] 3.6 Implement horizontal barrage attack (Pattern 1)
-  - Spawn 5-7 projectiles in spread pattern
+- [x] 3.6 Implement horizontal barrage attack (Pattern 1)
+  - Spawn 5-7 projectiles in spread pattern (30 degree spread)
   - Calculate spread angles from boss position toward left
   - Brief wind-up delay before firing
-- [ ] 3.7 Add boss_projectile_scene export to boss.gd
-- [ ] 3.8 Run all slice tests to verify no regressions
+- [x] 3.7 Add boss_projectile_scene export to boss.gd
+  - Auto-loads from res://scenes/enemies/boss_projectile.tscn if not assigned
+- [x] 3.8 Run all slice tests to verify no regressions
+  - test_boss_spawn.tscn: PASSED
+  - test_boss_damage.tscn: PASSED
+  - test_boss_attack.tscn: PASSED
 - [ ] 3.9 Commit working slice
 
 **Acceptance Criteria:**
-- Boss periodically fires a spread of 5-7 projectiles
-- Projectiles move left across screen
-- Player takes damage if hit by boss projectile
-- Projectiles despawn when leaving screen
+- [x] Boss periodically fires a spread of 5-7 projectiles
+- [x] Projectiles move left across screen
+- [x] Player takes damage if hit by boss projectile
+- [x] Projectiles despawn when leaving screen
 
 ---
 

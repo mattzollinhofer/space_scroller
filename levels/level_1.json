@@ -1,10 +1,10 @@
 {
-  "total_distance": 9000,
+  "total_distance": 13500,
   "sections": [
     {
       "name": "Opening",
       "start_percent": 0,
-      "end_percent": 20,
+      "end_percent": 15,
       "obstacle_density": "low",
       "enemy_waves": [
         { "enemy_type": "stationary", "count": 2 }
@@ -12,31 +12,53 @@
     },
     {
       "name": "Building",
-      "start_percent": 20,
-      "end_percent": 50,
+      "start_percent": 15,
+      "end_percent": 35,
       "obstacle_density": "medium",
       "enemy_waves": [
         { "enemy_type": "stationary", "count": 2 },
-        { "enemy_type": "patrol", "count": 1 }
+        { "enemy_type": "shooting", "count": 1 }
+      ]
+    },
+    {
+      "name": "Ramping",
+      "start_percent": 35,
+      "end_percent": 55,
+      "obstacle_density": "medium",
+      "enemy_waves": [
+        { "enemy_type": "patrol", "count": 2 },
+        { "enemy_type": "shooting", "count": 2 }
       ]
     },
     {
       "name": "Intense",
-      "start_percent": 50,
-      "end_percent": 80,
+      "start_percent": 55,
+      "end_percent": 75,
       "obstacle_density": "high",
       "enemy_waves": [
-        { "enemy_type": "patrol", "count": 2 },
-        { "enemy_type": "stationary", "count": 2 }
+        { "enemy_type": "patrol", "count": 3 },
+        { "enemy_type": "charger", "count": 1 }
+      ]
+    },
+    {
+      "name": "Gauntlet",
+      "start_percent": 75,
+      "end_percent": 90,
+      "obstacle_density": "high",
+      "enemy_waves": [
+        { "enemy_type": "shooting", "count": 2 },
+        { "enemy_type": "charger", "count": 2 },
+        { "enemy_type": "patrol", "count": 1 }
       ]
     },
     {
       "name": "Final Push",
-      "start_percent": 80,
+      "start_percent": 90,
       "end_percent": 100,
       "obstacle_density": "high",
       "enemy_waves": [
-        { "enemy_type": "patrol", "count": 3 }
+        { "enemy_type": "charger", "count": 3 },
+        { "enemy_type": "patrol", "count": 2 }
       ]
     }
   ]

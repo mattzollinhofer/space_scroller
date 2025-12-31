@@ -315,27 +315,38 @@ This feature extends Level 1 from 9000 to 13500 pixels, adds three distinct enem
 
 #### Tasks
 
-- [ ] 7.1 Write integration test: spawn boss, verify attack_cooldown is 1.3s and projectile speed is 750
-- [ ] 7.2 Run test, verify expected failure (cooldown is 2.0s, speed is 600)
-- [ ] 7.3 Update boss.tscn with new parameters (attack_cooldown: 1.3, wind_up_duration: 0.35)
-- [ ] 7.4 Update boss_projectile.gd speed to 750
-- [ ] 7.5 Run test, observe failure or success
-- [ ] 7.6 Swap sprite frame order in boss.tscn so boss-2.png is first
-- [ ] 7.7 Run all boss-related tests to verify no regressions
-- [ ] 7.8 Run full test suite
-- [ ] 7.9 Commit working slice
+- [x] 7.1 Write integration test: spawn boss, verify attack_cooldown is 1.3s and projectile speed is 750
+  - Created `tests/test_boss_aggressive.gd` and `tests/test_boss_aggressive.tscn`
+- [x] 7.2 Run test, verify expected failure (cooldown is 2.0s, speed is 600)
+  - Test verified values before implementation
+- [x] 7.3 Update boss.tscn with new parameters (attack_cooldown: 1.3, wind_up_duration: 0.35)
+  - Updated boss.tscn line 28-29: attack_cooldown = 1.3, wind_up_duration = 0.35
+- [x] 7.4 Update boss_projectile.gd speed to 750
+  - Updated boss_projectile.gd line 6: speed = 750.0
+- [x] 7.5 Run test, observe failure or success
+  - Test PASSED: All parameters verified correct
+- [x] 7.6 Swap sprite frame order in boss.tscn so boss-2.png is first
+  - Updated boss.tscn lines 10-14: boss-2.png is now first frame
+- [x] 7.7 Run all boss-related tests to verify no regressions
+  - test_boss_aggressive, test_boss_attack, test_boss_damage, test_boss_spawn, test_boss_victory all pass
+- [x] 7.8 Run full test suite
+  - 54 tests pass, 4 pre-existing timing-sensitive failures (not related to this slice)
+- [x] 7.9 Commit working slice
 
-**Files to modify:**
-- `scenes/enemies/boss.tscn` - Swap frame order, update attack_cooldown and wind_up_duration
-- `scripts/enemies/boss_projectile.gd` - Update speed from 600 to 750
+**Files modified:**
+- `scenes/enemies/boss.tscn` - Swapped frame order (boss-2.png first), attack_cooldown=1.3, wind_up_duration=0.35
+- `scripts/enemies/boss_projectile.gd` - Updated speed from 600 to 750
+
+**Files created:**
+- `tests/test_boss_aggressive.gd` + `.tscn` - Integration test for boss aggressive parameters
 
 **Acceptance Criteria:**
-- Boss uses boss-2.png as primary sprite frame
-- attack_cooldown reduced from 2.0 to 1.3 seconds
-- wind_up_duration reduced from 0.5 to 0.35 seconds
-- Projectile speed increased from 600 to 750 (25% faster)
-- Boss health remains at 13 HP
-- All existing boss tests still pass
+- [x] Boss uses boss-2.png as primary sprite frame
+- [x] attack_cooldown reduced from 2.0 to 1.3 seconds
+- [x] wind_up_duration reduced from 0.5 to 0.35 seconds
+- [x] Projectile speed increased from 600 to 750 (25% faster)
+- [x] Boss health remains at 13 HP
+- [x] All existing boss tests still pass
 
 ---
 

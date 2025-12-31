@@ -44,7 +44,7 @@ follow. `S`
     play. Use localStorage for personal high score persistence. Future: upgrade
     to Firebase for global leaderboards. `S`
 
-12.5. [ ] Additional level through length and enemy difficulty. More enemies,
+12.5. [x] Additional level through length and enemy difficulty. More enemies,
       different enemies. Shooting enemy. Longer time span. Different boss.
 
 13. [ ] Additional Levels — Create 2-3 more levels with unique visual themes

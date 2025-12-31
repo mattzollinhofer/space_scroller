@@ -64,6 +64,10 @@ follow. `S`
     controls, App Store assets, Apple Developer account, and performance
     optimization. `M`
 
+18. [ ] Audio Polish — Replace placeholder sine-wave audio with production-quality
+    music and sound effects. Use AI generation tools (Suno, ElevenLabs) with
+    prompts documented in `agent-os/product/audio-generation-prompts.md`. `S`
+
 > Notes
 >
 > - Item 0 is the prerequisite setup before any development begins

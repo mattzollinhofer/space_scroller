@@ -45,7 +45,7 @@ var _battle_position: Vector2 = Vector2.ZERO
 enum AttackState { IDLE, WIND_UP, ATTACKING, COOLDOWN }
 var _attack_state: AttackState = AttackState.IDLE
 
-## Current attack pattern index (0 = barrage, 1 = sweep, 2 = charge)
+## Current attack pattern index (0 = barrage, 1 = sweep, 2 = charge, 3 = solar flare)
 var _current_pattern: int = 0
 
 ## Attack cooldown timer
@@ -100,7 +100,7 @@ var _charge_target_x: float = 0.0
 ## Shake node for screen shake effect
 var _shake_node: Node2D = null
 
-## Which attack patterns are enabled (0=barrage, 1=sweep, 2=charge)
+## Which attack patterns are enabled (0=barrage, 1=sweep, 2=charge, 3=solar_flare)
 var _enabled_attacks: Array[int] = [0, 1, 2]
 
 ## Number of attack patterns enabled
@@ -221,6 +221,8 @@ func _play_attack_telegraph() -> void:
 	var warning_color: Color
 	if attack_type == 2:  # Charge attack
 		warning_color = Color(2.0, 1.0, 1.0, 1.0)  # Brighter red tint
+	elif attack_type == 3:  # Solar Flare - orange/yellow tint for "hot" theme
+		warning_color = Color(2.0, 1.5, 0.5, 1.0)  # Orange-yellow tint
 	else:  # Barrage or sweep
 		warning_color = Color(1.5, 1.0, 1.0, 1.0)  # Subtle red tint
 
@@ -261,6 +263,8 @@ func _execute_attack() -> void:
 			_attack_vertical_sweep()
 		2:
 			_attack_charge()
+		3:
+			_attack_solar_flare()
 
 
 func _attack_horizontal_barrage() -> void:
@@ -402,6 +406,45 @@ func _on_charge_complete() -> void:
 	_charge_active = false
 	_attack_state = AttackState.COOLDOWN
 	_attack_timer = attack_cooldown
+
+
+func _attack_solar_flare() -> void:
+	## Solar Flare: Radial burst of fast projectiles in all directions (360 degrees)
+	## Inner Solar System "hot" theme attack - fast, intense, but dodgeable
+	if not boss_projectile_scene:
+		push_warning("Boss projectile scene not assigned")
+		return
+
+	# Fire 12 projectiles in a radial burst (360 degrees / 12 = 30 degrees apart)
+	var projectile_count = 12
+	var angle_step = TAU / projectile_count  # TAU = 2*PI = full circle
+
+	for i in range(projectile_count):
+		var projectile = boss_projectile_scene.instantiate()
+
+		# Position at boss center
+		projectile.position = position
+
+		# Calculate direction for this projectile (evenly spaced around circle)
+		var angle = angle_step * i
+		var direction = Vector2(1, 0).rotated(angle)
+
+		# Set direction on projectile
+		if projectile.has_method("set_direction"):
+			projectile.set_direction(direction)
+		else:
+			projectile.direction = direction
+
+		# Solar Flare uses faster projectiles (950 vs default 750)
+		projectile.speed = 950.0
+
+		# Add to parent (main scene)
+		var parent = get_parent()
+		if parent:
+			parent.add_child(projectile)
+
+	attack_fired.emit()
+	_play_sfx("boss_attack")
 
 
 ## Setup boss at spawn position and start entrance animation
@@ -685,7 +728,7 @@ func configure(config: Dictionary) -> void:
 	if config.has("wind_up_duration"):
 		wind_up_duration = config.wind_up_duration
 
-	# Set enabled attacks (array of attack indices: 0=barrage, 1=sweep, 2=charge)
+	# Set enabled attacks (array of attack indices: 0=barrage, 1=sweep, 2=charge, 3=solar_flare)
 	if config.has("attacks"):
 		_enabled_attacks.clear()
 		for attack in config.attacks:

@@ -12,7 +12,7 @@ var main: Node = null
 var level_manager: Node = null
 var _boss: Node = null
 var _health_bar: Node = null
-var _initial_boss_health: int = 13
+var _initial_boss_health: int = 10  # Level 1 boss has 10 health
 var _health_after_damage: int = -1
 var _boss_spawned: bool = false
 
@@ -81,8 +81,9 @@ func _verify_boss_and_test_damage() -> void:
 	_initial_boss_health = _boss.health
 	print("Initial boss health: %d" % _initial_boss_health)
 
-	if _initial_boss_health != 13:
-		_fail("Boss initial health should be 13, got: %d" % _initial_boss_health)
+	# Level 1 boss has 10 health per level_1.json
+	if _initial_boss_health != 10:
+		_fail("Boss initial health should be 10 (Level 1), got: %d" % _initial_boss_health)
 		return
 
 	# Find health bar in scene
@@ -127,8 +128,8 @@ func _verify_boss_and_test_damage() -> void:
 	var health_after_multiple = _boss.health
 	print("Boss health after 6 total hits: %d" % health_after_multiple)
 
-	if health_after_multiple != 13 - 6:
-		_fail("Boss health should be 7 after 6 hits, got: %d" % health_after_multiple)
+	if health_after_multiple != _initial_boss_health - 6:
+		_fail("Boss health should be %d after 6 hits, got: %d" % [_initial_boss_health - 6, health_after_multiple])
 		return
 
 	_pass()

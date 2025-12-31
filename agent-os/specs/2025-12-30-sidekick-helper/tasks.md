@@ -69,28 +69,45 @@ Each slice delivers incremental user value and is tested end-to-end.
 
 #### Tasks
 
-- [ ] 2.1 Write integration test: player collects sidekick_pickup and sidekick follows player
+- [x] 2.1 Write integration test: player collects sidekick_pickup and sidekick follows player
   - Spawn sidekick_pickup at player position
   - Verify sidekick appears after collection
   - Move player, verify sidekick follows with offset
-- [ ] 2.2 Run test, verify expected failure
-- [ ] 2.3 Create sidekick_pickup.tscn scene (Area2D, UFO sprite, collision)
-- [ ] 2.4 Create sidekick_pickup.gd with zigzag movement (copy star_pickup pattern)
-- [ ] 2.5 Create sidekick.tscn scene (Node2D with UFO sprite, smaller scale)
-- [ ] 2.6 Create sidekick.gd with follow behavior (smooth lerp to player offset position)
-- [ ] 2.7 Implement collection logic: spawn sidekick when pickup collected
-- [ ] 2.8 Run test, observe failure or success
-- [ ] 2.9 Document result and update task list
-- [ ] 2.10 Repeat 2.7-2.9 as necessary
-- [ ] 2.11 Verify sidekick position offset (slightly behind and above/below player)
-- [ ] 2.12 Refactor if needed (keep tests green)
+  - Created test_sidekick_pickup.gd and test_sidekick_pickup.tscn
+- [x] 2.2 Run test, verify expected failure
+  - [Could not load sidekick_pickup scene] -> Test failed as expected
+- [x] 2.3 Create sidekick_pickup.tscn scene (Area2D, UFO sprite, collision)
+  - Created with friend-ufo-1.png sprite, scale Vector2(3,3), collision layer 8, mask 1
+- [x] 2.4 Create sidekick_pickup.gd with zigzag movement (copy star_pickup pattern)
+  - Copied zigzag movement from star_pickup.gd
+  - Added sidekick spawn logic on collection
+- [x] 2.5 Create sidekick.tscn scene (Node2D with UFO sprite, smaller scale)
+  - Created Area2D with friend-ufo-1.png sprite at scale Vector2(2,2)
+  - Collision layer 1 (player), mask 2 (enemies) for future damage handling
+- [x] 2.6 Create sidekick.gd with follow behavior (smooth lerp to player offset position)
+  - Uses lerp with follow_speed for smooth following
+  - Offset Vector2(-50, -30) positions behind and above player
+- [x] 2.7 Implement collection logic: spawn sidekick when pickup collected
+  - Pickup calls _spawn_sidekick() on player collision
+  - Sidekick added to Main scene, not player
+- [x] 2.8 Run test, observe failure or success
+  - Initial run: physics query warning during spawn
+- [x] 2.9 Document result and update task list
+- [x] 2.10 Repeat 2.7-2.9 as necessary
+  - Fixed physics warning by using call_deferred for sidekick spawn
+  - Test now passes cleanly without errors
+- [x] 2.11 Verify sidekick position offset (slightly behind and above/below player)
+  - Verified: offset is Vector2(-50, -30) - behind and above player
+  - Sidekick smoothly lerps to follow player movement
+- [x] 2.12 Refactor if needed (keep tests green)
+  - All tests pass: test_sidekick_pickup, test_star_pickup, test_score_ufo_friend
 - [ ] 2.13 Commit working slice
 
 **Acceptance Criteria:**
-- Sidekick pickup spawns with UFO sprite and zigzag movement
-- Collecting pickup spawns active sidekick companion
-- Sidekick follows player with smooth lag and position offset
-- Sidekick uses friend-ufo-1.png sprite at appropriate scale
+- [x] Sidekick pickup spawns with UFO sprite and zigzag movement
+- [x] Collecting pickup spawns active sidekick companion
+- [x] Sidekick follows player with smooth lag and position offset
+- [x] Sidekick uses friend-ufo-1.png sprite at appropriate scale
 
 ---
 

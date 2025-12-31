@@ -153,9 +153,9 @@ func _setup_enemy(enemy: Node2D) -> void:
 	# Connect to tree_exiting to remove from tracking when despawned
 	enemy.tree_exiting.connect(_on_enemy_despawned.bind(enemy))
 
-	# Connect to died signal for kill tracking
+	# Connect to died signal for kill tracking and score
 	if enemy.has_signal("died"):
-		enemy.died.connect(_on_enemy_killed)
+		enemy.died.connect(_on_enemy_killed.bind(enemy))
 
 
 func _spawn_initial_enemies() -> void:
@@ -213,8 +213,14 @@ func reset() -> void:
 
 
 ## Called when an enemy is killed
-func _on_enemy_killed() -> void:
+func _on_enemy_killed(enemy: Node) -> void:
 	_kill_count += 1
+
+	# Award score points via ScoreManager
+	if has_node("/root/ScoreManager"):
+		var score_manager = get_node("/root/ScoreManager")
+		score_manager.award_enemy_kill(enemy)
+
 	if _kill_count >= _next_ufo_threshold:
 		_spawn_ufo_friend()
 		_kill_count = 0

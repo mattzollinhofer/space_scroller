@@ -51,22 +51,24 @@ Each slice delivers incremental user value and is tested end-to-end.
 
 #### Tasks
 
-- [ ] 2.1 Write integration test that verifies score increases when enemy is destroyed
-- [ ] 2.2 Run test, verify expected failure
-- [ ] 2.3 Make smallest change possible to progress
-- [ ] 2.4 Run test, observe failure or success
-- [ ] 2.5 Document result and update task list
-- [ ] 2.6 Repeat 2.3-2.5 as necessary (expect to create: ScoreManager autoload or singleton, connect to enemy.died signals)
-- [ ] 2.7 Refactor if needed (keep tests green)
-- [ ] 2.8 Run all slice tests (1 and 2) to verify no regressions
-- [ ] 2.9 Commit working slice
-- [ ] 2.10 Write additional tests for patrol enemy giving 200 points vs stationary giving 100 points
+- [x] 2.1 Write integration test that verifies score increases when enemy is destroyed
+- [x] 2.2 Run test, verify expected failure [Score stays at 0 because no ScoreManager exists]
+- [x] 2.3-2.6 Red-green iterations:
+  - [x] Iteration 1: [Score 0] -> Created score_manager.gd with autoload, add_points(), award_enemy_kill()
+  - [x] Iteration 2: [Score still 0] -> Added ScoreManager as autoload in project.godot
+  - [x] Iteration 3: [Score still 0] -> Modified enemy_spawner.gd _on_enemy_killed() to call ScoreManager.award_enemy_kill(enemy)
+  - [x] Iteration 4: [Score still 0] -> Fixed test to use spawn_wave() method which properly calls _setup_enemy() and connects signals
+  - Success: Test passes - Stationary enemy awards 100 points
+- [x] 2.7 Refactor if needed (keep tests green) - Updated score_display.gd to connect to ScoreManager.score_changed signal
+- [x] 2.8 Run all slice tests (1 and 2) to verify no regressions - Both tests pass
+- [x] 2.9 Commit working slice
+- [x] 2.10 Write additional tests for patrol enemy giving 200 points vs stationary giving 100 points - Created test_score_patrol_enemy.gd/tscn, passes
 
 **Acceptance Criteria:**
-- Destroying a stationary enemy (1 HP) adds 100 points to score
-- Destroying a patrol enemy (2 HP) adds 200 points to score
-- Score display updates immediately when points are awarded
-- Points awarded on enemy.died signal (death, not just damage)
+- [x] Destroying a stationary enemy (1 HP) adds 100 points to score
+- [x] Destroying a patrol enemy (2 HP) adds 200 points to score
+- [x] Score display updates immediately when points are awarded
+- [x] Points awarded on enemy.died signal (death, not just damage)
 
 ---
 

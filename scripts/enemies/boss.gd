@@ -45,7 +45,7 @@ var _battle_position: Vector2 = Vector2.ZERO
 enum AttackState { IDLE, WIND_UP, ATTACKING, COOLDOWN }
 var _attack_state: AttackState = AttackState.IDLE
 
-## Current attack pattern index (0 = barrage, 1 = sweep, 2 = charge, 3 = solar flare)
+## Current attack pattern index (0 = barrage, 1 = sweep, 2 = charge, 3 = solar flare, 4 = heat wave)
 var _current_pattern: int = 0
 
 ## Attack cooldown timer
@@ -100,11 +100,20 @@ var _charge_target_x: float = 0.0
 ## Shake node for screen shake effect
 var _shake_node: Node2D = null
 
-## Which attack patterns are enabled (0=barrage, 1=sweep, 2=charge, 3=solar_flare)
+## Which attack patterns are enabled (0=barrage, 1=sweep, 2=charge, 3=solar_flare, 4=heat_wave)
 var _enabled_attacks: Array[int] = [0, 1, 2]
 
 ## Number of attack patterns enabled
 var _attack_count: int = 3
+
+## Whether currently in a heat wave attack
+var _heat_wave_active: bool = false
+
+## Heat wave projectile interval timer
+var _heat_wave_projectile_timer: float = 0.0
+
+## Heat wave projectile fire interval (faster than normal sweep)
+@export var heat_wave_fire_interval: float = 0.15
 
 ## Emitted when the boss is defeated
 signal boss_defeated()
@@ -166,6 +175,10 @@ func _process(delta: float) -> void:
 	if _sweep_active:
 		_process_sweep_projectiles(delta)
 
+	# Process heat wave attack projectile firing
+	if _heat_wave_active:
+		_process_heat_wave_projectiles(delta)
+
 	# Process attack state machine
 	_process_attack_state(delta)
 
@@ -189,8 +202,8 @@ func _process_attack_state(delta: float) -> void:
 				_execute_attack()
 
 		AttackState.ATTACKING:
-			# For sweep and charge, wait for tween to complete
-			if _sweep_active or _charge_active:
+			# For sweep, charge, and heat wave, wait for tween to complete
+			if _sweep_active or _charge_active or _heat_wave_active:
 				return
 			# Attack execution is instant for barrage, move to cooldown
 			_attack_state = AttackState.COOLDOWN
@@ -221,7 +234,7 @@ func _play_attack_telegraph() -> void:
 	var warning_color: Color
 	if attack_type == 2:  # Charge attack
 		warning_color = Color(2.0, 1.0, 1.0, 1.0)  # Brighter red tint
-	elif attack_type == 3:  # Solar Flare - orange/yellow tint for "hot" theme
+	elif attack_type == 3 or attack_type == 4:  # Solar Flare or Heat Wave - orange/yellow tint for "hot" theme
 		warning_color = Color(2.0, 1.5, 0.5, 1.0)  # Orange-yellow tint
 	else:  # Barrage or sweep
 		warning_color = Color(1.5, 1.0, 1.0, 1.0)  # Subtle red tint
@@ -265,6 +278,8 @@ func _execute_attack() -> void:
 			_attack_charge()
 		3:
 			_attack_solar_flare()
+		4:
+			_attack_heat_wave()
 
 
 func _attack_horizontal_barrage() -> void:
@@ -447,6 +462,73 @@ func _attack_solar_flare() -> void:
 	_play_sfx("boss_attack")
 
 
+func _attack_heat_wave() -> void:
+	## Heat Wave: Boss sweeps in arc while firing continuous stream of fast projectiles
+	## Inner Solar System "hot" theme attack - sweeping arc with rapid fire
+	if _attack_tween and _attack_tween.is_valid():
+		_attack_tween.kill()
+
+	_heat_wave_active = true
+	_heat_wave_projectile_timer = 0.0  # Fire immediately
+
+	# Determine sweep direction based on current position
+	var sweep_up = position.y > (Y_MIN + Y_MAX) / 2.0
+
+	# Create sweep tween (similar to vertical sweep but maybe slightly faster)
+	_attack_tween = create_tween()
+
+	if sweep_up:
+		# Sweep up then down
+		_attack_tween.tween_property(self, "position:y", Y_MIN, 0.8).set_ease(Tween.EASE_IN_OUT).set_trans(Tween.TRANS_SINE)
+		_attack_tween.tween_property(self, "position:y", _battle_position.y, 0.8).set_ease(Tween.EASE_IN_OUT).set_trans(Tween.TRANS_SINE)
+	else:
+		# Sweep down then up
+		_attack_tween.tween_property(self, "position:y", Y_MAX, 0.8).set_ease(Tween.EASE_IN_OUT).set_trans(Tween.TRANS_SINE)
+		_attack_tween.tween_property(self, "position:y", _battle_position.y, 0.8).set_ease(Tween.EASE_IN_OUT).set_trans(Tween.TRANS_SINE)
+
+	_attack_tween.tween_callback(_on_heat_wave_complete)
+
+
+func _process_heat_wave_projectiles(delta: float) -> void:
+	## Fire fast projectiles at rapid intervals during heat wave
+	_heat_wave_projectile_timer -= delta
+	if _heat_wave_projectile_timer <= 0:
+		_heat_wave_projectile_timer = heat_wave_fire_interval
+		_fire_heat_wave_projectile()
+
+
+func _fire_heat_wave_projectile() -> void:
+	## Fire a single fast projectile to the left (Heat Wave variant)
+	if not boss_projectile_scene:
+		return
+
+	var projectile = boss_projectile_scene.instantiate()
+	projectile.position = position + Vector2(-100, 0)
+
+	# Direction straight left
+	var direction = Vector2(-1, 0)
+	if projectile.has_method("set_direction"):
+		projectile.set_direction(direction)
+	else:
+		projectile.direction = direction
+
+	# Heat Wave uses faster projectiles (950 vs default 750)
+	projectile.speed = 950.0
+
+	var parent = get_parent()
+	if parent:
+		parent.add_child(projectile)
+
+	attack_fired.emit()
+	_play_sfx("boss_attack")
+
+
+func _on_heat_wave_complete() -> void:
+	_heat_wave_active = false
+	_attack_state = AttackState.COOLDOWN
+	_attack_timer = attack_cooldown
+
+
 ## Setup boss at spawn position and start entrance animation
 func setup(spawn_position: Vector2, battle_position: Vector2) -> void:
 	position = spawn_position
@@ -538,6 +620,7 @@ func _on_health_depleted() -> void:
 	_attack_cycle_active = false
 	_sweep_active = false
 	_charge_active = false
+	_heat_wave_active = false
 
 	# Kill tweens if active
 	if _flash_tween and _flash_tween.is_valid():
@@ -644,6 +727,7 @@ func stop_attack_cycle() -> void:
 	_attack_state = AttackState.IDLE
 	_sweep_active = false
 	_charge_active = false
+	_heat_wave_active = false
 
 	# Kill attack tween if active
 	if _attack_tween and _attack_tween.is_valid():
@@ -674,6 +758,7 @@ func reset_health() -> void:
 	## Clear any active attack states
 	_sweep_active = false
 	_charge_active = false
+	_heat_wave_active = false
 
 	## Kill any active tweens
 	if _flash_tween and _flash_tween.is_valid():
@@ -713,6 +798,11 @@ func is_sweeping() -> bool:
 	return _sweep_active
 
 
+## Check if currently in heat wave (for testing)
+func is_heat_waving() -> bool:
+	return _heat_wave_active
+
+
 ## Configure boss from level metadata
 func configure(config: Dictionary) -> void:
 	# Set health
@@ -728,7 +818,7 @@ func configure(config: Dictionary) -> void:
 	if config.has("wind_up_duration"):
 		wind_up_duration = config.wind_up_duration
 
-	# Set enabled attacks (array of attack indices: 0=barrage, 1=sweep, 2=charge, 3=solar_flare)
+	# Set enabled attacks (array of attack indices: 0=barrage, 1=sweep, 2=charge, 3=solar_flare, 4=heat_wave)
 	if config.has("attacks"):
 		_enabled_attacks.clear()
 		for attack in config.attacks:

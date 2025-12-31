@@ -11,7 +11,7 @@ feel unique while maintaining kid-friendly difficulty.
 
 ## Task List
 
-### Slice 1: Player fights Level 2 boss with Solar Flare attack
+### Slice 1: Player fights Level 2 boss with Solar Flare attack [COMPLETE]
 
 **What this delivers:** When fighting the Level 2 boss, the player encounters
 the new "Solar Flare" attack - a radial burst of fast projectiles firing in
@@ -49,7 +49,8 @@ all directions, matching the Inner Solar System "hot" theme.
 - [x] 1.9 Run boss-related tests to verify no regressions
   - Fixed pre-existing bug in test_boss_damage.gd (expected 13 health but Level 1 has 10)
   - All 9 boss tests pass
-- [ ] 1.10 Commit working slice
+- [x] 1.10 Commit working slice
+  - Committed: efbd5a0 "Add Solar Flare attack for Level 2 boss (Slice 1)"
 
 **Acceptance Criteria:**
 - [x] Level 2 boss uses Solar Flare attack (radial burst pattern)
@@ -59,7 +60,7 @@ all directions, matching the Inner Solar System "hot" theme.
 
 ---
 
-### Slice 2: Player fights Level 2 boss with Heat Wave attack
+### Slice 2: Player fights Level 2 boss with Heat Wave attack [COMPLETE]
 
 **What this delivers:** When fighting the Level 2 boss, the player encounters
 the new "Heat Wave" attack - a continuous stream of fast projectiles in a
@@ -73,24 +74,45 @@ sweeping arc, completing the Level 2 "hot" attack set.
 
 #### Tasks
 
-- [ ] 2.1 Write integration test: verify boss uses attack index 4 (Heat Wave) when configured
-- [ ] 2.2 Run test, verify expected failure (attack 4 not implemented)
-- [ ] 2.3 Make smallest change possible to progress
-- [ ] 2.4 Run test, observe failure or success
-- [ ] 2.5 Document result and update task list
-- [ ] 2.6 Repeat 2.3-2.5 as necessary until Heat Wave performs sweeping arc with continuous fire
-- [ ] 2.7 Verify projectiles use faster speed (900-1000)
-- [ ] 2.8 Update level_2.json attacks array to final: [0, 3, 4]
-- [ ] 2.9 Run boss-related tests to verify no regressions
+- [x] 2.1 Write integration test: verify boss uses attack index 4 (Heat Wave) when configured
+  - Created test_boss_heat_wave.gd and test_boss_heat_wave.tscn
+  - Test verifies: continuous fire (3+ projectiles), boss movement, fast speed (900-1000)
+- [x] 2.2 Run test, verify expected failure (attack 4 not implemented)
+  - Test failed: "No projectiles spawned - Heat Wave attack not implemented"
+- [x] 2.3 Make smallest change possible to progress
+  - Added case 4 to _execute_attack() match statement
+  - Added _heat_wave_active variable and _heat_wave_projectile_timer
+  - Added heat_wave_fire_interval (0.15s, faster than sweep's 0.3s)
+  - Added _attack_heat_wave() method (sweep movement with fast projectiles)
+  - Added _process_heat_wave_projectiles() for rapid interval firing
+  - Added _fire_heat_wave_projectile() with speed 950
+  - Added _on_heat_wave_complete() callback
+  - Updated telegraph color for attack index 4 (orange/yellow like Solar Flare)
+  - Updated _process() to handle _heat_wave_active
+  - Updated _on_health_depleted(), stop_attack_cycle(), reset_health() for _heat_wave_active
+  - Added is_heat_waving() test helper method
+- [x] 2.4 Run test, observe failure or success
+  - Success: Test passed on first implementation
+  - 13+ projectiles fired continuously, boss moved in arc, speed 950
+- [x] 2.5 Document result and update task list
+- [x] 2.6 Repeat 2.3-2.5 as necessary until Heat Wave performs sweeping arc with continuous fire
+  - Not needed - worked on first try
+- [x] 2.7 Verify projectiles use faster speed (900-1000)
+  - Verified: Average projectile speed is 950.0
+- [x] 2.8 Update level_2.json attacks array to final: [0, 3, 4]
+  - Already configured from Slice 1
+- [x] 2.9 Run boss-related tests to verify no regressions
+  - All 10 boss tests pass (test_boss_patterns needs 20s timeout)
 - [ ] 2.10 Manually playtest Level 2 boss to verify thematic feel and kid-friendly difficulty
-- [ ] 2.11 Commit working slice
+  - Skipped: headless environment
+- [x] 2.11 Commit working slice
 
 **Acceptance Criteria:**
-- Level 2 boss uses Heat Wave attack (sweeping arc with continuous fire)
-- Heat Wave projectiles are faster than default
-- Boss moves in arc while firing stream of projectiles
-- All Level 2 attacks (barrage, solar flare, heat wave) cycle correctly
-- Previous slice functionality still works
+- [x] Level 2 boss uses Heat Wave attack (sweeping arc with continuous fire)
+- [x] Heat Wave projectiles are faster than default
+- [x] Boss moves in arc while firing stream of projectiles
+- [x] All Level 2 attacks (barrage, solar flare, heat wave) cycle correctly
+- [x] Previous slice functionality still works
 
 ---
 

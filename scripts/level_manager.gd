@@ -117,6 +117,16 @@ func _ready() -> void:
 	_connect_player_signals()
 	# Set initial section density and spawn first wave
 	_check_section_change()
+	# Start gameplay background music
+	_start_gameplay_music()
+
+
+## Start gameplay background music via AudioManager
+func _start_gameplay_music() -> void:
+	if has_node("/root/AudioManager"):
+		var audio_manager = get_node("/root/AudioManager")
+		if audio_manager.has_method("play_music"):
+			audio_manager.play_music()
 
 
 ## Get the selected level from GameState autoload

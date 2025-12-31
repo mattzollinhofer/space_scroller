@@ -21,18 +21,18 @@ Each slice delivers incremental user value and is tested end-to-end.
 
 #### Tasks
 
-- [ ] 1.1 Write integration test that verifies music plays when entering main.tscn
-- [ ] 1.2 Run test, verify expected failure
-- [ ] 1.3 Create AudioManager autoload script (scripts/autoloads/audio_manager.gd)
-- [ ] 1.4 Register AudioManager in project.godot autoloads section
-- [ ] 1.5 Create audio bus layout with Master, Music, and SFX buses (default_bus_layout.tres)
-- [ ] 1.6 Add AudioStreamPlayer nodes for music playback to AudioManager
-- [ ] 1.7 Implement play_music() method to start background music
-- [ ] 1.8 Source/create placeholder background music track (assets/audio/music/gameplay.ogg)
-- [ ] 1.9 Call AudioManager.play_music() when main.tscn loads (in level_manager.gd or main.tscn script)
-- [ ] 1.10 Run test, iterate as needed until music plays
-- [ ] 1.11 Verify manually that music starts on gameplay entry
-- [ ] 1.12 Commit working slice
+- [x] 1.1 Write integration test that verifies music plays when entering main.tscn
+- [x] 1.2 Run test, verify expected failure [AudioManager autoload not found] -> Created test
+- [x] 1.3 Create AudioManager autoload script (scripts/autoloads/audio_manager.gd)
+- [x] 1.4 Register AudioManager in project.godot autoloads section
+- [x] 1.5 Create audio bus layout with Master, Music, and SFX buses (default_bus_layout.tres)
+- [x] 1.6 Add AudioStreamPlayer nodes for music playback to AudioManager
+- [x] 1.7 Implement play_music() method to start background music
+- [x] 1.8 Source/create placeholder background music track (assets/audio/music/gameplay.wav)
+- [x] 1.9 Call AudioManager.play_music() when main.tscn loads (in level_manager.gd)
+- [x] 1.10 Run test, iterate as needed until music plays - Success
+- [x] 1.11 Verify manually that music starts on gameplay entry (skipped - headless environment)
+- [x] 1.12 Commit working slice - commit a602494
 
 **Acceptance Criteria:**
 - Background music starts when player enters main gameplay scene

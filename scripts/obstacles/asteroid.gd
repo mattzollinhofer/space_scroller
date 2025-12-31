@@ -43,6 +43,9 @@ var _glow: Sprite2D = null
 
 
 func _ready() -> void:
+	# Add to asteroids group for collision detection
+	add_to_group("asteroids")
+
 	# Randomize size if not explicitly set
 	var rng = RandomNumberGenerator.new()
 	rng.randomize()
@@ -93,3 +96,30 @@ func _on_body_entered(body: Node2D) -> void:
 
 func _despawn() -> void:
 	queue_free()
+
+
+## Called when hit by a projectile - asteroid blocks the shot
+func take_hit(_damage: int = 1) -> void:
+	_spawn_impact_explosion()
+
+
+## Spawn a small explosion effect when hit by projectile
+func _spawn_impact_explosion() -> void:
+	var explosion_texture = load("res://assets/sprites/explosion.png")
+	var explosion = Sprite2D.new()
+	explosion.texture = explosion_texture
+	explosion.scale = Vector2(1.0, 1.0)
+	explosion.z_index = 10  # Above asteroid
+
+	# Position at asteroid center (projectiles can hit from either side)
+	explosion.global_position = global_position
+
+	# Add to parent so it persists after potential asteroid removal
+	get_parent().add_child(explosion)
+
+	# Animate: quick scale up and fade out
+	var tween = explosion.create_tween()
+	tween.set_parallel(true)
+	tween.tween_property(explosion, "scale", Vector2(2.0, 2.0), 0.2).set_ease(Tween.EASE_OUT)
+	tween.tween_property(explosion, "modulate:a", 0.0, 0.2).set_ease(Tween.EASE_IN)
+	tween.chain().tween_callback(explosion.queue_free)

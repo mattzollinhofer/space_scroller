@@ -1,6 +1,6 @@
 extends Node2D
-## Integration test: Projectile passes through asteroid without being destroyed
-## Run this scene to verify projectiles don't interact with asteroids.
+## Integration test: Projectile is blocked by asteroid
+## Projectiles should be destroyed when hitting asteroids, asteroid remains intact.
 
 var _test_passed: bool = false
 var _test_failed: bool = false
@@ -15,7 +15,7 @@ var _asteroid_position_x: float = 0.0
 
 
 func _ready() -> void:
-	print("=== Test: Projectile Asteroid Pass-through ===")
+	print("=== Test: Projectile Blocked by Asteroid ===")
 
 	# Load projectile scene
 	var projectile_scene = load("res://scenes/projectile.tscn")
@@ -39,7 +39,7 @@ func _ready() -> void:
 		_fail("Could not load asteroid scene")
 		return
 	asteroid = asteroid_scene.instantiate()
-	asteroid.position = Vector2(700, 768)  # Same Y as player, to the right
+	asteroid.position = Vector2(600, 768)  # Same Y as player, to the right
 	asteroid.scroll_speed = 0.0  # Stop asteroid from moving during test
 	_asteroid_position_x = asteroid.position.x
 	add_child(asteroid)
@@ -50,8 +50,7 @@ func _ready() -> void:
 	player.shoot()
 
 	# Get a weak reference to track the projectile
-	var projectiles = get_tree().get_nodes_in_group("projectiles") if get_tree().has_group("projectiles") else []
-	# Alternative: find projectile by checking children
+	await get_tree().process_frame
 	await get_tree().process_frame
 	for child in get_children():
 		if child.name.begins_with("Projectile"):
@@ -60,24 +59,10 @@ func _ready() -> void:
 			break
 
 	if not _projectile_ref or not _projectile_ref.get_ref():
-		# Try to find in parent since projectiles are added to parent
-		for child in get_parent().get_children() if get_parent() else []:
-			if child.name.begins_with("Projectile"):
-				_projectile_ref = weakref(child)
-				print("Tracking projectile (from parent) at position: %s" % child.position)
-				break
+		_fail("Could not find projectile after shooting")
+		return
 
-	if not _projectile_ref or not _projectile_ref.get_ref():
-		# Projectiles added to player's parent, which is this test node
-		# Check immediate children again after frame
-		await get_tree().process_frame
-		for child in get_children():
-			if child.name.begins_with("Projectile"):
-				_projectile_ref = weakref(child)
-				print("Tracking projectile (delayed) at position: %s" % child.position)
-				break
-
-	print("Waiting for projectile to pass asteroid position...")
+	print("Waiting for projectile to hit asteroid...")
 
 
 func _process(delta: float) -> void:
@@ -88,39 +73,30 @@ func _process(delta: float) -> void:
 
 	# Check for timeout
 	if _timer >= _test_timeout:
-		_fail("Test timed out")
+		_fail("Test timed out - projectile never hit asteroid")
 		return
 
-	# Check if we have a projectile reference
 	var projectile = _projectile_ref.get_ref() if _projectile_ref else null
 
-	# If projectile is gone (was destroyed), check if it was destroyed before passing asteroid
+	# Projectile should be destroyed when hitting asteroid
 	if projectile == null:
-		# Projectile was destroyed - check what happened
-		# If asteroid is still there and projectile is gone, it might have been destroyed by asteroid
-		# We need to check if projectile made it past asteroid
-		if _timer < 0.5:
-			# Too early - projectile shouldn't have reached right edge yet
-			# Check if asteroid is still there
-			if is_instance_valid(asteroid):
-				_fail("Projectile was destroyed before passing asteroid (asteroid still exists)")
-			else:
-				_fail("Both projectile and asteroid were destroyed - unexpected interaction")
-		else:
-			# Projectile likely despawned at right edge - this is success
+		# Projectile was destroyed - verify asteroid still exists
+		if is_instance_valid(asteroid):
+			print("Projectile destroyed, asteroid intact at x=%s" % asteroid.position.x)
 			_pass()
+		else:
+			_fail("Asteroid was also destroyed - should be indestructible")
 		return
 
-	# Check if projectile has passed the asteroid position
+	# If projectile passed the asteroid, that's a failure
 	if projectile.position.x > _asteroid_position_x + 100:
-		print("Projectile passed asteroid position! x=%s (asteroid was at x=%s)" % [projectile.position.x, _asteroid_position_x])
-		_pass()
+		_fail("Projectile passed through asteroid without being destroyed")
 
 
 func _pass() -> void:
 	_test_passed = true
 	print("=== TEST PASSED ===")
-	print("Projectile passed through asteroid without being destroyed.")
+	print("Projectile was blocked by asteroid (asteroid remains intact).")
 	await get_tree().create_timer(0.5).timeout
 	get_tree().quit(0)
 

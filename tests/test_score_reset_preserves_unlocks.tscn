@@ -1,0 +1,6 @@
+[gd_scene load_steps=2 format=3 uid="uid://dr8lqm5nfj2wk"]
+
+[ext_resource type="Script" path="res://tests/test_score_reset_preserves_unlocks.gd" id="1_test"]
+
+[node name="TestScoreResetPreservesUnlocks" type="Node"]
+script = ExtResource("1_test")

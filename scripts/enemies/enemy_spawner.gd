@@ -9,6 +9,12 @@ extends Node2D
 ## Patrol enemy scene to spawn
 @export var patrol_enemy_scene: PackedScene
 
+## Shooting enemy scene to spawn
+@export var shooting_enemy_scene: PackedScene
+
+## Charger enemy scene to spawn
+@export var charger_enemy_scene: PackedScene
+
 ## Star pickup scene to spawn when kill threshold is reached
 @export var star_pickup_scene: PackedScene
 
@@ -111,10 +117,15 @@ func spawn_wave(wave_configs: Array) -> void:
 		var count = wave_config.get("count", 1)
 
 		for i in range(count):
-			if enemy_type == "patrol":
-				_spawn_patrol_enemy()
-			else:
-				_spawn_stationary_enemy()
+			match enemy_type:
+				"patrol":
+					_spawn_patrol_enemy()
+				"shooting":
+					_spawn_shooting_enemy()
+				"charger":
+					_spawn_charger_enemy()
+				_:
+					_spawn_stationary_enemy()
 
 
 func _spawn_random_enemy() -> void:
@@ -140,6 +151,24 @@ func _spawn_patrol_enemy() -> void:
 		return
 
 	var enemy = patrol_enemy_scene.instantiate()
+	_setup_enemy(enemy)
+
+
+func _spawn_shooting_enemy() -> void:
+	if not shooting_enemy_scene:
+		push_warning("No shooting enemy scene assigned to EnemySpawner")
+		return
+
+	var enemy = shooting_enemy_scene.instantiate()
+	_setup_enemy(enemy)
+
+
+func _spawn_charger_enemy() -> void:
+	if not charger_enemy_scene:
+		push_warning("No charger enemy scene assigned to EnemySpawner")
+		return
+
+	var enemy = charger_enemy_scene.instantiate()
 	_setup_enemy(enemy)
 
 

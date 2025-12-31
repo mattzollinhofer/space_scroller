@@ -1,4 +1,4 @@
-[gd_scene load_steps=26 format=3 uid="uid://d0n8g3kv2kq7y"]
+[gd_scene load_steps=28 format=3 uid="uid://d0n8g3kv2kq7y"]
 
 [ext_resource type="Script" path="res://scripts/scroll_controller.gd" id="1_scroll"]
 [ext_resource type="Script" path="res://scripts/background/star_field.gd" id="2_starfield"]
@@ -23,6 +23,8 @@
 [ext_resource type="PackedScene" uid="uid://cscore_display" path="res://scenes/ui/score_display.tscn" id="22_score_display"]
 [ext_resource type="PackedScene" uid="uid://cpause_menu" path="res://scenes/ui/pause_menu.tscn" id="23_pause_menu"]
 [ext_resource type="PackedScene" uid="uid://cpause_button" path="res://scenes/ui/pause_button.tscn" id="24_pause_button"]
+[ext_resource type="PackedScene" uid="uid://cshooting_enemy" path="res://scenes/enemies/shooting_enemy.tscn" id="25_shooting_enemy"]
+[ext_resource type="PackedScene" uid="uid://ccharger_enemy" path="res://scenes/enemies/charger_enemy.tscn" id="26_charger_enemy"]
 
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_top"]
 size = Vector2(2048, 80)
@@ -84,6 +86,8 @@ initial_count = 4
 script = ExtResource("14_enemy_spawner")
 stationary_enemy_scene = ExtResource("12_stationary_enemy")
 patrol_enemy_scene = ExtResource("13_patrol_enemy")
+shooting_enemy_scene = ExtResource("25_shooting_enemy")
+charger_enemy_scene = ExtResource("26_charger_enemy")
 star_pickup_scene = ExtResource("18_star_pickup")
 sidekick_pickup_scene = ExtResource("19_sidekick_pickup")
 spawn_rate_min = 3.0

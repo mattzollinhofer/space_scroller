@@ -1,0 +1,6 @@
+[gd_scene load_steps=2 format=3 uid="uid://bz3k5j8n2p1ty"]
+
+[ext_resource type="Script" path="res://tests/test_spawn_wave_charger.gd" id="1_test"]
+
+[node name="TestSpawnWaveCharger" type="Node2D"]
+script = ExtResource("1_test")

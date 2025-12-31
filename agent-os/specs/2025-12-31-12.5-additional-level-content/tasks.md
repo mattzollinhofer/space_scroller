@@ -152,7 +152,7 @@ This feature extends Level 1 from 9000 to 13500 pixels, adds three distinct enem
 
 **What this delivers:** The enemy spawner can spawn shooting and charger enemies as part of level waves, enabling varied combat encounters.
 
-**Dependencies:** Slice 2 (ShootingEnemy), Slice 3 (ChargerEnemy)
+**Dependencies:** Slice 2 (ShootingEnemy), Slice 3 (ChargerEnemy) - BOTH COMPLETED
 
 **Reference patterns:**
 - [@/Users/matt/dev/space_scroller/scripts/enemies/enemy_spawner.gd:106-118] - spawn_wave() method
@@ -161,23 +161,38 @@ This feature extends Level 1 from 9000 to 13500 pixels, adds three distinct enem
 
 #### Tasks
 
-- [ ] 4.1 Write integration test: call spawn_wave with "shooting" type, verify ShootingEnemy spawns
-- [ ] 4.2 Run test, verify expected failure (spawn_wave doesn't handle "shooting")
-- [ ] 4.3 Make smallest change possible to progress
-- [ ] 4.4 Run test, observe failure or success
-- [ ] 4.5 Document result and update task list
-- [ ] 4.6 Repeat 4.3-4.5 as necessary
-- [ ] 4.7 Add test for "charger" enemy type in spawn_wave
-- [ ] 4.8 Run all previous slice tests to verify no regressions
-- [ ] 4.9 Commit working slice
+- [x] 4.1 Write integration test: call spawn_wave with "shooting" type, verify ShootingEnemy spawns
+  - Created `tests/test_spawn_wave_shooting.gd` and `tests/test_spawn_wave_shooting.tscn`
+- [x] 4.2 Run test, verify expected failure (spawn_wave doesn't handle "shooting")
+  - Test failed: "Expected 2 ShootingEnemies to spawn, got 0" - as expected (fell through to default)
+- [x] 4.3 Make smallest change possible to progress
+  - Added `shooting_enemy_scene` and `charger_enemy_scene` @export vars to enemy_spawner.gd
+  - Updated `spawn_wave()` to use match statement with cases for "shooting" and "charger"
+  - Added `_spawn_shooting_enemy()` and `_spawn_charger_enemy()` methods
+- [x] 4.4 Run test, observe failure or success
+  - Test PASSED: "spawn_wave correctly spawns ShootingEnemy when enemy_type is 'shooting'"
+- [x] 4.5 Document result and update task list - Success after adding spawn methods
+- [x] 4.6 Repeat 4.3-4.5 as necessary - Not needed, passed first iteration
+- [x] 4.7 Add test for "charger" enemy type in spawn_wave
+  - Created `tests/test_spawn_wave_charger.gd/.tscn` - PASSED
+  - Created `tests/test_spawn_wave_mixed.gd/.tscn` - PASSED (tests all 4 enemy types together)
+- [x] 4.8 Run all previous slice tests to verify no regressions
+  - All 11 tests passed (slice 1-4): test_enemy_zigzag, test_shooting_enemy, test_enemy_projectile_damage, test_enemy_projectile_despawn, test_charger_enemy, test_charger_damage, test_charger_despawn, test_spawn_wave_shooting, test_spawn_wave_charger, test_spawn_wave_mixed, test_enemy_waves
+- [x] 4.9 Commit working slice
 
-**Files to modify:**
-- `scripts/enemies/enemy_spawner.gd` - Add shooting_enemy_scene and charger_enemy_scene exports, spawn methods
+**Files modified:**
+- `scripts/enemies/enemy_spawner.gd` - Added shooting_enemy_scene and charger_enemy_scene exports, _spawn_shooting_enemy() and _spawn_charger_enemy() methods, updated spawn_wave() with match statement
+- `scenes/main.tscn` - Added shooting_enemy_scene and charger_enemy_scene references to EnemySpawner node
+
+**Files created:**
+- `tests/test_spawn_wave_shooting.gd` + `.tscn` - Test spawn_wave with "shooting" type
+- `tests/test_spawn_wave_charger.gd` + `.tscn` - Test spawn_wave with "charger" type
+- `tests/test_spawn_wave_mixed.gd` + `.tscn` - Test spawn_wave with all 4 enemy types together
 
 **Acceptance Criteria:**
-- spawn_wave([{"enemy_type": "shooting", "count": 2}]) spawns 2 ShootingEnemies
-- spawn_wave([{"enemy_type": "charger", "count": 1}]) spawns 1 ChargerEnemy
-- Existing "stationary" and "patrol" types still work
+- [x] spawn_wave([{"enemy_type": "shooting", "count": 2}]) spawns 2 ShootingEnemies
+- [x] spawn_wave([{"enemy_type": "charger", "count": 1}]) spawns 1 ChargerEnemy
+- [x] Existing "stationary" and "patrol" types still work (verified in test_spawn_wave_mixed)
 
 ---
 

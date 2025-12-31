@@ -1,0 +1,6 @@
+[gd_scene load_steps=2 format=3 uid="uid://dqpw8kx4y5c7t"]
+
+[ext_resource type="Script" path="res://tests/test_spawn_wave_shooting.gd" id="1_test"]
+
+[node name="TestSpawnWaveShooting" type="Node2D"]
+script = ExtResource("1_test")

@@ -154,3 +154,45 @@ timeout 180 bash -c 'failed=0; for t in tests/*.tscn; do echo "=== $t ==="; time
 ```
 
 **Important:** Use `timeout 10` per test, not 60. Tests should complete in 2-5 seconds. The 180-second global timeout caps the entire suite.
+
+## Running Tests During Feature Implementation
+
+**CRITICAL: Do NOT run the full test suite after every change during feature development.**
+
+The full test suite (60+ tests) can take 3-5+ minutes to run. Running it after each change during implementation causes massive slowdowns and wastes time.
+
+### The Right Approach
+
+1. **During development**: Only run tests related to your feature
+   ```bash
+   # For level-related work:
+   timeout 30 bash -c 'for t in tests/test_level*.tscn; do timeout 10 godot --headless --path . "$t" || exit 1; done'
+
+   # For enemy-related work:
+   timeout 30 bash -c 'for t in tests/test_enemy*.tscn tests/test_*_enemy*.tscn; do timeout 10 godot --headless --path . "$t" || exit 1; done'
+   ```
+
+2. **After completing a slice/feature**: Run the full suite once to verify no regressions
+   ```bash
+   timeout 180 bash -c 'failed=0; for t in tests/*.tscn; do timeout 10 godot --headless --path . "$t" || ((failed++)); done; echo "Failed: $failed"; exit $failed'
+   ```
+
+3. **Before committing**: Run full suite if not already done
+
+### Why This Matters
+
+| Approach | Time per iteration | 10 iterations |
+|----------|-------------------|---------------|
+| Full suite (67 tests) | ~3-5 min | 30-50 min |
+| Feature-specific (8-12 tests) | ~30-60 sec | 5-10 min |
+
+Running only relevant tests provides the same fast feedback loop while saving hours on larger features.
+
+### Identifying Relevant Tests
+
+Name your tests consistently so they can be filtered:
+- `test_level_*.tscn` - Level-related tests
+- `test_boss_*.tscn` - Boss-related tests
+- `test_enemy_*.tscn` - Enemy-related tests
+- `test_pickup_*.tscn` - Pickup-related tests
+- `test_score_*.tscn` - Score-related tests

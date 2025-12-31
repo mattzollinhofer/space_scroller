@@ -33,7 +33,7 @@ follow. `S`
 9. [x] Game UI — Build main menu, pause menu, game over screen, and HUD showing
    score, lives, and level progress. `M`
 
-10. [ ] Sidekick Helper — Add a good alien sidekick that can be unlocked as a
+10. [x] Sidekick Helper — Add a good alien sidekick that can be unlocked as a
     bonus, providing assistance to the player (e.g., extra firepower, shield,
     or collecting pickups). `M`
 

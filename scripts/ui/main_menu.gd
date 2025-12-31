@@ -8,14 +8,24 @@ func _ready() -> void:
 	pass
 
 
-## Handle Play button pressed - start gameplay
+## Handle Play button pressed - start gameplay with transition
 func _on_play_button_pressed() -> void:
-	get_tree().call_deferred("change_scene_to_file", "res://scenes/main.tscn")
+	if has_node("/root/TransitionManager"):
+		var transition_manager = get_node("/root/TransitionManager")
+		transition_manager.transition_to_scene("res://scenes/main.tscn")
+	else:
+		# Fallback to instant transition
+		get_tree().call_deferred("change_scene_to_file", "res://scenes/main.tscn")
 
 
 ## Handle Character Selection button pressed
 func _on_character_select_button_pressed() -> void:
-	get_tree().call_deferred("change_scene_to_file", "res://scenes/ui/character_selection.tscn")
+	if has_node("/root/TransitionManager"):
+		var transition_manager = get_node("/root/TransitionManager")
+		transition_manager.transition_to_scene("res://scenes/ui/character_selection.tscn")
+	else:
+		# Fallback to instant transition
+		get_tree().call_deferred("change_scene_to_file", "res://scenes/ui/character_selection.tscn")
 
 
 ## Handle High Scores button pressed (placeholder)

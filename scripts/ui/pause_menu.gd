@@ -54,4 +54,9 @@ func _on_resume_button_pressed() -> void:
 func _on_quit_button_pressed() -> void:
 	# Unpause before changing scene
 	get_tree().paused = false
-	get_tree().change_scene_to_file("res://scenes/ui/main_menu.tscn")
+	if has_node("/root/TransitionManager"):
+		var transition_manager = get_node("/root/TransitionManager")
+		transition_manager.transition_to_scene("res://scenes/ui/main_menu.tscn")
+	else:
+		# Fallback to instant transition
+		get_tree().change_scene_to_file("res://scenes/ui/main_menu.tscn")

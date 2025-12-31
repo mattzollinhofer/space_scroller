@@ -19,6 +19,7 @@ config/icon="res://icon.svg"
 
 ScoreManager="*res://scripts/score_manager.gd"
 GameState="*res://scripts/autoloads/game_state.gd"
+TransitionManager="*res://scripts/autoloads/transition_manager.gd"
 
 [display]
 

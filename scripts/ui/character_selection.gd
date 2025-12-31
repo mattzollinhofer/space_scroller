@@ -36,9 +36,14 @@ func _on_character_selected(character_id: String) -> void:
 	_update_selection_highlight()
 
 
-## Handle back button pressed - return to main menu
+## Handle back button pressed - return to main menu with transition
 func _on_back_pressed() -> void:
-	get_tree().call_deferred("change_scene_to_file", "res://scenes/ui/main_menu.tscn")
+	if has_node("/root/TransitionManager"):
+		var transition_manager = get_node("/root/TransitionManager")
+		transition_manager.transition_to_scene("res://scenes/ui/main_menu.tscn")
+	else:
+		# Fallback to instant transition
+		get_tree().call_deferred("change_scene_to_file", "res://scenes/ui/main_menu.tscn")
 
 
 ## Update visual highlighting to show selected character

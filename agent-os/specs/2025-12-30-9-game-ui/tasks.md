@@ -337,40 +337,50 @@ Each slice delivers incremental user value and is tested end-to-end.
 
 #### Tasks
 
-- [ ] 7.1 Write integration test: transition from main menu to game has visible fade effect
-- [ ] 7.2 Run test, verify expected failure
-- [ ] 7.3 Make smallest change possible to progress
-- [ ] 7.4 Run test, observe failure or success
-- [ ] 7.5 Document result and update task list
-- [ ] 7.6 Repeat 7.3-7.5 as necessary (expected iterations):
-  - [ ] Create transition_manager.gd autoload script
-  - [ ] Add full-screen ColorRect for fade overlay (black, starts transparent)
-  - [ ] Implement fade_out() method using Tween (alpha 0 to 1, 0.3s)
-  - [ ] Implement fade_in() method using Tween (alpha 1 to 0, 0.3s)
-  - [ ] Implement transition_to_scene(scene_path: String) method
-    - [ ] Call fade_out()
-    - [ ] Wait for fade complete
-    - [ ] Change scene
-    - [ ] Call fade_in()
-  - [ ] Register TransitionManager as autoload in project.godot
-  - [ ] Update main_menu.gd Play button to use TransitionManager
-  - [ ] Update pause_menu.gd Quit to Menu to use TransitionManager
-  - [ ] Update game_over_screen.gd Main Menu button to use TransitionManager
-  - [ ] Add fade-in when pause menu shows (optional, lighter transition)
-  - [ ] Add fade-in when game over shows (optional, lighter transition)
-  - [ ] If transitions prove complex, document and fall back to instant (acceptable per spec)
-- [ ] 7.7 Refactor if needed (keep tests green)
-- [ ] 7.8 Run all feature tests to verify everything works together
-- [ ] 7.9 Final commit
+- [x] 7.1 Write integration test: transition from main menu to game has visible fade effect
+  - Created tests/test_transitions.gd and tests/test_transitions.tscn
+- [x] 7.2 Run test, verify expected failure
+  - Iteration 1: [TransitionManager autoload not found] -> Need to create TransitionManager
+- [x] 7.3-7.6 Red-green iterations:
+  - Iteration 2: [Created transition_manager.gd, registered in project.godot, updated all screens] -> Success
+  - [x] Create transition_manager.gd autoload script (scripts/autoloads/transition_manager.gd)
+  - [x] Add full-screen ColorRect for fade overlay (black, starts transparent)
+  - [x] Implement fade_out() method using Tween (alpha 0 to 1, 0.3s)
+  - [x] Implement fade_in() method using Tween (alpha 1 to 0, 0.3s)
+  - [x] Implement transition_to_scene(scene_path: String) method
+    - [x] Call fade_out()
+    - [x] Wait for fade complete
+    - [x] Change scene
+    - [x] Call fade_in()
+  - [x] Register TransitionManager as autoload in project.godot
+  - [x] Update main_menu.gd Play button to use TransitionManager
+  - [x] Update main_menu.gd Character Selection button to use TransitionManager
+  - [x] Update pause_menu.gd Quit to Menu to use TransitionManager
+  - [x] Update game_over_screen.gd Main Menu button to use TransitionManager
+  - [x] Update character_selection.gd Back button to use TransitionManager
+- [x] 7.7 Refactor if needed (keep tests green) - No refactoring needed
+- [x] 7.8 Run all feature tests to verify everything works together
+  - test_transitions.tscn: PASSED
+  - test_main_menu.tscn: PASSED
+  - test_score_display.tscn: PASSED
+  - test_character_selection.tscn: PASSED
+  - test_pause_menu.tscn: PASSED
+  - test_level_indicator.tscn: PASSED
+  - test_progress_bar.tscn: PASSED
+  - test_score_game_over.tscn: PASSED
+  - test_game_over_main_menu.tscn: PASSED
+- [x] 7.9 Final commit
+
+**Test Result:** Success
 
 **Acceptance Criteria:**
-- Main menu to gameplay transition has fade effect
-- Quit to menu has fade effect
-- Game over to menu has fade effect
-- Transitions are smooth (0.3s duration, no jarring cuts)
-- If implementation is too complex, instant transitions acceptable as fallback
-- All previous slice functionality still works
-- No visual glitches during transitions
+- [x] Main menu to gameplay transition has fade effect
+- [x] Quit to menu has fade effect
+- [x] Game over to menu has fade effect
+- [x] Transitions are smooth (0.3s duration, no jarring cuts)
+- [x] If implementation is too complex, instant transitions acceptable as fallback - Not needed, implementation works
+- [x] All previous slice functionality still works
+- [x] No visual glitches during transitions
 
 ---
 
@@ -384,7 +394,7 @@ After all slices are complete:
 4. **pause_menu.tscn / pause_menu.gd** - Pause overlay with Resume and Quit to Menu
 5. **pause_button.tscn / pause_button.gd** - In-game pause button trigger
 6. **score_display.tscn / score_display.gd** - HUD score counter
-7. **transition_manager.gd** - Autoload for smooth screen transitions (optional)
+7. **transition_manager.gd** - Autoload for smooth screen transitions
 8. **2 new character sprites** - Space Dragon and Cosmic Cat (placeholder acceptable)
 9. **game_over_screen.tscn modifications** - Score display, high scores placeholder, Main Menu button
 10. **progress_bar.tscn modifications** - Level indicator label
@@ -405,3 +415,4 @@ After all slices are complete:
 - **Scene Transition:** get_tree().change_scene_to_file() for navigation
 - **Character Sprites:** Store in assets/sprites/characters/ folder
 - **Autoloads:** Register in project.godot [autoload] section
+- **TransitionManager:** CanvasLayer at layer 100, uses Tween for 0.3s fade animations

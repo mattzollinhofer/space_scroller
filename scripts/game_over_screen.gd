@@ -37,12 +37,17 @@ func hide_game_over() -> void:
 	get_tree().paused = false
 
 
-## Handle Main Menu button pressed - return to main menu
+## Handle Main Menu button pressed - return to main menu with transition
 func _on_main_menu_button_pressed() -> void:
 	# Unpause the game tree before changing scene
 	get_tree().paused = false
-	# Navigate to main menu
-	get_tree().call_deferred("change_scene_to_file", "res://scenes/ui/main_menu.tscn")
+	# Navigate to main menu with transition
+	if has_node("/root/TransitionManager"):
+		var transition_manager = get_node("/root/TransitionManager")
+		transition_manager.transition_to_scene("res://scenes/ui/main_menu.tscn")
+	else:
+		# Fallback to instant transition
+		get_tree().call_deferred("change_scene_to_file", "res://scenes/ui/main_menu.tscn")
 
 
 ## Update the score label with current score from ScoreManager

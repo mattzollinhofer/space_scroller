@@ -53,15 +53,18 @@ Each slice delivers incremental user value and is tested end-to-end.
 
 #### Tasks
 
-- [ ] 2.1 Write integration test verifying music stops when transitioning to menu
-- [ ] 2.2 Run test, verify expected failure
-- [ ] 2.3 Implement stop_music() method in AudioManager
-- [ ] 2.4 Call AudioManager.stop_music() before scene transitions to menus
-- [ ] 2.5 Ensure main_menu.tscn does not trigger music playback
-- [ ] 2.6 Run test, iterate as needed
-- [ ] 2.7 Verify music behavior on pause menu quit, game over return, and level complete transitions
-- [ ] 2.8 Run slice 1 and 2 tests to verify no regressions
-- [ ] 2.9 Commit working slice
+- [x] 2.1 Write integration test verifying music stops when transitioning to menu
+- [x] 2.2 Run test, verify expected failure [stop_music already implemented in Slice 1] -> Test passed
+- [x] 2.3 Implement stop_music() method in AudioManager [already existed from Slice 1]
+- [x] 2.4 Call AudioManager.stop_music() before scene transitions to menus
+  - Added to pause_menu.gd _on_quit_button_pressed()
+  - Added to game_over_screen.gd _on_main_menu_button_pressed()
+  - Added to level_complete_screen.gd _on_main_menu_pressed()
+- [x] 2.5 Ensure main_menu.tscn does not trigger music playback [already correct - no play_music call]
+- [x] 2.6 Run test, iterate as needed - Success
+- [x] 2.7 Verify music behavior on pause menu quit, game over return, and level complete transitions - All verified via test_audio_menu_transitions.gd
+- [x] 2.8 Run slice 1 and 2 tests to verify no regressions - All passed
+- [x] 2.9 Commit working slice - commit b07fab5
 
 **Acceptance Criteria:**
 - Music stops when returning to main menu

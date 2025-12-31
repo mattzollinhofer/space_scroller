@@ -91,7 +91,17 @@ func _on_main_menu_pressed() -> void:
 	# Unpause before transitioning
 	get_tree().paused = false
 	visible = false
+	# Stop music before returning to menu
+	_stop_gameplay_music()
 	get_tree().change_scene_to_file("res://scenes/ui/main_menu.tscn")
+
+
+## Stop gameplay music via AudioManager
+func _stop_gameplay_music() -> void:
+	if has_node("/root/AudioManager"):
+		var audio_manager = get_node("/root/AudioManager")
+		if audio_manager.has_method("stop_music"):
+			audio_manager.stop_music()
 
 
 ## Hide the level complete screen (for next level functionality, if implemented later)

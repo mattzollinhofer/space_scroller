@@ -41,6 +41,8 @@ func hide_game_over() -> void:
 func _on_main_menu_button_pressed() -> void:
 	# Unpause the game tree before changing scene
 	get_tree().paused = false
+	# Stop music before returning to menu
+	_stop_gameplay_music()
 	# Navigate to main menu with transition
 	if has_node("/root/TransitionManager"):
 		var transition_manager = get_node("/root/TransitionManager")
@@ -48,6 +50,14 @@ func _on_main_menu_button_pressed() -> void:
 	else:
 		# Fallback to instant transition
 		get_tree().call_deferred("change_scene_to_file", "res://scenes/ui/main_menu.tscn")
+
+
+## Stop gameplay music via AudioManager
+func _stop_gameplay_music() -> void:
+	if has_node("/root/AudioManager"):
+		var audio_manager = get_node("/root/AudioManager")
+		if audio_manager.has_method("stop_music"):
+			audio_manager.stop_music()
 
 
 ## Update the score label with current score from ScoreManager

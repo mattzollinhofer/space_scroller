@@ -1,0 +1,6 @@
+[gd_scene load_steps=2 format=3 uid="uid://test_audio_stops_menu"]
+
+[ext_resource type="Script" path="res://tests/test_audio_music_stops_menu.gd" id="1_test"]
+
+[node name="TestAudioMusicStopsMenu" type="Node2D"]
+script = ExtResource("1_test")

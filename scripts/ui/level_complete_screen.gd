@@ -14,8 +14,17 @@ extends CanvasLayer
 ## Reference to new high score indicator
 @onready var _new_high_score_label: Label = $CenterContainer/VBoxContainer/NewHighScoreLabel
 
+## Reference to next level button
+@onready var _next_level_button: Button = $CenterContainer/VBoxContainer/NextLevelButton
+
+## Reference to main menu button
+@onready var _main_menu_button: Button = $CenterContainer/VBoxContainer/MainMenuButton
+
 ## Current level number (set by LevelManager before showing)
 var current_level: int = 1
+
+## Maximum level number
+const MAX_LEVEL: int = 3
 
 
 func _ready() -> void:
@@ -23,6 +32,11 @@ func _ready() -> void:
 	visible = false
 	# Set process mode to continue running when game is paused
 	process_mode = Node.PROCESS_MODE_ALWAYS
+	# Connect button signals
+	if _next_level_button:
+		_next_level_button.pressed.connect(_on_next_level_pressed)
+	if _main_menu_button:
+		_main_menu_button.pressed.connect(_on_main_menu_pressed)
 
 
 ## Set the current level number
@@ -35,9 +49,49 @@ func show_level_complete() -> void:
 	_update_score_display()
 	_update_high_score_display()
 	_unlock_next_level()
+	_update_buttons()
 	visible = true
 	# Pause the game tree
 	get_tree().paused = true
+
+
+## Update which button is shown based on whether there's a next level
+func _update_buttons() -> void:
+	var has_next_level: bool = current_level < MAX_LEVEL
+	if _next_level_button:
+		_next_level_button.visible = has_next_level
+	if _main_menu_button:
+		_main_menu_button.visible = not has_next_level
+
+
+## Handle next level button press
+func _on_next_level_pressed() -> void:
+	# Unpause before transitioning
+	get_tree().paused = false
+	visible = false
+
+	# Set the next level in GameState and reload main scene
+	var next_level: int = current_level + 1
+	if has_node("/root/GameState"):
+		var game_state = get_node("/root/GameState")
+		if game_state.has_method("set_selected_level"):
+			game_state.set_selected_level(next_level)
+
+	# Reset score for new level
+	if has_node("/root/ScoreManager"):
+		var score_manager = get_node("/root/ScoreManager")
+		if score_manager.has_method("reset_score"):
+			score_manager.reset_score()
+
+	get_tree().change_scene_to_file("res://scenes/main.tscn")
+
+
+## Handle main menu button press
+func _on_main_menu_pressed() -> void:
+	# Unpause before transitioning
+	get_tree().paused = false
+	visible = false
+	get_tree().change_scene_to_file("res://scenes/ui/main_menu.tscn")
 
 
 ## Hide the level complete screen (for next level functionality, if implemented later)

@@ -20,20 +20,21 @@ Each slice delivers incremental user value and is tested end-to-end.
 
 #### Tasks
 
-- [ ] 1.1 Write integration test that verifies score is displayed on screen during gameplay
-- [ ] 1.2 Run test, verify expected failure
-- [ ] 1.3 Make smallest change possible to progress
-- [ ] 1.4 Run test, observe failure or success
-- [ ] 1.5 Document result and update task list
-- [ ] 1.6 Repeat 1.3-1.5 as necessary (expect to create: score_display.gd, score_display.tscn, add to main.tscn)
-- [ ] 1.7 Refactor if needed (keep tests green)
-- [ ] 1.8 Commit working slice
+- [x] 1.1 Write integration test that verifies score is displayed on screen during gameplay
+- [x] 1.2 Run test, verify expected failure [ScoreDisplay node not found in main scene] -> Created test_score_display.gd and test_score_display.tscn
+- [x] 1.3-1.6 Red-green iterations:
+  - [x] Iteration 1: [ScoreDisplay node not found] -> Created score_display.gd with CanvasLayer pattern
+  - [x] Iteration 2: [Scene needed] -> Created score_display.tscn with layer=10, Container, ScoreLabel
+  - [x] Iteration 3: [Node not in main scene] -> Added ScoreDisplay instance to main.tscn
+  - Success: Test passes - Score display shows "SCORE: 0" in top-right corner
+- [x] 1.7 Refactor if needed (keep tests green) - No refactoring needed
+- [x] 1.8 Commit working slice (commit: cca17f8)
 
 **Acceptance Criteria:**
-- Score label visible in top-right corner showing "SCORE: 0"
-- Format includes comma-separated thousands (will show once score increases)
-- CanvasLayer uses layer 10 to match other UI elements
-- Score display is visible during gameplay
+- [x] Score label visible in top-right corner showing "SCORE: 0"
+- [x] Format includes comma-separated thousands (will show once score increases)
+- [x] CanvasLayer uses layer 10 to match other UI elements
+- [x] Score display is visible during gameplay
 
 ---
 

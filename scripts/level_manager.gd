@@ -23,6 +23,9 @@ extends Node
 ## Reference to the game over screen
 @export var game_over_screen_path: NodePath
 
+## Reference to the level complete screen
+@export var level_complete_screen_path: NodePath
+
 ## Signals
 signal section_changed(section_index: int)
 signal level_completed()
@@ -44,6 +47,9 @@ var _current_section: int = -1
 var _checkpoint_section: int = -1
 var _checkpoint_scroll_offset: float = 0.0
 
+## Level completion state
+var _level_complete: bool = false
+
 ## Reference to scroll controller
 var _scroll_controller: Node = null
 
@@ -61,6 +67,9 @@ var _player: Node = null
 
 ## Reference to game over screen
 var _game_over_screen: Node = null
+
+## Reference to level complete screen
+var _level_complete_screen: Node = null
 
 ## Current progress (0.0 to 1.0)
 var _current_progress: float = 0.0
@@ -132,6 +141,12 @@ func _setup_references() -> void:
 	if not _game_over_screen:
 		_game_over_screen = get_tree().root.get_node_or_null("Main/GameOverScreen")
 
+	# Get level complete screen reference
+	if not level_complete_screen_path.is_empty():
+		_level_complete_screen = get_node_or_null(level_complete_screen_path)
+	if not _level_complete_screen:
+		_level_complete_screen = get_tree().root.get_node_or_null("Main/LevelCompleteScreen")
+
 
 func _setup_wave_based_spawning() -> void:
 	# Disable continuous enemy spawning - we'll spawn waves at section boundaries
@@ -161,8 +176,12 @@ func _on_player_died() -> void:
 
 
 func _process(_delta: float) -> void:
+	if _level_complete:
+		return
+
 	_update_progress()
 	_check_section_change()
+	_check_level_complete()
 
 
 func _update_progress() -> void:
@@ -203,6 +222,26 @@ func _check_section_change() -> void:
 	if new_section != _current_section:
 		_current_section = new_section
 		_on_section_changed(_current_section)
+
+
+func _check_level_complete() -> void:
+	if _current_progress >= 1.0 and not _level_complete:
+		_level_complete = true
+		_on_level_complete()
+
+
+func _on_level_complete() -> void:
+	# Stop spawners
+	if _obstacle_spawner and _obstacle_spawner.has_method("set_density"):
+		# Setting to a very low density effectively stops spawning
+		pass  # Keep spawning as-is, just stop processing
+
+	# Show level complete screen
+	if _level_complete_screen and _level_complete_screen.has_method("show_level_complete"):
+		_level_complete_screen.show_level_complete()
+
+	# Emit signal for other systems
+	level_completed.emit()
 
 
 func _on_section_changed(section_index: int) -> void:
@@ -299,3 +338,8 @@ func get_section(index: int) -> Dictionary:
 ## Check if a checkpoint has been saved
 func has_checkpoint() -> bool:
 	return _checkpoint_section > 0
+
+
+## Check if level is complete
+func is_level_complete() -> bool:
+	return _level_complete

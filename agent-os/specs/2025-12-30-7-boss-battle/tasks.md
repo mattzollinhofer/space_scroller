@@ -186,36 +186,45 @@ The boss battle feature adds an end-of-level boss encounter with health bar, thr
 
 #### Tasks
 
-- [ ] 4.1 Write integration test: boss cycles through multiple attack patterns
+- [x] 4.1 Write integration test: boss cycles through multiple attack patterns
   - Start boss fight, wait through multiple attacks
   - Verify boss position changes (vertical sweep, charge)
   - Verify pattern cycling occurs
-- [ ] 4.2 Run test, verify expected failure
-- [ ] 4.3 Implement vertical sweep attack (Pattern 2)
+  - [Created tests/test_boss_patterns.gd and test_boss_patterns.tscn]
+- [x] 4.2 Run test, verify expected failure
+  - [failure: Boss position did not change during attacks] -> Sweep and charge not implemented
+- [x] 4.3 Implement vertical sweep attack (Pattern 2)
   - Boss tweens up/down while firing single projectiles
   - Use Y_MIN/Y_MAX bounds from base_enemy constants
-  - Fire projectiles at intervals during sweep
-- [ ] 4.4 Implement charge attack (Pattern 3)
+  - Fire projectiles at intervals during sweep (0.3s interval)
+  - Added _attack_vertical_sweep() and _process_sweep_projectiles()
+- [x] 4.4 Implement charge attack (Pattern 3)
   - Store player position at attack start
-  - Tween boss toward player X position (not all the way to avoid overlap)
-  - Pause briefly, then tween back to battle position
+  - Tween boss toward player X position (stops 150px before player)
+  - Pause briefly (0.3s), then tween back to battle position
   - Player takes contact damage if boss overlaps
-- [ ] 4.5 Add body_entered collision for charge attack damage
-  - Connect to player CharacterBody2D collision
-  - Call player.take_damage() on contact
-- [ ] 4.6 Implement pattern cycling
-  - Cycle through patterns 1, 2, 3 in order
-  - Add cooldown between patterns (1-2 seconds)
-  - Reset to pattern 1 after pattern 3
-- [ ] 4.7 Run all slice tests to verify no regressions
+  - Added _attack_charge() method
+- [x] 4.5 Add body_entered collision for charge attack damage
+  - body_entered signal already connected in _ready()
+  - _on_body_entered calls player.take_damage() on contact
+- [x] 4.6 Implement pattern cycling
+  - Cycle through patterns 0, 1, 2 in order (barrage, sweep, charge)
+  - Cooldown between patterns (2.0s default)
+  - Reset to pattern 0 after pattern 2
+  - State machine handles transitions
+- [x] 4.7 Run all slice tests to verify no regressions
+  - test_boss_spawn.tscn: PASSED
+  - test_boss_damage.tscn: PASSED
+  - test_boss_attack.tscn: PASSED
+  - test_boss_patterns.tscn: PASSED
 - [ ] 4.8 Commit working slice
 
 **Acceptance Criteria:**
-- Boss performs vertical sweep while firing
-- Boss charges toward player position then returns
-- Player takes damage from charge contact
-- Patterns cycle: barrage -> sweep -> charge -> barrage...
-- Brief cooldown between each pattern
+- [x] Boss performs vertical sweep while firing
+- [x] Boss charges toward player position then returns
+- [x] Player takes damage from charge contact
+- [x] Patterns cycle: barrage -> sweep -> charge -> barrage...
+- [x] Brief cooldown between each pattern
 
 ---
 

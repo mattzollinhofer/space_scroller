@@ -57,6 +57,31 @@ var _attack_timer: float = 0.0
 ## Whether attack cycle is active
 var _attack_cycle_active: bool = false
 
+## Y bounds for vertical sweep (from base_enemy.gd)
+const Y_MIN: float = 140.0
+const Y_MAX: float = 1396.0
+
+## Reference to player for charge attack targeting
+var _player: Node2D = null
+
+## Whether currently in a sweep attack
+var _sweep_active: bool = false
+
+## Sweep projectile interval timer
+var _sweep_projectile_timer: float = 0.0
+
+## Sweep projectile fire interval
+@export var sweep_fire_interval: float = 0.3
+
+## Whether currently in a charge attack
+var _charge_active: bool = false
+
+## Charge attack target X position
+var _charge_target_x: float = 0.0
+
+## Charge damage amount
+@export var charge_damage: int = 1
+
 ## Emitted when the boss is defeated
 signal boss_defeated()
 
@@ -86,10 +111,36 @@ func _ready() -> void:
 	if not boss_projectile_scene:
 		boss_projectile_scene = load("res://scenes/enemies/boss_projectile.tscn")
 
+	# Find player reference
+	_find_player()
+
+
+func _find_player() -> void:
+	# Try to find player in scene tree
+	var root = get_tree().root
+	_player = root.get_node_or_null("Main/Player")
+	if not _player:
+		# Search recursively
+		_player = _find_node_by_name(root, "Player")
+
+
+func _find_node_by_name(node: Node, target_name: String) -> Node:
+	if node.name == target_name:
+		return node
+	for child in node.get_children():
+		var found = _find_node_by_name(child, target_name)
+		if found:
+			return found
+	return null
+
 
 func _process(delta: float) -> void:
 	if _is_destroying or not _entrance_complete:
 		return
+
+	# Process sweep attack projectile firing
+	if _sweep_active:
+		_process_sweep_projectiles(delta)
 
 	# Process attack state machine
 	_process_attack_state(delta)
@@ -112,7 +163,10 @@ func _process_attack_state(delta: float) -> void:
 				_execute_attack()
 
 		AttackState.ATTACKING:
-			# Attack execution is instant, move to cooldown
+			# For sweep and charge, wait for tween to complete
+			if _sweep_active or _charge_active:
+				return
+			# Attack execution is instant for barrage, move to cooldown
 			_attack_state = AttackState.COOLDOWN
 			_attack_timer = attack_cooldown
 
@@ -129,11 +183,9 @@ func _execute_attack() -> void:
 		0:
 			_attack_horizontal_barrage()
 		1:
-			# Vertical sweep (to be implemented in Slice 4)
-			_attack_horizontal_barrage()
+			_attack_vertical_sweep()
 		2:
-			# Charge attack (to be implemented in Slice 4)
-			_attack_horizontal_barrage()
+			_attack_charge()
 
 
 func _attack_horizontal_barrage() -> void:
@@ -174,6 +226,107 @@ func _attack_horizontal_barrage() -> void:
 	attack_fired.emit()
 
 
+func _attack_vertical_sweep() -> void:
+	## Boss moves up/down while firing single projectiles
+	if _attack_tween and _attack_tween.is_valid():
+		_attack_tween.kill()
+
+	_sweep_active = true
+	_sweep_projectile_timer = 0.0  # Fire immediately
+
+	# Determine sweep direction based on current position
+	var sweep_up = position.y > (Y_MIN + Y_MAX) / 2.0
+
+	# Create sweep tween
+	_attack_tween = create_tween()
+
+	if sweep_up:
+		# Sweep up then down
+		_attack_tween.tween_property(self, "position:y", Y_MIN, 1.0).set_ease(Tween.EASE_IN_OUT).set_trans(Tween.TRANS_SINE)
+		_attack_tween.tween_property(self, "position:y", _battle_position.y, 1.0).set_ease(Tween.EASE_IN_OUT).set_trans(Tween.TRANS_SINE)
+	else:
+		# Sweep down then up
+		_attack_tween.tween_property(self, "position:y", Y_MAX, 1.0).set_ease(Tween.EASE_IN_OUT).set_trans(Tween.TRANS_SINE)
+		_attack_tween.tween_property(self, "position:y", _battle_position.y, 1.0).set_ease(Tween.EASE_IN_OUT).set_trans(Tween.TRANS_SINE)
+
+	_attack_tween.tween_callback(_on_sweep_complete)
+
+
+func _process_sweep_projectiles(delta: float) -> void:
+	## Fire projectiles at intervals during sweep
+	_sweep_projectile_timer -= delta
+	if _sweep_projectile_timer <= 0:
+		_sweep_projectile_timer = sweep_fire_interval
+		_fire_single_projectile()
+
+
+func _fire_single_projectile() -> void:
+	## Fire a single projectile to the left
+	if not boss_projectile_scene:
+		return
+
+	var projectile = boss_projectile_scene.instantiate()
+	projectile.position = position + Vector2(-100, 0)
+
+	# Direction straight left
+	var direction = Vector2(-1, 0)
+	if projectile.has_method("set_direction"):
+		projectile.set_direction(direction)
+	else:
+		projectile.direction = direction
+
+	var parent = get_parent()
+	if parent:
+		parent.add_child(projectile)
+
+	attack_fired.emit()
+
+
+func _on_sweep_complete() -> void:
+	_sweep_active = false
+	_attack_state = AttackState.COOLDOWN
+	_attack_timer = attack_cooldown
+
+
+func _attack_charge() -> void:
+	## Charge toward player position then return to battle position
+	if _attack_tween and _attack_tween.is_valid():
+		_attack_tween.kill()
+
+	_charge_active = true
+
+	# Get player position for targeting
+	var target_x = position.x  # Default to current position
+	if _player and is_instance_valid(_player):
+		# Charge toward player X, but not all the way (stop 150px before)
+		target_x = _player.position.x + 150
+	else:
+		# If no player, charge to left side of screen
+		target_x = 600
+
+	_charge_target_x = target_x
+
+	# Create charge tween
+	_attack_tween = create_tween()
+
+	# Quick charge toward player
+	_attack_tween.tween_property(self, "position:x", target_x, 0.4).set_ease(Tween.EASE_IN).set_trans(Tween.TRANS_QUAD)
+
+	# Brief pause at charge position
+	_attack_tween.tween_interval(0.3)
+
+	# Return to battle position
+	_attack_tween.tween_property(self, "position:x", _battle_position.x, 0.6).set_ease(Tween.EASE_OUT).set_trans(Tween.TRANS_QUAD)
+
+	_attack_tween.tween_callback(_on_charge_complete)
+
+
+func _on_charge_complete() -> void:
+	_charge_active = false
+	_attack_state = AttackState.COOLDOWN
+	_attack_timer = attack_cooldown
+
+
 ## Setup boss at spawn position and start entrance animation
 func setup(spawn_position: Vector2, battle_position: Vector2) -> void:
 	position = spawn_position
@@ -202,7 +355,7 @@ func _on_body_entered(body: Node2D) -> void:
 	if _is_destroying:
 		return
 
-	# Check if it's the player
+	# Check if it's the player - deals contact damage during charge
 	if body.has_method("take_damage"):
 		body.take_damage()
 
@@ -262,6 +415,8 @@ func _on_health_depleted() -> void:
 
 	# Stop attack cycle
 	_attack_cycle_active = false
+	_sweep_active = false
+	_charge_active = false
 
 	# Kill tweens if active
 	if _flash_tween and _flash_tween.is_valid():
@@ -316,6 +471,12 @@ func start_attack_cycle() -> void:
 func stop_attack_cycle() -> void:
 	_attack_cycle_active = false
 	_attack_state = AttackState.IDLE
+	_sweep_active = false
+	_charge_active = false
+
+	# Kill attack tween if active
+	if _attack_tween and _attack_tween.is_valid():
+		_attack_tween.kill()
 
 
 ## Get current attack state (for testing)
@@ -326,3 +487,13 @@ func get_attack_state() -> AttackState:
 ## Check if attack cycle is active
 func is_attacking() -> bool:
 	return _attack_cycle_active
+
+
+## Check if currently charging (for testing)
+func is_charging() -> bool:
+	return _charge_active
+
+
+## Check if currently sweeping (for testing)
+func is_sweeping() -> bool:
+	return _sweep_active

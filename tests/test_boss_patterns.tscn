@@ -1,0 +1,6 @@
+[gd_scene load_steps=2 format=3 uid="uid://cewrmx45hy2p3"]
+
+[ext_resource type="Script" path="res://tests/test_boss_patterns.gd" id="1_boss_patterns"]
+
+[node name="TestBossPatterns" type="Node2D"]
+script = ExtResource("1_boss_patterns")

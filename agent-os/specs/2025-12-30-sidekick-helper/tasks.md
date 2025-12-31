@@ -178,29 +178,54 @@ Each slice delivers incremental user value and is tested end-to-end.
 
 #### Tasks
 
-- [ ] 4.1 Write integration test: sidekick destroyed on enemy contact
+- [x] 4.1 Write integration test: sidekick destroyed on enemy contact
   - Spawn sidekick pickup, collect it
   - Spawn enemy at sidekick position
   - Verify sidekick is destroyed after collision
-- [ ] 4.2 Run test, verify expected failure
-- [ ] 4.3 Set sidekick collision layer 1 (player layer) to be hit by enemies
-- [ ] 4.4 Set sidekick collision mask 2 (enemy layer) to detect enemy contact
-- [ ] 4.5 Implement body_entered handler for enemy collision
-- [ ] 4.6 Implement destruction animation (scale up, fade out like pickup)
-- [ ] 4.7 Run test, observe failure or success
-- [ ] 4.8 Document result and update task list
-- [ ] 4.9 Repeat 4.6-4.8 as necessary
-- [ ] 4.10 Verify sidekick cleanup: disconnect signals, remove from scene
-- [ ] 4.11 Test that sidekick has NO invincibility (immediate destruction)
-- [ ] 4.12 Refactor if needed (keep tests green)
-- [ ] 4.13 Run all slice tests (1-4) to verify no regressions
-- [ ] 4.14 Commit working slice
+  - Created test_sidekick_destruction.gd and test_sidekick_destruction.tscn
+- [x] 4.2 Run test, verify expected failure
+  - [Sidekick was NOT destroyed by enemy contact] -> Test failed as expected
+  - Sidekick had no collision handling for enemies
+- [x] 4.3 Set sidekick collision layer 1 (player layer) to be hit by enemies
+  - Already set in sidekick.tscn: collision_layer = 1
+- [x] 4.4 Set sidekick collision mask 2 (enemy layer) to detect enemy contact
+  - Already set in sidekick.tscn: collision_mask = 2
+- [x] 4.5 Implement area_entered handler for enemy collision
+  - Connected area_entered signal in _ready()
+  - Handler checks for enemy via take_hit method or health property
+  - Calls _destroy() when enemy detected
+- [x] 4.6 Implement destruction animation (scale up, fade out like pickup)
+  - Added _play_destruction_animation() with tween
+  - Scales sprite up 2x and fades to 0 alpha over 0.3 seconds
+  - queue_free() called after animation completes
+- [x] 4.7 Run test, observe failure or success
+  - Success - test passes on first run after implementation
+- [x] 4.8 Document result and update task list
+- [x] 4.9 Repeat 4.6-4.8 as necessary
+  - No repetition needed - passed on first try
+- [x] 4.10 Verify sidekick cleanup: disconnect signals, remove from scene
+  - _destroy() disconnects player's projectile_fired signal
+  - Disables monitoring/monitorable via set_deferred
+  - queue_free() removes sidekick after animation
+- [x] 4.11 Test that sidekick has NO invincibility (immediate destruction)
+  - Created test_sidekick_no_invincibility.gd and .tscn
+  - Verifies sidekick has no health property
+  - Confirms single hit destruction with no grace period
+  - Test passes
+- [x] 4.12 Refactor if needed (keep tests green)
+  - No refactoring needed
+  - Added _is_destroying flag to prevent double-processing
+  - Added guards in shoot() and _process() for destruction state
+- [x] 4.13 Run all slice tests (1-4) to verify no regressions
+  - All 6 tests pass: test_star_pickup, test_sidekick_pickup, test_sidekick_shooting,
+    test_sidekick_destruction, test_sidekick_no_invincibility, test_score_ufo_friend
+- [x] 4.14 Commit working slice
 
 **Acceptance Criteria:**
-- Sidekick takes damage from enemy contact
-- Single hit destroys sidekick (no health system, no invincibility)
-- Destruction plays visual animation (explosion or fade)
-- Sidekick properly cleaned up after destruction
+- [x] Sidekick takes damage from enemy contact
+- [x] Single hit destroys sidekick (no health system, no invincibility)
+- [x] Destruction plays visual animation (explosion or fade)
+- [x] Sidekick properly cleaned up after destruction
 
 ---
 

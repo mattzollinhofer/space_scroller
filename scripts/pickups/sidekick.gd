@@ -2,6 +2,7 @@ extends Area2D
 class_name Sidekick
 ## UFO sidekick companion that follows the player with a position offset.
 ## Provides extra firepower by shooting when the player shoots.
+## Destroyed on contact with enemies.
 
 ## Position offset from player (behind and above)
 @export var follow_offset: Vector2 = Vector2(-50, -30)
@@ -18,11 +19,16 @@ var _player: Node2D = null
 ## Target position to follow (player position + offset)
 var _target_position: Vector2 = Vector2.ZERO
 
+## Whether the sidekick is currently being destroyed (prevents double-processing)
+var _is_destroying: bool = false
+
 
 func _ready() -> void:
 	add_to_group("sidekick")
 	# Load projectile scene
 	projectile_scene = load("res://scenes/projectile.tscn")
+	# Connect signal for collision detection with enemies (Area2D)
+	area_entered.connect(_on_area_entered)
 
 
 ## Setup the sidekick with player reference
@@ -37,9 +43,12 @@ func setup(player: Node2D) -> void:
 
 
 func _process(delta: float) -> void:
+	if _is_destroying:
+		return
+
 	if not _player or not is_instance_valid(_player):
 		# Player is gone, clean up sidekick
-		queue_free()
+		_destroy()
 		return
 
 	# Update target position based on player
@@ -49,13 +58,30 @@ func _process(delta: float) -> void:
 	position = position.lerp(_target_position, follow_speed * delta)
 
 
+## Called when another Area2D enters our collision area
+func _on_area_entered(area: Area2D) -> void:
+	if _is_destroying:
+		return
+
+	# Check if it's an enemy (enemies are on layer 2)
+	# Enemies extend BaseEnemy which has health property
+	if area.has_method("take_hit") or area.get("health") != null:
+		print("Sidekick hit by enemy!")
+		_destroy()
+
+
 ## Called when player fires a projectile - sidekick fires synchronized
 func _on_player_projectile_fired() -> void:
+	if _is_destroying:
+		return
 	shoot()
 
 
 ## Spawn a projectile from the sidekick's position
 func shoot() -> void:
+	if _is_destroying:
+		return
+
 	if not projectile_scene:
 		push_warning("No projectile scene loaded for Sidekick")
 		return
@@ -67,3 +93,42 @@ func shoot() -> void:
 
 	# Add to Main scene so it persists independently
 	get_parent().add_child(projectile)
+
+
+## Destroy the sidekick with visual animation
+func _destroy() -> void:
+	if _is_destroying:
+		return
+	_is_destroying = true
+
+	# Disconnect from player signals to avoid errors
+	if _player and is_instance_valid(_player) and _player.has_signal("projectile_fired"):
+		if _player.projectile_fired.is_connected(_on_player_projectile_fired):
+			_player.projectile_fired.disconnect(_on_player_projectile_fired)
+
+	# Disable collision during animation
+	set_deferred("monitoring", false)
+	set_deferred("monitorable", false)
+
+	# Play destruction animation (scale up and fade out like pickup)
+	_play_destruction_animation()
+
+
+## Play destruction animation: scale up and fade out
+func _play_destruction_animation() -> void:
+	var sprite = get_node_or_null("Sprite2D")
+	if not sprite:
+		queue_free()
+		return
+
+	# Get current values
+	var original_scale = sprite.scale
+
+	# Animate: scale up and fade out
+	var tween = create_tween()
+	tween.set_parallel(true)
+	tween.tween_property(sprite, "scale", original_scale * 2.0, 0.3).set_ease(Tween.EASE_OUT)
+	tween.tween_property(sprite, "modulate:a", 0.0, 0.3).set_ease(Tween.EASE_IN)
+
+	# Queue free after animation completes
+	tween.chain().tween_callback(queue_free)

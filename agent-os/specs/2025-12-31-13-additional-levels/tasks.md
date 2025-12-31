@@ -32,7 +32,7 @@ This feature adds 2 additional levels (Level 2 and Level 3) with unique visual t
 - [x] 1.7 Create level_select.tscn with Level 1 button and level_select.gd with handler
 - [x] 1.8 Run test - Success!
 - [x] 1.9 Verified no regressions (test_main_menu.tscn, test_character_selection.tscn pass)
-- [ ] 1.10 Commit working slice
+- [x] 1.10 Commit working slice
 
 **Acceptance Criteria:**
 - Main menu shows "Level Select" button between "Play" and "Character Select"
@@ -53,21 +53,37 @@ This feature adds 2 additional levels (Level 2 and Level 3) with unique visual t
 
 #### Tasks
 
-- [ ] 2.1 Write integration test: clicking Level 1 button starts game with level_1.json
-- [ ] 2.2 Run test, verify expected failure
-- [ ] 2.3 Make smallest change possible to progress
-- [ ] 2.4 Run test, observe failure or success
-- [ ] 2.5 Document result and update task list
-- [ ] 2.6 Repeat 2.3-2.5 as necessary
-- [ ] 2.7 Write test: Level 2 and 3 buttons show locked state when not unlocked
-- [ ] 2.8 Implement locked button visual state (disabled property, gray color)
-- [ ] 2.9 Write test: ScoreManager persists level unlock state to ConfigFile
-- [ ] 2.10 Add unlock_level() and is_level_unlocked() methods to ScoreManager
-- [ ] 2.11 Write test: completing Level 1 unlocks Level 2
-- [ ] 2.12 Update level_complete_screen.gd to call unlock_level() for next level
-- [ ] 2.13 Run all slice tests to verify no regressions
-- [ ] 2.14 Refactor if needed (keep tests green)
-- [ ] 2.15 Commit working slice
+- [x] 2.1 Write integration test: clicking Level 1 button starts game with level_1.json
+  - Created tests/test_level1_start.gd and .tscn
+- [x] 2.2 Run test, verify expected failure
+  - Test passed immediately (Level 1 button exists and _on_level_selected method exists)
+- [x] 2.3-2.6 Make changes and iterate
+  - Added Level 2 and Level 3 buttons to level_select.tscn (disabled, grayed out)
+  - Updated level_select.gd to connect all buttons and update states based on ScoreManager
+  - Added level selection to GameState autoload (get_selected_level, set_selected_level, get_level_path)
+  - Updated LevelManager to read selected level from GameState
+- [x] 2.7 Write test: Level 2 and 3 buttons show locked state when not unlocked
+  - Created tests/test_level_locked_state.gd and .tscn - PASSED
+- [x] 2.8 Implement locked button visual state (disabled property, gray color)
+  - Buttons added to level_select.tscn with disabled=true and gray font color
+  - level_select.gd updates appearance based on unlock status
+- [x] 2.9 Write test: ScoreManager persists level unlock state to ConfigFile
+  - Created tests/test_level_unlock_persistence.gd and .tscn - PASSED
+- [x] 2.10 Add unlock_level() and is_level_unlocked() methods to ScoreManager
+  - Added _unlocked_levels array, is_level_unlocked(), unlock_level(), reset_level_unlocks()
+  - Updated _save_to_file() and load_high_scores() to persist level unlocks
+- [x] 2.11 Write test: completing Level 1 unlocks Level 2
+  - Created tests/test_level_complete_unlocks.gd and .tscn - PASSED
+- [x] 2.12 Update level_complete_screen.gd to call unlock_level() for next level
+  - Added current_level property and set_current_level() method
+  - Added _unlock_next_level() called in show_level_complete()
+  - LevelManager now passes current level to level_complete_screen before showing
+- [x] 2.13 Run all slice tests to verify no regressions
+  - All 6 slice-related tests pass
+  - Pre-existing test failures unrelated to this slice (test_patrol_enemy_two_hits, test_high_score_game_over)
+- [x] 2.14 Refactor if needed (keep tests green)
+  - No refactoring needed
+- [x] 2.15 Commit working slice
 
 **Acceptance Criteria:**
 - Level 1 button is clickable and starts the game

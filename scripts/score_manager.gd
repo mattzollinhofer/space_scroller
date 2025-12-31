@@ -3,6 +3,7 @@ extends Node
 ## Connects to enemy died signals to award points.
 ## Emits score_changed signal for UI updates.
 ## Handles high score persistence using ConfigFile.
+## Also manages level unlock state.
 
 ## Emitted when score changes
 signal score_changed(new_score: int)
@@ -10,11 +11,17 @@ signal score_changed(new_score: int)
 ## Emitted when a new high score is achieved
 signal new_high_score(score: int)
 
+## Emitted when a level is unlocked
+signal level_unlocked(level_number: int)
+
 ## Current score for the active game session
 var _current_score: int = 0
 
 ## High scores list (array of dictionaries with "score" and "date" keys)
 var _high_scores: Array = []
+
+## Unlocked levels (array of level numbers, Level 1 always unlocked)
+var _unlocked_levels: Array = [1]
 
 ## Maximum number of high scores to store
 const MAX_HIGH_SCORES: int = 10
@@ -148,22 +155,62 @@ func _sort_high_scores() -> void:
 	)
 
 
-## Save high scores to file using ConfigFile
+## Check if a level is unlocked
+func is_level_unlocked(level_number: int) -> bool:
+	# Level 1 is always unlocked
+	if level_number == 1:
+		return true
+	return level_number in _unlocked_levels
+
+
+## Unlock a level
+func unlock_level(level_number: int) -> void:
+	if level_number in _unlocked_levels:
+		return
+	_unlocked_levels.append(level_number)
+	_unlocked_levels.sort()
+	_save_to_file()
+	level_unlocked.emit(level_number)
+
+
+## Reset level unlocks (for testing)
+func reset_level_unlocks() -> void:
+	_unlocked_levels = [1]
+	_save_to_file()
+
+
+## Get the highest unlocked level number
+func get_highest_unlocked_level() -> int:
+	if _unlocked_levels.is_empty():
+		return 1
+	return _unlocked_levels.max()
+
+
+## Save high scores and level unlocks to file using ConfigFile
 func _save_to_file() -> void:
 	var config = ConfigFile.new()
 
+	# Save high scores
 	for i in range(_high_scores.size()):
 		var entry = _high_scores[i]
 		config.set_value("high_scores", "score_%d" % i, entry["score"])
 		config.set_value("high_scores", "date_%d" % i, entry["date"])
 
 	config.set_value("high_scores", "count", _high_scores.size())
+
+	# Save level unlocks
+	for i in range(_unlocked_levels.size()):
+		config.set_value("level_unlocks", "level_%d" % i, _unlocked_levels[i])
+
+	config.set_value("level_unlocks", "count", _unlocked_levels.size())
+
 	config.save(HIGH_SCORE_PATH)
 
 
-## Load high scores from file
+## Load high scores and level unlocks from file
 func load_high_scores() -> void:
 	_high_scores.clear()
+	_unlocked_levels = [1]  # Level 1 always unlocked
 
 	if not FileAccess.file_exists(HIGH_SCORE_PATH):
 		return
@@ -173,6 +220,7 @@ func load_high_scores() -> void:
 	if error != OK:
 		return
 
+	# Load high scores
 	var count: int = config.get_value("high_scores", "count", 0)
 
 	for i in range(count):
@@ -186,3 +234,13 @@ func load_high_scores() -> void:
 
 	# Ensure sorted after loading
 	_sort_high_scores()
+
+	# Load level unlocks
+	var unlock_count: int = config.get_value("level_unlocks", "count", 0)
+
+	for i in range(unlock_count):
+		var level_num: int = config.get_value("level_unlocks", "level_%d" % i, 0)
+		if level_num > 0 and level_num not in _unlocked_levels:
+			_unlocked_levels.append(level_num)
+
+	_unlocked_levels.sort()

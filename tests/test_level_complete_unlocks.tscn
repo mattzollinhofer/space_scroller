@@ -1,0 +1,6 @@
+[gd_scene load_steps=2 format=3 uid="uid://ctest_level_complete_unlocks"]
+
+[ext_resource type="Script" path="res://tests/test_level_complete_unlocks.gd" id="1_test"]
+
+[node name="TestLevelCompleteUnlocks" type="Node2D"]
+script = ExtResource("1_test")

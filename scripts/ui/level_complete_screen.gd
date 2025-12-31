@@ -2,6 +2,7 @@ extends CanvasLayer
 ## Level complete screen that displays when the player finishes the level.
 ## Pauses the game tree when shown.
 ## Shows current score, high score, and "NEW HIGH SCORE!" indicator.
+## Unlocks the next level when shown.
 
 
 ## Reference to score label
@@ -13,6 +14,9 @@ extends CanvasLayer
 ## Reference to new high score indicator
 @onready var _new_high_score_label: Label = $CenterContainer/VBoxContainer/NewHighScoreLabel
 
+## Current level number (set by LevelManager before showing)
+var current_level: int = 1
+
 
 func _ready() -> void:
 	# Start hidden
@@ -21,10 +25,16 @@ func _ready() -> void:
 	process_mode = Node.PROCESS_MODE_ALWAYS
 
 
+## Set the current level number
+func set_current_level(level_number: int) -> void:
+	current_level = level_number
+
+
 ## Show the level complete screen and pause the game
 func show_level_complete() -> void:
 	_update_score_display()
 	_update_high_score_display()
+	_unlock_next_level()
 	visible = true
 	# Pause the game tree
 	get_tree().paused = true
@@ -74,6 +84,19 @@ func _update_high_score_display() -> void:
 	# Show/hide new high score indicator
 	if _new_high_score_label:
 		_new_high_score_label.visible = is_new
+
+
+## Unlock the next level after completing current level
+func _unlock_next_level() -> void:
+	if not has_node("/root/ScoreManager"):
+		return
+
+	var score_manager = get_node("/root/ScoreManager")
+
+	# Unlock the next level (current_level + 1)
+	var next_level: int = current_level + 1
+	if score_manager.has_method("unlock_level"):
+		score_manager.unlock_level(next_level)
 
 
 ## Format number with comma-separated thousands

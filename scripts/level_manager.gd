@@ -50,6 +50,9 @@ var _sections: Array = []
 ## Current section index
 var _current_section: int = -1
 
+## Current level number (1, 2, or 3)
+var _level_number: int = 1
+
 ## Checkpoint data
 var _checkpoint_section: int = -1
 var _checkpoint_scroll_offset: float = 0.0
@@ -100,12 +103,23 @@ var _viewport_height: float = 1536.0
 func _ready() -> void:
 	_viewport_width = ProjectSettings.get_setting("display/window/size/viewport_width")
 	_viewport_height = ProjectSettings.get_setting("display/window/size/viewport_height")
+	_get_selected_level_from_game_state()
 	_load_level_data()
 	_setup_references()
 	_setup_wave_based_spawning()
 	_connect_player_signals()
 	# Set initial section density and spawn first wave
 	_check_section_change()
+
+
+## Get the selected level from GameState autoload
+func _get_selected_level_from_game_state() -> void:
+	if has_node("/root/GameState"):
+		var game_state = get_node("/root/GameState")
+		if game_state.has_method("get_selected_level"):
+			_level_number = game_state.get_selected_level()
+		if game_state.has_method("get_selected_level_path"):
+			level_path = game_state.get_selected_level_path()
 
 
 func _load_level_data() -> void:
@@ -511,8 +525,15 @@ func _on_boss_defeated() -> void:
 
 
 func _show_level_complete_screen() -> void:
-	if _level_complete_screen and _level_complete_screen.has_method("show_level_complete"):
-		_level_complete_screen.show_level_complete()
+	if _level_complete_screen:
+		# Set the current level number before showing
+		if _level_complete_screen.has_method("set_current_level"):
+			_level_complete_screen.set_current_level(_level_number)
+		elif "current_level" in _level_complete_screen:
+			_level_complete_screen.current_level = _level_number
+
+		if _level_complete_screen.has_method("show_level_complete"):
+			_level_complete_screen.show_level_complete()
 
 
 func _on_section_changed(section_index: int) -> void:
@@ -597,6 +618,11 @@ func get_total_distance() -> float:
 ## Get current section index
 func get_current_section() -> int:
 	return _current_section
+
+
+## Get current level number
+func get_level_number() -> int:
+	return _level_number
 
 
 ## Get section data by index

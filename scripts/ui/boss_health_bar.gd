@@ -39,24 +39,19 @@ func get_fill_percent() -> float:
 
 
 func _update_fill() -> void:
-	if not _fill or not _background:
+	if not _fill:
 		return
 
 	# Calculate fill percentage
 	var fill_percent = get_fill_percent()
 
-	# Get background dimensions for reference
-	var bg_width = _background.offset_right - _background.offset_left
-	if bg_width <= 0:
-		bg_width = bar_width
+	# Fill bar: left margin at 2, max right at 298 (296px total width)
+	var fill_left = 2.0
+	var fill_max_width = 296.0
+	var fill_width = fill_max_width * fill_percent
 
-	# Fill from left, so we adjust offset_right based on fill percentage
-	# offset_left stays at 0, offset_right moves based on health
-	var fill_width = bg_width * fill_percent
-
-	# The fill starts at offset_left = 0 (relative to anchor)
-	# We only need to update offset_right to shrink/grow the fill
-	_fill.offset_right = _fill.offset_left + fill_width - 4  # -4 for margin
+	# Update offset_right to shrink/grow the fill
+	_fill.offset_right = fill_left + fill_width
 
 
 ## Hide the health bar

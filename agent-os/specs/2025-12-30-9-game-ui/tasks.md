@@ -25,33 +25,34 @@ Each slice delivers incremental user value and is tested end-to-end.
 
 #### Tasks
 
-- [ ] 1.1 Write integration test: game launches to main menu, Play button visible, clicking Play loads gameplay
-- [ ] 1.2 Run test, verify expected failure
-- [ ] 1.3 Make smallest change possible to progress
-- [ ] 1.4 Run test, observe failure or success
-- [ ] 1.5 Document result and update task list
-- [ ] 1.6 Repeat 1.3-1.5 as necessary (expected iterations):
-  - [ ] Create main_menu.gd script extending Control (full scene, not overlay)
-  - [ ] Create main_menu.tscn scene with CenterContainer > VBoxContainer layout
-  - [ ] Add game title Label with large font (128pt) and space-themed color
-  - [ ] Add Play button using Button node with space-themed styling
-  - [ ] Add High Scores button (disabled placeholder, disabled = true)
-  - [ ] Add Character Selection button (functional in Slice 3)
-  - [ ] Connect Play button pressed signal to _on_play_pressed()
-  - [ ] Implement _on_play_pressed() to change_scene_to_file("res://scenes/main.tscn")
-  - [ ] Update project.godot run/main_scene to "res://scenes/ui/main_menu.tscn"
-  - [ ] Add semi-transparent space background or solid dark color
-- [ ] 1.7 Refactor if needed (keep tests green)
-- [ ] 1.8 Commit working slice
+- [x] 1.1 Write integration test: game launches to main menu, Play button visible, clicking Play loads gameplay
+- [x] 1.2 Run test, verify expected failure
+  - Iteration 1: [main menu scene not found] -> Created main_menu.gd and main_menu.tscn
+- [x] 1.3-1.6 Red-green iterations:
+  - Iteration 2: [Scene created, test passed for UI elements] -> Success
+  - [x] Create main_menu.gd script extending Control (full scene, not overlay)
+  - [x] Create main_menu.tscn scene with CenterContainer > VBoxContainer layout
+  - [x] Add game title Label with large font (128pt) and space-themed color (gold)
+  - [x] Add Play button using Button node with space-themed styling
+  - [x] Add High Scores button (disabled placeholder, disabled = true)
+  - [x] Add Character Selection button (functional in Slice 3)
+  - [x] Connect Play button pressed signal to _on_play_button_pressed()
+  - [x] Implement _on_play_button_pressed() to change_scene_to_file("res://scenes/main.tscn")
+  - [x] Update project.godot run/main_scene to "res://scenes/ui/main_menu.tscn"
+  - [x] Add solid dark space background (dark purple ColorRect)
+- [x] 1.7 Refactor if needed (keep tests green) - No refactoring needed
+- [x] 1.8 Commit working slice
+
+**Test Result:** Success
 
 **Acceptance Criteria:**
-- Game launches to main menu (not directly to gameplay)
-- Title "Solar System Showdown" displayed prominently
-- Play button visible and responsive to touch/click
-- High Scores button visible but disabled (grayed out)
-- Character Selection button visible
-- Pressing Play loads the gameplay scene
-- Space-themed visual styling consistent with game
+- [x] Game launches to main menu (not directly to gameplay)
+- [x] Title "Solar System Showdown" displayed prominently
+- [x] Play button visible and responsive to touch/click
+- [x] High Scores button visible but disabled (grayed out)
+- [x] Character Selection button visible
+- [x] Pressing Play loads the gameplay scene
+- [x] Space-themed visual styling consistent with game
 
 ---
 

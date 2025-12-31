@@ -37,10 +37,10 @@ follow. `S`
     bonus, providing assistance to the player (e.g., extra firepower, shield,
     or collecting pickups). `M`
 
-11. [ ] Web Export — Configure and test HTML5 build with keyboard/mouse fallback
+11. [x] Web Export — Configure and test HTML5 build with keyboard/mouse fallback
     controls and web-optimized performance. `S`
 
-12. [ ] GitHub Pages Hosting — Deploy the web export to GitHub Pages for public
+12. [x] GitHub Pages Hosting — Deploy the web export to GitHub Pages for public
     play. Use localStorage for personal high score persistence. Future: upgrade
     to Firebase for global leaderboards. `S`
 

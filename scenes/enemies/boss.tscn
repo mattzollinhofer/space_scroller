@@ -1,0 +1,36 @@
+[gd_scene load_steps=6 format=3 uid="uid://cboss_scene"]
+
+[ext_resource type="Script" path="res://scripts/enemies/boss.gd" id="1_boss"]
+[ext_resource type="Texture2D" path="res://assets/sprites/boss-1.png" id="2_boss1"]
+[ext_resource type="Texture2D" path="res://assets/sprites/boss-2.png" id="3_boss2"]
+
+[sub_resource type="SpriteFrames" id="SpriteFrames_boss"]
+animations = [{
+"frames": [{
+"duration": 1.0,
+"texture": ExtResource("2_boss1")
+}, {
+"duration": 1.0,
+"texture": ExtResource("3_boss2")
+}],
+"loop": true,
+"name": &"idle",
+"speed": 3.0
+}]
+
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_boss"]
+size = Vector2(300, 250)
+
+[node name="Boss" type="Area2D"]
+collision_layer = 2
+collision_mask = 5
+script = ExtResource("1_boss")
+
+[node name="AnimatedSprite2D" type="AnimatedSprite2D" parent="."]
+scale = Vector2(4, 4)
+sprite_frames = SubResource("SpriteFrames_boss")
+animation = &"idle"
+autoplay = "idle"
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="."]
+shape = SubResource("RectangleShape2D_boss")

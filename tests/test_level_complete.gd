@@ -1,21 +1,24 @@
 extends Node2D
-## Integration test: Level complete screen shows when progress reaches 100%
-## Run this scene to verify level completion works.
+## Integration test: Level complete screen shows after boss is defeated
+## Run this scene to verify level completion flow works correctly.
 
 var _test_passed: bool = false
 var _test_failed: bool = false
 var _failure_reason: String = ""
-var _test_timeout: float = 10.0
+var _test_timeout: float = 20.0
 var _timer: float = 0.0
 
+var main: Node = null
 var level_manager: Node = null
 var level_complete_screen: Node = null
 var scroll_controller: Node = null
 var _level_completed_emitted: bool = false
+var _boss_spawned: bool = false
+var _boss_entered: bool = false
 
 
 func _ready() -> void:
-	print("=== Test: Level Complete ===")
+	print("=== Test: Level Complete (After Boss) ===")
 
 	# Load and setup main scene
 	var main_scene = load("res://scenes/main.tscn")
@@ -23,7 +26,7 @@ func _ready() -> void:
 		_fail("Could not load main scene")
 		return
 
-	var main = main_scene.instantiate()
+	main = main_scene.instantiate()
 	add_child(main)
 
 	# Find level manager
@@ -39,6 +42,10 @@ func _ready() -> void:
 
 	# Connect to level_completed signal
 	level_manager.level_completed.connect(_on_level_completed)
+
+	# Connect to boss_spawned signal if available
+	if level_manager.has_signal("boss_spawned"):
+		level_manager.boss_spawned.connect(_on_boss_spawned)
 
 	# Find level complete screen
 	level_complete_screen = main.get_node_or_null("LevelCompleteScreen")
@@ -60,9 +67,45 @@ func _on_level_completed() -> void:
 	print("level_completed signal emitted!")
 	_level_completed_emitted = true
 
-	# Wait a frame for UI to update
+
+func _on_boss_spawned() -> void:
+	print("boss_spawned signal emitted!")
+	_boss_spawned = true
+
+	# Wait a frame for boss to be added to scene
 	await get_tree().process_frame
-	await get_tree().process_frame
+
+	# Find the boss and connect to its boss_entered signal
+	var boss = main.get_node_or_null("Boss")
+	if boss:
+		if boss.has_signal("boss_entered"):
+			boss.boss_entered.connect(_on_boss_entered)
+		# Wait for entrance animation (2 seconds + margin)
+		print("Waiting for boss entrance animation...")
+		await get_tree().create_timer(2.5).timeout
+		_defeat_boss()
+	else:
+		_fail("Boss not found in scene tree after boss_spawned signal")
+
+
+func _on_boss_entered() -> void:
+	print("boss_entered signal emitted!")
+	_boss_entered = true
+
+
+func _defeat_boss() -> void:
+	var boss = main.get_node_or_null("Boss")
+	if boss and boss.has_method("take_hit"):
+		print("Defeating boss (dealing 15 damage)...")
+		# Deal enough damage to kill boss (13 HP)
+		for i in range(15):
+			if boss and is_instance_valid(boss):
+				boss.take_hit(1)
+			await get_tree().process_frame
+
+	# Wait for death animation and level complete screen
+	print("Waiting for level complete screen...")
+	await get_tree().create_timer(2.0).timeout
 
 	_check_level_complete()
 
@@ -73,10 +116,10 @@ func _check_level_complete() -> void:
 
 	# Check if level complete screen is visible
 	if level_complete_screen and level_complete_screen.visible:
-		print("Level complete screen is visible")
+		print("Level complete screen is visible after boss defeat")
 		_pass()
 	else:
-		_fail("Level complete screen not visible (visible: %s)" % (level_complete_screen.visible if level_complete_screen else "null"))
+		_fail("Level complete screen not visible after boss defeat (visible: %s, boss_entered: %s)" % [(level_complete_screen.visible if level_complete_screen else "null"), _boss_entered])
 
 
 func _process(delta: float) -> void:
@@ -87,14 +130,14 @@ func _process(delta: float) -> void:
 
 	if _timer >= _test_timeout:
 		var progress = level_manager.get_progress() if level_manager else -1
-		_fail("Test timed out - progress: %s, level_completed emitted: %s" % [progress, _level_completed_emitted])
+		_fail("Test timed out - progress: %s, level_completed emitted: %s, boss_spawned: %s, boss_entered: %s" % [progress, _level_completed_emitted, _boss_spawned, _boss_entered])
 		return
 
 
 func _pass() -> void:
 	_test_passed = true
 	print("=== TEST PASSED ===")
-	print("Level complete screen shows when progress reaches 100%%.")
+	print("Level complete screen shows after boss is defeated.")
 	await get_tree().create_timer(0.5).timeout
 	get_tree().quit(0)
 

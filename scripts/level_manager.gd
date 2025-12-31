@@ -26,10 +26,14 @@ extends Node
 ## Reference to the level complete screen
 @export var level_complete_screen_path: NodePath
 
+## Boss scene to spawn
+@export var boss_scene: PackedScene
+
 ## Signals
 signal section_changed(section_index: int)
 signal level_completed()
 signal player_respawned()
+signal boss_spawned()
 
 ## Level data loaded from JSON
 var _level_data: Dictionary = {}
@@ -49,6 +53,10 @@ var _checkpoint_scroll_offset: float = 0.0
 
 ## Level completion state
 var _level_complete: bool = false
+
+## Boss fight state
+var _boss_fight_active: bool = false
+var _boss: Node = null
 
 ## Reference to scroll controller
 var _scroll_controller: Node = null
@@ -74,8 +82,14 @@ var _level_complete_screen: Node = null
 ## Current progress (0.0 to 1.0)
 var _current_progress: float = 0.0
 
+## Viewport dimensions for boss positioning
+var _viewport_width: float = 2048.0
+var _viewport_height: float = 1536.0
+
 
 func _ready() -> void:
+	_viewport_width = ProjectSettings.get_setting("display/window/size/viewport_width")
+	_viewport_height = ProjectSettings.get_setting("display/window/size/viewport_height")
 	_load_level_data()
 	_setup_references()
 	_setup_wave_based_spawning()
@@ -231,17 +245,72 @@ func _check_level_complete() -> void:
 
 
 func _on_level_complete() -> void:
-	# Stop spawners
-	if _obstacle_spawner and _obstacle_spawner.has_method("set_density"):
-		# Setting to a very low density effectively stops spawning
-		pass  # Keep spawning as-is, just stop processing
-
-	# Show level complete screen
-	if _level_complete_screen and _level_complete_screen.has_method("show_level_complete"):
-		_level_complete_screen.show_level_complete()
-
 	# Emit signal for other systems
 	level_completed.emit()
+
+	# Spawn boss instead of showing level complete screen immediately
+	_spawn_boss()
+
+
+func _spawn_boss() -> void:
+	# Load boss scene if not assigned
+	if not boss_scene:
+		boss_scene = load("res://scenes/enemies/boss.tscn")
+
+	if not boss_scene:
+		push_warning("Boss scene not found - showing level complete screen")
+		_show_level_complete_screen()
+		return
+
+	# Instantiate boss
+	_boss = boss_scene.instantiate()
+
+	# Position boss off right edge
+	var spawn_x = _viewport_width + 200
+	var spawn_y = _viewport_height / 2.0
+	var spawn_position = Vector2(spawn_x, spawn_y)
+
+	# Battle position is in right third of screen
+	var battle_x = _viewport_width * 0.75
+	var battle_position = Vector2(battle_x, spawn_y)
+
+	# Add to main scene
+	var main = get_parent()
+	if main:
+		main.add_child(_boss)
+		_boss.name = "Boss"
+
+		# Setup boss with entrance animation
+		if _boss.has_method("setup"):
+			_boss.setup(spawn_position, battle_position)
+		else:
+			_boss.position = spawn_position
+
+		# Connect to boss signals
+		if _boss.has_signal("boss_defeated"):
+			_boss.boss_defeated.connect(_on_boss_defeated)
+		if _boss.has_signal("boss_entered"):
+			_boss.boss_entered.connect(_on_boss_entered)
+
+		_boss_fight_active = true
+		boss_spawned.emit()
+
+
+func _on_boss_entered() -> void:
+	# Boss entrance animation complete - boss is now ready to fight
+	pass
+
+
+func _on_boss_defeated() -> void:
+	_boss_fight_active = false
+	# Wait a moment then show level complete screen
+	await get_tree().create_timer(1.0).timeout
+	_show_level_complete_screen()
+
+
+func _show_level_complete_screen() -> void:
+	if _level_complete_screen and _level_complete_screen.has_method("show_level_complete"):
+		_level_complete_screen.show_level_complete()
 
 
 func _on_section_changed(section_index: int) -> void:
@@ -343,3 +412,13 @@ func has_checkpoint() -> bool:
 ## Check if level is complete
 func is_level_complete() -> bool:
 	return _level_complete
+
+
+## Check if boss fight is currently active
+func is_boss_fight_active() -> bool:
+	return _boss_fight_active
+
+
+## Get reference to current boss
+func get_boss() -> Node:
+	return _boss

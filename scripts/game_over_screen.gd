@@ -2,6 +2,7 @@ extends CanvasLayer
 ## Game over screen that displays when the player loses all lives.
 ## Pauses the game tree when shown.
 ## Shows current score, high score, and "NEW HIGH SCORE!" indicator.
+## Provides Main Menu button to return to the main menu.
 
 
 ## Reference to score label
@@ -34,6 +35,14 @@ func show_game_over() -> void:
 func hide_game_over() -> void:
 	visible = false
 	get_tree().paused = false
+
+
+## Handle Main Menu button pressed - return to main menu
+func _on_main_menu_button_pressed() -> void:
+	# Unpause the game tree before changing scene
+	get_tree().paused = false
+	# Navigate to main menu
+	get_tree().call_deferred("change_scene_to_file", "res://scenes/ui/main_menu.tscn")
 
 
 ## Update the score label with current score from ScoreManager

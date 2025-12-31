@@ -77,40 +77,47 @@ The boss battle feature adds an end-of-level boss encounter with health bar, thr
 
 #### Tasks
 
-- [ ] 2.1 Write integration test: boss takes damage and health bar updates
+- [x] 2.1 Write integration test: boss takes damage and health bar updates
   - Spawn boss, fire projectile at boss
   - Verify boss health decreases
   - Verify health bar UI updates
-- [ ] 2.2 Run test, verify expected failure
-- [ ] 2.3 Add health system to boss.gd
-  - `@export var health: int = 13` with setter
-  - `_max_health` to track initial value for UI percentage
-  - `take_hit(damage: int)` method matching enemy interface
-  - Emit `health_changed` signal for UI binding
-- [ ] 2.4 Add hit flash effect to boss
-  - Reuse pattern from base_enemy.gd _play_hit_flash()
+- [x] 2.2 Run test, verify expected failure
+  - [failure: Boss health bar not found in scene] -> Created health bar scene and script
+- [x] 2.3 Add health system to boss.gd
+  - `@export var health: int = 13` with setter (already implemented in Slice 1)
+  - `_max_health` to track initial value for UI percentage (already implemented)
+  - `take_hit(damage: int)` method matching enemy interface (already implemented)
+  - Emit `health_changed` signal for UI binding (already implemented)
+- [x] 2.4 Add hit flash effect to boss
+  - Reuse pattern from base_enemy.gd _play_hit_flash() (already implemented in Slice 1)
   - White flash + scale punch on damage
   - Tween to restore original state
-- [ ] 2.5 Create boss health bar scene (scenes/ui/boss_health_bar.tscn)
+- [x] 2.5 Create boss health bar scene (scenes/ui/boss_health_bar.tscn)
   - CanvasLayer with layer = 10 (HUD layer)
   - Container anchored to bottom-right
   - Background ColorRect (dark, 80% opacity)
   - Fill ColorRect (red/purple for danger)
   - Label "BOSS" above bar
-- [ ] 2.6 Create boss health bar script (scripts/ui/boss_health_bar.gd)
+- [x] 2.6 Create boss health bar script (scripts/ui/boss_health_bar.gd)
   - `set_health(current: int, max_health: int)` method
   - Fill from right-to-left (opposite of progress bar)
   - `_update_fill()` pattern from progress_bar.gd
-- [ ] 2.7 Spawn health bar when boss enters, connect to health_changed
-- [ ] 2.8 Verify projectile collision triggers take_hit on boss
-- [ ] 2.9 Run all slice tests (1 and 2) to verify no regressions
-- [ ] 2.10 Commit working slice
+- [x] 2.7 Spawn health bar when boss enters, connect to health_changed
+  - Added _spawn_boss_health_bar() to level_manager.gd
+  - Connected boss.health_changed signal to _on_boss_health_changed
+- [x] 2.8 Verify projectile collision triggers take_hit on boss
+  - Projectile collision_mask = 2, Boss collision_layer = 2 (compatible)
+  - Projectile._on_area_entered checks for take_hit method
+- [x] 2.9 Run all slice tests (1 and 2) to verify no regressions
+  - test_boss_spawn.tscn: PASSED
+  - test_boss_damage.tscn: PASSED
+- [x] 2.10 Commit working slice
 
 **Acceptance Criteria:**
-- Boss has 13 HP that decreases when shot
-- Health bar appears in bottom-right corner when boss spawns
-- Health bar depletes visually as boss takes damage
-- Boss flashes white and scales when hit
+- [x] Boss has 13 HP that decreases when shot
+- [x] Health bar appears in bottom-right corner when boss spawns
+- [x] Health bar depletes visually as boss takes damage
+- [x] Boss flashes white and scales when hit
 
 ---
 

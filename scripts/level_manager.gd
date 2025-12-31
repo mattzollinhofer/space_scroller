@@ -29,6 +29,9 @@ extends Node
 ## Boss scene to spawn
 @export var boss_scene: PackedScene
 
+## Boss health bar scene to spawn
+@export var boss_health_bar_scene: PackedScene
+
 ## Signals
 signal section_changed(section_index: int)
 signal level_completed()
@@ -57,6 +60,7 @@ var _level_complete: bool = false
 ## Boss fight state
 var _boss_fight_active: bool = false
 var _boss: Node = null
+var _boss_health_bar: Node = null
 
 ## Reference to scroll controller
 var _scroll_controller: Node = null
@@ -291,9 +295,46 @@ func _spawn_boss() -> void:
 			_boss.boss_defeated.connect(_on_boss_defeated)
 		if _boss.has_signal("boss_entered"):
 			_boss.boss_entered.connect(_on_boss_entered)
+		if _boss.has_signal("health_changed"):
+			_boss.health_changed.connect(_on_boss_health_changed)
 
 		_boss_fight_active = true
+
+		# Spawn boss health bar
+		_spawn_boss_health_bar()
+
 		boss_spawned.emit()
+
+
+func _spawn_boss_health_bar() -> void:
+	# Load boss health bar scene if not assigned
+	if not boss_health_bar_scene:
+		boss_health_bar_scene = load("res://scenes/ui/boss_health_bar.tscn")
+
+	if not boss_health_bar_scene:
+		push_warning("Boss health bar scene not found")
+		return
+
+	# Instantiate health bar
+	_boss_health_bar = boss_health_bar_scene.instantiate()
+
+	# Add to main scene
+	var main = get_parent()
+	if main:
+		main.add_child(_boss_health_bar)
+		_boss_health_bar.name = "BossHealthBar"
+
+		# Initialize health bar with boss health
+		if _boss and _boss_health_bar.has_method("set_health"):
+			var boss_health = _boss.health if "health" in _boss else 13
+			var boss_max_health = _boss._max_health if "_max_health" in _boss else 13
+			_boss_health_bar.set_health(boss_health, boss_max_health)
+
+
+func _on_boss_health_changed(current: int, max_health: int) -> void:
+	# Update health bar when boss health changes
+	if _boss_health_bar and _boss_health_bar.has_method("set_health"):
+		_boss_health_bar.set_health(current, max_health)
 
 
 func _on_boss_entered() -> void:
@@ -303,6 +344,14 @@ func _on_boss_entered() -> void:
 
 func _on_boss_defeated() -> void:
 	_boss_fight_active = false
+
+	# Hide health bar
+	if _boss_health_bar:
+		if _boss_health_bar.has_method("hide_bar"):
+			_boss_health_bar.hide_bar()
+		else:
+			_boss_health_bar.visible = false
+
 	# Wait a moment then show level complete screen
 	await get_tree().create_timer(1.0).timeout
 	_show_level_complete_screen()
@@ -422,3 +471,8 @@ func is_boss_fight_active() -> bool:
 ## Get reference to current boss
 func get_boss() -> Node:
 	return _boss
+
+
+## Get reference to boss health bar
+func get_boss_health_bar() -> Node:
+	return _boss_health_bar

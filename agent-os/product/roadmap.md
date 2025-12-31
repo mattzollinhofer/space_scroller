@@ -33,16 +33,19 @@ follow. `S`
 9. [ ] Game UI — Build main menu, pause menu, game over screen, and HUD showing
    score, lives, and level progress. `M`
 
-10. [ ] Additional Levels — Create 2-3 more levels with unique visual themes
+10. [ ] Sidekick Helper — Add a good alien sidekick that can be unlocked as a
+    bonus, providing assistance to the player (e.g., extra firepower, shield,
+    or collecting pickups). `M`
+
+10.5. [ ] Additional level through length and enemy difficulty. MOre enemies,
+      different enemies. Shooting enemy. Longer time span. Different boss.
+
+11. [ ] Additional Levels — Create 2-3 more levels with unique visual themes
     (different planets/areas of solar system), new obstacles, and escalating
 difficulty. `L`
 
-11. [ ] Additional Bosses — Design unique boss encounters for each additional
+12. [ ] Additional Bosses — Design unique boss encounters for each additional
     level with distinct attack patterns and mechanics. `L`
-
-12. [ ] Sidekick Helper — Add a good alien sidekick that can be unlocked as a
-    bonus, providing assistance to the player (e.g., extra firepower, shield,
-    or collecting pickups). `M`
 
 13. [ ] Audio Integration — Add background music tracks, sound effects for
     actions (shooting, collecting, damage), and boss battle music. `M`

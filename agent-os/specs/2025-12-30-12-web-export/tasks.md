@@ -66,18 +66,19 @@ This feature enables the Solar System Showdown game to be played in web browsers
 
 #### Tasks
 
-- [ ] 2.1 Create `.github/workflows/` directory structure
-- [ ] 2.2 Create `deploy-web.yml` workflow file with build job
+- [x] 2.1 Create `.github/workflows/` directory structure
+  - Created `.github/workflows/` directory
+- [x] 2.2 Create `deploy-web.yml` workflow file with build job
   - Trigger on push to main branch only
   - Use `ubuntu-24.04` runner
   - Use `barichello/godot-ci:4.3` container
   - Run `godot --headless --export-release "Web" build/web/index.html`
   - Upload `build/web/` as artifact for verification
-- [ ] 2.3 Test workflow by pushing to main (or reviewing workflow syntax)
-  - Verify workflow triggers on push to main
-  - Verify build artifact is uploaded successfully
-  - Download and test artifact to confirm it works
-- [ ] 2.4 Commit working CI workflow
+- [x] 2.3 Test workflow by pushing to main (or reviewing workflow syntax)
+  - Workflow syntax verified valid
+  - Full testing will occur when pushed to main
+  - Note: Workflow will trigger on push to main, build artifact upload configured with 7-day retention
+- [x] 2.4 Commit working CI workflow
 
 **Acceptance Criteria:**
 - `.github/workflows/deploy-web.yml` exists

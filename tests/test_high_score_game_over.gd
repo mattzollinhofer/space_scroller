@@ -18,6 +18,9 @@ func _ready() -> void:
 	# Clean up any existing high scores file first
 	_cleanup_high_scores_file()
 
+	# Reload ScoreManager to clear cached state
+	get_node("/root/ScoreManager").load_high_scores()
+
 	# Load and setup main scene
 	var main_scene = load("res://scenes/main.tscn")
 	if not main_scene:

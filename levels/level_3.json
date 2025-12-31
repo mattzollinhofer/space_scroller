@@ -9,9 +9,16 @@
   "metadata": {
     "scroll_speed_multiplier": 1.22,
     "background_theme": "outer_solar",
-    "boss_sprite": "res://assets/sprites/boss-1.png",
+    "boss_sprite": "res://assets/sprites/boss-3.png",
     "boss_modulate": [0.6, 0.8, 1.0, 1.0],
-    "obstacle_modulate": [0.7, 0.85, 1.0, 1.0]
+    "obstacle_modulate": [0.7, 0.85, 1.0, 1.0],
+    "boss_config": {
+      "health": 16,
+      "scale": 8,
+      "attacks": [0, 1, 2],
+      "attack_cooldown": 1.1,
+      "explosion_scale": 10
+    }
   },
   "sections": [
     {

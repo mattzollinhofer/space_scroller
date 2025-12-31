@@ -63,7 +63,8 @@ func _ready() -> void:
 
 	# Store initial spawn rate (should be "low" = 6.0 for section 0)
 	_initial_spawn_rate_min = obstacle_spawner.spawn_rate_min
-	print("Initial spawn_rate_min: %s" % _initial_spawn_rate_min)
+	_initial_section = 0  # We start in section 0
+	print("Initial spawn_rate_min: %s (section 0)" % _initial_spawn_rate_min)
 
 	print("Test setup complete. Waiting for section change to section 1...")
 
@@ -72,14 +73,10 @@ func _on_section_changed(section_index: int) -> void:
 	print("Section changed to: %s" % section_index)
 	_section_change_count += 1
 
-	if _initial_section < 0:
-		_initial_section = section_index
-		_initial_spawn_rate_min = obstacle_spawner.spawn_rate_min
-		print("Initial section %s, spawn_rate_min: %s" % [section_index, _initial_spawn_rate_min])
-	elif section_index > _initial_section:
-		# We've moved to a new section, check density change
+	# We're looking for section 0 -> 1 transition (low -> medium density)
+	if section_index == 1:
 		_spawn_rate_after_section_1 = obstacle_spawner.spawn_rate_min
-		print("Section %s, spawn_rate_min: %s" % [section_index, _spawn_rate_after_section_1])
+		print("Section 1, spawn_rate_min: %s" % _spawn_rate_after_section_1)
 
 		if _spawn_rate_after_section_1 != _initial_spawn_rate_min:
 			print("Density changed from %s to %s" % [_initial_spawn_rate_min, _spawn_rate_after_section_1])

@@ -92,10 +92,16 @@ var _charge_target_x: float = 0.0
 @export var shake_duration: float = 0.5
 
 ## Explosion scale multiplier (boss is larger than regular enemies)
-@export var explosion_scale: float = 6.0
+@export var explosion_scale: float = 8.0
 
 ## Shake node for screen shake effect
 var _shake_node: Node2D = null
+
+## Which attack patterns are enabled (0=barrage, 1=sweep, 2=charge)
+var _enabled_attacks: Array[int] = [0, 1, 2]
+
+## Number of attack patterns enabled
+var _attack_count: int = 3
 
 ## Emitted when the boss is defeated
 signal boss_defeated()
@@ -188,13 +194,15 @@ func _process_attack_state(delta: float) -> void:
 		AttackState.COOLDOWN:
 			_attack_timer -= delta
 			if _attack_timer <= 0:
-				# Move to next pattern
-				_current_pattern = (_current_pattern + 1) % 3
+				# Move to next pattern (cycle through enabled attacks only)
+				_current_pattern = (_current_pattern + 1) % _attack_count
 				_attack_state = AttackState.IDLE
 
 
 func _execute_attack() -> void:
-	match _current_pattern:
+	# Get the actual attack type from enabled attacks array
+	var attack_type = _enabled_attacks[_current_pattern] if _current_pattern < _enabled_attacks.size() else 0
+	match attack_type:
 		0:
 			_attack_horizontal_barrage()
 		1:
@@ -598,3 +606,47 @@ func is_charging() -> bool:
 ## Check if currently sweeping (for testing)
 func is_sweeping() -> bool:
 	return _sweep_active
+
+
+## Configure boss from level metadata
+func configure(config: Dictionary) -> void:
+	# Set health
+	if config.has("health"):
+		health = config.health
+		_max_health = config.health
+
+	# Set attack cooldown
+	if config.has("attack_cooldown"):
+		attack_cooldown = config.attack_cooldown
+
+	# Set wind-up duration
+	if config.has("wind_up_duration"):
+		wind_up_duration = config.wind_up_duration
+
+	# Set enabled attacks (array of attack indices: 0=barrage, 1=sweep, 2=charge)
+	if config.has("attacks"):
+		_enabled_attacks.clear()
+		for attack in config.attacks:
+			_enabled_attacks.append(int(attack))
+		_attack_count = _enabled_attacks.size()
+		if _attack_count == 0:
+			# Fallback to barrage if no attacks specified
+			_enabled_attacks = [0]
+			_attack_count = 1
+
+	# Set scale
+	if config.has("scale"):
+		var sprite = get_node_or_null("AnimatedSprite2D")
+		var collision = get_node_or_null("CollisionShape2D")
+		var scale_value = float(config.scale)
+		if sprite:
+			sprite.scale = Vector2(scale_value, scale_value)
+		if collision and collision.shape:
+			# Scale collision relative to base size (75x62.5 at scale 1)
+			var base_width = 75.0
+			var base_height = 62.5
+			collision.shape.size = Vector2(base_width * scale_value, base_height * scale_value)
+
+	# Set explosion scale
+	if config.has("explosion_scale"):
+		explosion_scale = config.explosion_scale

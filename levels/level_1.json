@@ -1,5 +1,15 @@
 {
   "total_distance": 13500,
+  "metadata": {
+    "boss_sprite": "res://assets/sprites/boss-1.png",
+    "boss_config": {
+      "health": 10,
+      "scale": 5,
+      "attacks": [0],
+      "attack_cooldown": 1.5,
+      "explosion_scale": 7
+    }
+  },
   "enemy_config": {
     "zigzag_speed_min": 100,
     "zigzag_speed_max": 140,

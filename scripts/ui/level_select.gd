@@ -20,21 +20,17 @@ func _ready() -> void:
 	_update_button_states()
 
 
-## Update button enabled/disabled states based on ScoreManager unlock status
+## Update button enabled/disabled states - all levels are selectable
 func _update_button_states() -> void:
-	# Level 1 is always unlocked
+	# All levels are always available from level select
 	_level1_button.disabled = false
 	_update_button_appearance(_level1_button, true)
 
-	# Check Level 2 unlock status
-	var level2_unlocked: bool = _is_level_unlocked(2)
-	_level2_button.disabled = not level2_unlocked
-	_update_button_appearance(_level2_button, level2_unlocked)
+	_level2_button.disabled = false
+	_update_button_appearance(_level2_button, true)
 
-	# Check Level 3 unlock status
-	var level3_unlocked: bool = _is_level_unlocked(3)
-	_level3_button.disabled = not level3_unlocked
-	_update_button_appearance(_level3_button, level3_unlocked)
+	_level3_button.disabled = false
+	_update_button_appearance(_level3_button, true)
 
 
 ## Check if a level is unlocked via ScoreManager

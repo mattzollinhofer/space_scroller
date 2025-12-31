@@ -55,7 +55,7 @@ func _ready() -> void:
 	_patrol_enemy = patrol_scene.instantiate()
 	_patrol_enemy.position = Vector2(600, 768)
 	_patrol_enemy.scroll_speed = 0.0  # Stop scrolling during test
-	_patrol_enemy.patrol_speed = 0.0  # Stop patrolling during test
+	_patrol_enemy.zigzag_speed = 0.0  # Stop zigzag movement during test
 	add_child(_patrol_enemy)
 
 	# Get the sprite for flash detection
@@ -113,14 +113,14 @@ func _process(delta: float) -> void:
 				else:
 					_fail("Patrol enemy did not survive first hit (health = %d)" % _patrol_enemy.health)
 
-		2:  # Check for red flash
-			# Check if modulate changed to red tint
+		2:  # Check for flash effect
+			# Check if modulate changed (white flash effect)
 			if _sprite and _sprite.modulate != _original_modulate:
 				var current = _sprite.modulate
-				# Check for red tint (high red, low green)
-				if current.r > 1.0 and current.g < 0.5:
+				# Check for bright flash (high values indicate flash effect)
+				if current.r > 1.5 or current.g > 1.5 or current.b > 1.5:
 					_patrol_flash_detected = true
-					print("PASS: Red flash detected (modulate = %s)" % current)
+					print("PASS: Flash effect detected (modulate = %s)" % current)
 
 			# Wait a short time for flash to complete, then fire second shot
 			if _timer >= 0.3:

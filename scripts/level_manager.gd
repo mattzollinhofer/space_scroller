@@ -461,6 +461,11 @@ func _spawn_boss() -> void:
 	if boss_modulate and _boss:
 		_apply_boss_modulate(_boss, boss_modulate)
 
+	# Apply boss configuration (attacks, health, scale) from level metadata
+	var boss_config = _level_metadata.get("boss_config", {})
+	if boss_config and _boss and _boss.has_method("configure"):
+		_boss.configure(boss_config)
+
 	# Position boss off right edge
 	var spawn_x = _viewport_width + 200
 	var spawn_y = _viewport_height / 2.0
@@ -518,12 +523,12 @@ func _apply_boss_sprite(boss: Node, sprite_path: String) -> void:
 		push_warning("Could not load boss sprite: %s" % sprite_path)
 		return
 
-	# Get or create sprite frames
+	# Get sprite frames and update ALL frames of the idle animation
 	var frames = animated_sprite.sprite_frames
-	if frames:
-		# Update the first frame of the idle animation
-		if frames.has_animation("idle") and frames.get_frame_count("idle") > 0:
-			frames.set_frame("idle", 0, texture)
+	if frames and frames.has_animation("idle"):
+		var frame_count = frames.get_frame_count("idle")
+		for i in range(frame_count):
+			frames.set_frame("idle", i, texture)
 
 
 func _apply_boss_modulate(boss: Node, modulate_array: Array) -> void:

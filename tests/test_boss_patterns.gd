@@ -90,6 +90,14 @@ func _verify_boss_and_test_patterns() -> void:
 	_player.position = Vector2(300, 768)
 	print("Player positioned at: " + str(_player.position))
 
+	# Configure boss to have all 3 attack patterns for this test
+	# (Level 1 only has pattern 0 by default)
+	if _boss.has_method("configure"):
+		var config = {"attacks": [0, 1, 2], "attack_cooldown": 1.0}
+		_boss.configure(config)
+		print("Configured boss with all 3 attack patterns")
+
+
 	# Start the attack cycle
 	if _boss.has_method("start_attack_cycle"):
 		_boss.start_attack_cycle()

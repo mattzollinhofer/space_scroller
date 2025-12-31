@@ -89,13 +89,10 @@ No visual assets provided.
 - Space-themed visual style consistent with game
 
 **Character Selection:**
-- 6 playable characters total:
+- 3 playable characters total:
   1. Blue Blaster (Current/Default) - existing blue spacecraft/UFO
-  2. Rocket Red - classic red rocket with flames
-  3. Space Dragon (Green) - dragon-shaped ship with wings and tail fin
-  4. Cosmic Cat (Purple) - cat-faced spacecraft with pointy ears and whiskers
-  5. Star Cruiser (Yellow) - sleek star-shaped ship
-  6. (One additional character slot - 5 new + 1 existing = 6 total)
+  2. Space Dragon (Green) - dragon-shaped ship with wings and tail fin
+  3. Cosmic Cat (Purple) - cat-faced spacecraft with pointy ears and whiskers
 - All characters are cosmetic only (no gameplay differences)
 - All characters unlocked from start
 - Selection resets to default (Blue Blaster) each game launch
@@ -166,6 +163,6 @@ No visual assets provided.
 - All menu screens use CanvasLayer for proper layering
 - Input handling: InputMap actions for pause (new "pause" action needed)
 - No autoloads currently exist - may need GameState autoload for character selection
-- Character sprites will need to be created (5 new sprites matching existing art style)
+- Character sprites will need to be created (2 new sprites matching existing art style)
 - Main scene currently launches directly into gameplay - will need new main menu as entry point
 - Project main scene (`run/main_scene`) will need to change from `main.tscn` to new main menu scene

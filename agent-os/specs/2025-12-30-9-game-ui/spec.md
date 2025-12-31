@@ -19,16 +19,16 @@ Build a complete menu system with main menu, character selection, pause menu, en
 - Character Selection button opens character selection screen
 - Space-themed visual styling with large readable fonts
 
-**Player can select from 6 cosmetic characters**
+**Player can select from 3 cosmetic characters**
 
-- Character Selection screen shows 6 selectable characters in grid layout
-- Characters: Blue Blaster (default), Rocket Red, Space Dragon (Green), Cosmic Cat (Purple), Star Cruiser (Yellow), one additional slot
+- Character Selection screen shows 3 selectable characters in grid layout
+- Characters: Blue Blaster (default), Space Dragon (Green), Cosmic Cat (Purple)
 - All characters cosmetic only (same gameplay stats)
 - All characters unlocked from start
 - Create GameState autoload to store selected character for current session
 - Selection resets to Blue Blaster on each game launch
 - Player scene loads appropriate sprite based on GameState selection
-- 5 new character sprites needed (matching existing cute space art style)
+- 2 new character sprites needed (matching existing cute space art style)
 
 **Player can pause gameplay with button or keyboard**
 

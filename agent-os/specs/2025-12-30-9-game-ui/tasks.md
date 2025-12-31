@@ -104,7 +104,7 @@ Each slice delivers incremental user value and is tested end-to-end.
 
 ### Slice 3: Player can select character from main menu
 
-**What this delivers:** From the main menu, the player can open character selection, choose from 6 characters, and see their selection reflected when starting gameplay.
+**What this delivers:** From the main menu, the player can open character selection, choose from 3 characters, and see their selection reflected when starting gameplay.
 
 **Dependencies:** Slice 1 (main menu exists)
 
@@ -126,14 +126,11 @@ Each slice delivers incremental user value and is tested end-to-end.
   - [ ] Default to "blue_blaster" on launch
   - [ ] Add get_selected_character() and set_selected_character() methods
   - [ ] Register GameState as autoload in project.godot [autoload] section
-  - [ ] Create placeholder character sprites (5 new, can be color variations initially)
-    - [ ] Rocket Red - red tinted version of player.png
+  - [ ] Create placeholder character sprites (2 new, can be color variations initially)
     - [ ] Space Dragon (Green) - green tinted version
     - [ ] Cosmic Cat (Purple) - purple tinted version
-    - [ ] Star Cruiser (Yellow) - yellow tinted version
-    - [ ] Pixel Penguin (Cyan) - cyan tinted version (6th character)
   - [ ] Create character_selection.gd script extending Control
-  - [ ] Create character_selection.tscn scene with grid layout (2x3 or 3x2)
+  - [ ] Create character_selection.tscn scene with horizontal layout (1x3 row)
   - [ ] Add character buttons with preview sprites
   - [ ] Add "Back" button to return to main menu
   - [ ] Highlight currently selected character
@@ -147,7 +144,7 @@ Each slice delivers incremental user value and is tested end-to-end.
 
 **Acceptance Criteria:**
 - Character Selection button on main menu works
-- 6 characters displayed in selection screen (Blue Blaster + 5 new)
+- 3 characters displayed in selection screen (Blue Blaster + 2 new)
 - Current selection visually highlighted
 - Selection persists while navigating back to main menu
 - Starting game loads player with selected character sprite
@@ -353,13 +350,13 @@ Each slice delivers incremental user value and is tested end-to-end.
 After all slices are complete:
 
 1. **main_menu.tscn / main_menu.gd** - Entry point scene with Play, High Scores placeholder, Character Selection buttons
-2. **character_selection.tscn / character_selection.gd** - 6-character grid selection screen
+2. **character_selection.tscn / character_selection.gd** - 3-character selection screen
 3. **game_state.gd** - Autoload for session state (selected character)
 4. **pause_menu.tscn / pause_menu.gd** - Pause overlay with Resume and Quit to Menu
 5. **pause_button.tscn / pause_button.gd** - In-game pause button trigger
 6. **score_display.tscn / score_display.gd** - HUD score counter
 7. **transition_manager.gd** - Autoload for smooth screen transitions (optional)
-8. **5 new character sprites** - Color variations of player sprite (placeholder acceptable)
+8. **2 new character sprites** - Space Dragon and Cosmic Cat (placeholder acceptable)
 9. **game_over_screen.tscn modifications** - Score display, high scores placeholder, Main Menu button
 10. **progress_bar.tscn modifications** - Level indicator label
 11. **main.tscn modifications** - Add PauseMenu, PauseButton, ScoreDisplay

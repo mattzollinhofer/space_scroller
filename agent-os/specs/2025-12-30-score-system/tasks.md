@@ -85,23 +85,28 @@ Each slice delivers incremental user value and is tested end-to-end.
 
 #### Tasks
 
-- [ ] 3.1 Write integration test that verifies 500 points awarded when UFO Friend collected
-- [ ] 3.2 Run test, verify expected failure
-- [ ] 3.3 Make smallest change possible to progress
-- [ ] 3.4 Run test, observe failure or success
-- [ ] 3.5 Document result and update task list
-- [ ] 3.6 Repeat 3.3-3.5 as necessary (connect ScoreManager to UfoFriend.collected signal)
-- [ ] 3.7 Write integration test for level completion bonus (5,000 points)
-- [ ] 3.8 Run test and iterate until passing
-- [ ] 3.9 Refactor if needed (keep tests green)
-- [ ] 3.10 Run all slice tests (1, 2, and 3) to verify no regressions
-- [ ] 3.11 Commit working slice
+- [x] 3.1 Write integration test that verifies 500 points awarded when UFO Friend collected
+  - Created test_score_ufo_friend.gd and test_score_ufo_friend.tscn
+- [x] 3.2 Run test, verify expected failure [Score 0, expected 500 - UFO collected but no points awarded]
+- [x] 3.3-3.6 Red-green iterations:
+  - [x] Iteration 1: [Score 0] -> Added POINTS_UFO_FRIEND constant (500) and award_ufo_friend_bonus() to ScoreManager
+  - [x] Iteration 2: [Score still 0] -> Added _award_bonus_points() to ufo_friend.gd that calls ScoreManager.award_ufo_friend_bonus()
+  - Success: Test passes - UFO Friend awards 500 bonus points
+- [x] 3.7 Write integration test for level completion bonus (5,000 points)
+  - Created test_score_level_complete.gd and test_score_level_complete.tscn
+- [x] 3.8 Run test and iterate until passing
+  - [x] Iteration 1: [Score 1000, expected 6000] -> Added POINTS_LEVEL_COMPLETE constant (5000) and award_level_complete_bonus() to ScoreManager
+  - [x] Iteration 2: [Score still 1000] -> Added _award_level_complete_bonus() to level_manager.gd that calls ScoreManager.award_level_complete_bonus()
+  - Success: Test passes - Level completion awards 5,000 bonus points
+- [x] 3.9 Refactor if needed (keep tests green) - Cleaned up ScoreManager to remove unused connection method
+- [x] 3.10 Run all slice tests (1, 2, and 3) to verify no regressions - All 4 tests pass
+- [x] 3.11 Commit working slice
 
 **Acceptance Criteria:**
-- Collecting UFO Friend adds 500 points to score
-- Points only awarded if UFO was actually collected (life was gained)
-- Level completion adds 5,000 points to score
-- Bonus added before displaying on Level Complete screen
+- [x] Collecting UFO Friend adds 500 points to score
+- [x] Points only awarded if UFO was actually collected (life was gained)
+- [x] Level completion adds 5,000 points to score
+- [x] Bonus added before displaying on Level Complete screen
 
 ---
 

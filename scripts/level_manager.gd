@@ -351,11 +351,22 @@ func _check_level_complete() -> void:
 
 
 func _on_level_complete() -> void:
+	# Award level completion bonus points via ScoreManager
+	_award_level_complete_bonus()
+
 	# Emit signal for other systems
 	level_completed.emit()
 
 	# Spawn boss instead of showing level complete screen immediately
 	_spawn_boss()
+
+
+func _award_level_complete_bonus() -> void:
+	# Award bonus points via ScoreManager autoload
+	if has_node("/root/ScoreManager"):
+		var score_manager = get_node("/root/ScoreManager")
+		if score_manager.has_method("award_level_complete_bonus"):
+			score_manager.award_level_complete_bonus()
 
 
 func _spawn_boss() -> void:

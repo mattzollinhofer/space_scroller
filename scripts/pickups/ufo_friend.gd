@@ -96,9 +96,18 @@ func _on_body_entered(body: Node2D) -> void:
 	if body.has_method("gain_life"):
 		if body.gain_life():
 			collected.emit()
+			_award_bonus_points()
 			_spawn_floating_heart()
 			_play_collect_animation()
 		# If player is at max health, UFO just passes through
+
+
+func _award_bonus_points() -> void:
+	# Award bonus points via ScoreManager autoload
+	if has_node("/root/ScoreManager"):
+		var score_manager = get_node("/root/ScoreManager")
+		if score_manager.has_method("award_ufo_friend_bonus"):
+			score_manager.award_ufo_friend_bonus()
 
 
 func _spawn_floating_heart() -> void:

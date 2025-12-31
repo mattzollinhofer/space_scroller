@@ -13,6 +13,10 @@ var _current_score: int = 0
 const POINTS_STATIONARY_ENEMY: int = 100
 const POINTS_PATROL_ENEMY: int = 200
 
+## Bonus point values
+const POINTS_UFO_FRIEND: int = 500
+const POINTS_LEVEL_COMPLETE: int = 5000
+
 
 func _ready() -> void:
 	process_mode = Node.PROCESS_MODE_ALWAYS
@@ -42,3 +46,13 @@ func award_enemy_kill(enemy: Node) -> void:
 		add_points(POINTS_PATROL_ENEMY)
 	else:
 		add_points(POINTS_STATIONARY_ENEMY)
+
+
+## Award bonus points for collecting a UFO Friend pickup
+func award_ufo_friend_bonus() -> void:
+	add_points(POINTS_UFO_FRIEND)
+
+
+## Award bonus points for completing a level
+func award_level_complete_bonus() -> void:
+	add_points(POINTS_LEVEL_COMPLETE)

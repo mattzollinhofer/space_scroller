@@ -231,6 +231,23 @@ func get_lives() -> int:
 	return _lives
 
 
+## Gain a life (used by pickups). Returns true if life was gained.
+func gain_life() -> bool:
+	if _lives >= starting_lives:
+		return false
+	_lives += 1
+	lives_changed.emit(_lives)
+	return true
+
+
+## Reset lives to starting value (used for checkpoint respawn)
+func reset_lives() -> void:
+	_lives = starting_lives
+	_is_invincible = false
+	_end_invincibility()
+	lives_changed.emit(_lives)
+
+
 ## Check if player is currently invincible
 func is_invincible() -> bool:
 	return _is_invincible

@@ -119,41 +119,44 @@ Each slice delivers incremental user value and is tested end-to-end.
 
 #### Tasks
 
-- [ ] 3.1 Write integration test: open character selection, select a character, start game, player uses selected character sprite
-- [ ] 3.2 Run test, verify expected failure
-- [ ] 3.3 Make smallest change possible to progress
-- [ ] 3.4 Run test, observe failure or success
-- [ ] 3.5 Document result and update task list
-- [ ] 3.6 Repeat 3.3-3.5 as necessary (expected iterations):
-  - [ ] Create GameState autoload script (scripts/autoloads/game_state.gd)
-  - [ ] Add selected_character variable (enum or string identifier)
-  - [ ] Default to "blue_blaster" on launch
-  - [ ] Add get_selected_character() and set_selected_character() methods
-  - [ ] Register GameState as autoload in project.godot [autoload] section
-  - [ ] Create placeholder character sprites (2 new, can be color variations initially)
-    - [ ] Space Dragon (Green) - green tinted version
-    - [ ] Cosmic Cat (Purple) - purple tinted version
-  - [ ] Create character_selection.gd script extending Control
-  - [ ] Create character_selection.tscn scene with horizontal layout (1x3 row)
-  - [ ] Add character buttons with preview sprites
-  - [ ] Add "Back" button to return to main menu
-  - [ ] Highlight currently selected character
-  - [ ] On character button press, update GameState.selected_character
-  - [ ] Connect main menu Character Selection button to show character selection
-  - [ ] Modify player.gd _ready() to load texture based on GameState.selected_character
-  - [ ] Add character texture mapping dictionary in player.gd or separate resource
-- [ ] 3.7 Refactor if needed (keep tests green)
-- [ ] 3.8 Run all slice tests to verify no regressions
-- [ ] 3.9 Commit working slice
+- [x] 3.1 Write integration test: open character selection, select a character, start game, player uses selected character sprite
+- [x] 3.2 Run test, verify expected failure
+  - Iteration 1: [GameState autoload not found] -> Created game_state.gd and registered in project.godot
+- [x] 3.3-3.6 Red-green iterations:
+  - Iteration 2: [character selection scene not found] -> Created character_selection.gd and character_selection.tscn
+  - Iteration 3: [player sprite not loading selected character] -> Modified player.gd to load sprite from GameState
+  - [x] Create GameState autoload script (scripts/autoloads/game_state.gd)
+  - [x] Add selected_character variable (string identifier)
+  - [x] Default to "blue_blaster" on launch
+  - [x] Add get_selected_character() and set_selected_character() methods
+  - [x] Add get_character_texture_path() and get_character_display_name() helpers
+  - [x] Register GameState as autoload in project.godot [autoload] section
+  - [x] Character sprites already exist (player.png, space-dragon-1.png, cosmic-cat-1.png)
+  - [x] Create character_selection.gd script extending Control
+  - [x] Create character_selection.tscn scene with horizontal layout (1x3 row)
+  - [x] Add character buttons with preview sprites
+  - [x] Add "Back" button to return to main menu
+  - [x] Highlight currently selected character (gold color, full opacity)
+  - [x] On character button press, update GameState.selected_character
+  - [x] Connect main menu Character Selection button to navigate to character selection scene
+  - [x] Modify player.gd _ready() to load texture based on GameState.selected_character
+- [x] 3.7 Refactor if needed (keep tests green) - No refactoring needed
+- [x] 3.8 Run all slice tests to verify no regressions
+  - test_character_selection.tscn: PASSED
+  - test_main_menu.tscn: PASSED
+  - test_score_display.tscn: PASSED
+- [x] 3.9 Commit working slice
+
+**Test Result:** Success
 
 **Acceptance Criteria:**
-- Character Selection button on main menu works
-- 3 characters displayed in selection screen (Blue Blaster + 2 new)
-- Current selection visually highlighted
-- Selection persists while navigating back to main menu
-- Starting game loads player with selected character sprite
-- Back button returns to main menu
-- Selection resets to Blue Blaster on game relaunch
+- [x] Character Selection button on main menu works
+- [x] 3 characters displayed in selection screen (Blue Blaster, Space Dragon, Cosmic Cat)
+- [x] Current selection visually highlighted
+- [x] Selection persists while navigating back to main menu
+- [x] Starting game loads player with selected character sprite
+- [x] Back button returns to main menu
+- [x] Selection resets to Blue Blaster on game relaunch
 
 ---
 

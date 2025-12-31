@@ -2,6 +2,7 @@ extends CharacterBody2D
 ## Player spacecraft with 4-directional movement using keyboard or virtual joystick.
 ## Movement is snappy with minimal inertia. X-axis clamped to viewport, Y-axis uses collision boundaries.
 ## Includes lives system with damage handling, invincibility, and shooting.
+## Loads character sprite from GameState selection.
 
 ## Movement speed in pixels per second
 @export var move_speed: float = 600.0
@@ -59,6 +60,9 @@ func _ready() -> void:
 	# Initialize lives
 	_lives = starting_lives
 
+	# Load character sprite based on GameState selection
+	_load_character_sprite()
+
 	# Get the sprite size for accurate viewport clamping (accounting for scale)
 	var sprite = $Sprite2D
 	if sprite and sprite.texture:
@@ -69,6 +73,26 @@ func _ready() -> void:
 
 	# Find the fire button in the scene tree
 	_find_fire_button()
+
+
+## Load the character sprite based on GameState selection
+func _load_character_sprite() -> void:
+	var sprite = $Sprite2D as Sprite2D
+	if not sprite:
+		return
+
+	# Get GameState autoload
+	var game_state = get_node_or_null("/root/GameState")
+	if not game_state:
+		return
+
+	# Get the selected character and load its texture
+	var selected_character = game_state.get_selected_character()
+	var texture_path = game_state.get_character_texture_path(selected_character)
+
+	var texture = load(texture_path)
+	if texture:
+		sprite.texture = texture
 
 
 func _find_virtual_joystick() -> void:

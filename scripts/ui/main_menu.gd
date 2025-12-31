@@ -15,8 +15,7 @@ func _on_play_button_pressed() -> void:
 
 ## Handle Character Selection button pressed
 func _on_character_select_button_pressed() -> void:
-	# TODO: Implement in Slice 3
-	pass
+	get_tree().call_deferred("change_scene_to_file", "res://scenes/ui/character_selection.tscn")
 
 
 ## Handle High Scores button pressed (placeholder)

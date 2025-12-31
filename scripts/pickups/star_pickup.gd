@@ -1,6 +1,6 @@
 extends Area2D
-class_name UfoFriend
-## Friendly UFO pickup that grants an extra life when collected.
+class_name StarPickup
+## Star pickup that grants an extra life when collected.
 ## Spawns from a random edge and zigzags across the screen.
 
 ## Movement speed
@@ -9,7 +9,7 @@ class_name UfoFriend
 ## Zigzag vertical speed
 @export var zigzag_speed: float = 150.0
 
-## Edge where UFO spawned (determines travel direction)
+## Edge where pickup spawned (determines travel direction)
 enum SpawnEdge { LEFT, RIGHT, TOP, BOTTOM }
 var _spawn_edge: SpawnEdge = SpawnEdge.RIGHT
 
@@ -38,7 +38,7 @@ func _ready() -> void:
 	_zigzag_direction = 1.0 if randf() > 0.5 else -1.0
 
 
-## Configure the UFO based on which edge it spawns from
+## Configure the pickup based on which edge it spawns from
 func setup(spawn_edge: SpawnEdge) -> void:
 	_spawn_edge = spawn_edge
 	match spawn_edge:
@@ -99,7 +99,7 @@ func _on_body_entered(body: Node2D) -> void:
 			_award_bonus_points()
 			_spawn_floating_heart()
 			_play_collect_animation()
-		# If player is at max health, UFO just passes through
+		# If player is at max health, star just passes through
 
 
 func _award_bonus_points() -> void:

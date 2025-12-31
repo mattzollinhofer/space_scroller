@@ -16,7 +16,7 @@
 [ext_resource type="PackedScene" uid="uid://cfire_button_scene" path="res://scenes/ui/fire_button.tscn" id="15_fire_button"]
 [ext_resource type="Script" path="res://scripts/level_manager.gd" id="16_level_manager"]
 [ext_resource type="PackedScene" uid="uid://progress_bar_scene" path="res://scenes/ui/progress_bar.tscn" id="17_progress_bar"]
-[ext_resource type="PackedScene" uid="uid://cufo_friend" path="res://scenes/pickups/ufo_friend.tscn" id="18_ufo_friend"]
+[ext_resource type="PackedScene" uid="uid://cufo_friend" path="res://scenes/pickups/star_pickup.tscn" id="18_star_pickup"]
 [ext_resource type="PackedScene" uid="uid://chealth_display" path="res://scenes/ui/health_display.tscn" id="19_health_display"]
 [ext_resource type="PackedScene" uid="uid://clevel_complete_screen" path="res://scenes/ui/level_complete_screen.tscn" id="20_level_complete"]
 [ext_resource type="PackedScene" uid="uid://cscore_display" path="res://scenes/ui/score_display.tscn" id="21_score_display"]
@@ -83,7 +83,7 @@ initial_count = 4
 script = ExtResource("14_enemy_spawner")
 stationary_enemy_scene = ExtResource("12_stationary_enemy")
 patrol_enemy_scene = ExtResource("13_patrol_enemy")
-ufo_friend_scene = ExtResource("18_ufo_friend")
+star_pickup_scene = ExtResource("18_star_pickup")
 spawn_rate_min = 3.0
 spawn_rate_max = 6.0
 patrol_spawn_chance = 0.4

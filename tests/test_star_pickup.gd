@@ -1,7 +1,6 @@
 extends Node2D
-## Integration test: Score increases when Star Pickup is collected
-## Verifies that collecting a Star Pickup awards 500 bonus points.
-## Note: This test was originally for "UFO Friend" which has been renamed to "Star Pickup"
+## Integration test: Player collects star_pickup and gains extra life
+## Verifies that collecting a StarPickup awards 500 bonus points and grants life.
 
 var _test_passed: bool = false
 var _test_failed: bool = false
@@ -16,7 +15,7 @@ var _score_before_collection: int = 0
 
 
 func _ready() -> void:
-	print("=== Test: Score Increases When Star Pickup Collected ===")
+	print("=== Test: Player Collects Star Pickup and Gains Life ===")
 
 	# Load and setup main scene to get all components
 	var main_scene = load("res://scenes/main.tscn")
@@ -64,8 +63,8 @@ func _run_star_pickup_test() -> void:
 
 	# Get initial score and player lives
 	var initial_score = _get_current_score()
-	var player_lives = _player.get_lives() if _player.has_method("get_lives") else -1
-	print("Initial score: %d, Player lives: %d" % [initial_score, player_lives])
+	var lives_before = _player.get_lives() if _player.has_method("get_lives") else -1
+	print("Initial score: %d, Player lives: %d" % [initial_score, lives_before])
 	_score_before_collection = initial_score
 
 	# Move player to a known position, away from any obstacles
@@ -75,7 +74,7 @@ func _run_star_pickup_test() -> void:
 	# Spawn a Star Pickup at player's exact position for immediate collision
 	var star_scene = load("res://scenes/pickups/star_pickup.tscn")
 	if not star_scene:
-		_fail("Could not load Star Pickup scene")
+		_fail("Could not load star_pickup scene")
 		return
 
 	var star_pickup = star_scene.instantiate()
@@ -111,7 +110,15 @@ func _run_star_pickup_test() -> void:
 		_fail("Expected score %d after collecting Star Pickup, got %d" % [expected_score, new_score])
 		return
 
-	print("Star Pickup collection awarded 500 bonus points correctly!")
+	# Check that player gained a life
+	var lives_after = _player.get_lives() if _player.has_method("get_lives") else -1
+	print("Lives after collection: %d" % lives_after)
+
+	if lives_after != lives_before + 1:
+		_fail("Expected player to gain a life (from %d to %d), but lives are now %d" % [lives_before, lives_before + 1, lives_after])
+		return
+
+	print("Star Pickup collection awarded 500 bonus points and extra life correctly!")
 	_pass()
 
 
@@ -144,7 +151,7 @@ func _process(delta: float) -> void:
 func _pass() -> void:
 	_test_passed = true
 	print("=== TEST PASSED ===")
-	print("Score increases correctly when Star Pickup is collected.")
+	print("Star pickup collection works correctly - awards 500 points and extra life.")
 	await get_tree().create_timer(1.0).timeout
 	get_tree().quit(0)
 

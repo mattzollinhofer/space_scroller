@@ -18,33 +18,41 @@ Each slice delivers incremental user value and is tested end-to-end.
 **Dependencies:** None
 
 **Reference patterns:**
-- [@/Users/matt/dev/space_scroller/scenes/pickups/ufo_friend.tscn:1-20] - Current pickup scene structure to rename/refactor
-- [@/Users/matt/dev/space_scroller/scripts/pickups/ufo_friend.gd:1-138] - Existing zigzag movement and collection logic to preserve
-- [@/Users/matt/dev/space_scroller/tests/test_score_ufo_friend.gd:1-158] - Test pattern for pickup collection
+- [@/Users/matt/dev/space_scroller/scenes/pickups/star_pickup.tscn:1-20] - Star pickup scene (renamed from ufo_friend)
+- [@/Users/matt/dev/space_scroller/scripts/pickups/star_pickup.gd:1-138] - Star pickup script with zigzag movement
+- [@/Users/matt/dev/space_scroller/tests/test_star_pickup.gd:1-130] - New integration test for star pickup
 
 #### Tasks
 
-- [ ] 1.1 Write integration test: player collects star_pickup and gains life
+- [x] 1.1 Write integration test: player collects star_pickup and gains life
   - Load main scene, spawn star_pickup at player position
   - Verify player gains life and score bonus awarded
-- [ ] 1.2 Run test, verify expected failure (star_pickup scene not found)
-- [ ] 1.3 Rename ufo_friend.tscn to star_pickup.tscn
-- [ ] 1.4 Rename ufo_friend.gd to star_pickup.gd, update class_name to StarPickup
-- [ ] 1.5 Update star_pickup.tscn to reference renamed script
-- [ ] 1.6 Update enemy_spawner.gd to load star_pickup scene
-- [ ] 1.7 Run test, observe failure or success
-- [ ] 1.8 Document result and update task list
-- [ ] 1.9 Repeat 1.7-1.8 as necessary until test passes
-- [ ] 1.10 Update test_score_ufo_friend.gd to use new scene/class names
-- [ ] 1.11 Refactor if needed (keep tests green)
-- [ ] 1.12 Commit working slice
+- [x] 1.2 Run test, verify expected failure (star_pickup scene not found)
+  - [StarPickup class not declared] -> Test failed as expected
+- [x] 1.3 Rename ufo_friend.tscn to star_pickup.tscn
+- [x] 1.4 Rename ufo_friend.gd to star_pickup.gd, update class_name to StarPickup
+- [x] 1.5 Update star_pickup.tscn to reference renamed script
+- [x] 1.6 Update enemy_spawner.gd to load star_pickup scene
+  - Renamed ufo_friend_scene to star_pickup_scene
+  - Renamed _spawn_ufo_friend to _spawn_star_pickup
+  - Updated main.tscn to use new property name
+- [x] 1.7 Run test, observe failure or success
+  - Success - test passes
+- [x] 1.8 Document result and update task list
+- [x] 1.9 Repeat 1.7-1.8 as necessary until test passes
+  - Test passed on first run after all renames
+- [x] 1.10 Update test_score_ufo_friend.gd to use new scene/class names
+  - Updated to use StarPickup and star_pickup.tscn
+- [x] 1.11 Refactor if needed (keep tests green)
+  - All tests pass, no refactoring needed
+- [x] 1.12 Commit working slice
 
 **Acceptance Criteria:**
-- Star pickup scene exists and uses sparkle-star-1.png sprite (already correct)
-- Player gains extra life when collecting star pickup
-- 500 bonus points awarded on collection
-- Existing zigzag movement behavior preserved
-- All references to old ufo_friend naming updated
+- [x] Star pickup scene exists and uses sparkle-star-1.png sprite (already correct)
+- [x] Player gains extra life when collecting star pickup
+- [x] 500 bonus points awarded on collection
+- [x] Existing zigzag movement behavior preserved
+- [x] All references to old ufo_friend naming updated
 
 ---
 
@@ -55,7 +63,7 @@ Each slice delivers incremental user value and is tested end-to-end.
 **Dependencies:** Slice 1 (pickup system infrastructure)
 
 **Reference patterns:**
-- [@/Users/matt/dev/space_scroller/scripts/pickups/ufo_friend.gd:1-138] - Pickup movement pattern to reuse for sidekick_pickup
+- [@/Users/matt/dev/space_scroller/scripts/pickups/star_pickup.gd:1-138] - Pickup movement pattern to reuse for sidekick_pickup
 - [@/Users/matt/dev/space_scroller/scripts/player.gd:99-163] - Player position and movement for follow behavior
 - [@/Users/matt/dev/space_scroller/assets/sprites/friend-ufo-1.png] - UFO sprite to use for sidekick
 
@@ -169,7 +177,7 @@ Each slice delivers incremental user value and is tested end-to-end.
 
 **Reference patterns:**
 - [@/Users/matt/dev/space_scroller/scripts/enemies/enemy_spawner.gd:216-228] - Kill counting and threshold logic
-- [@/Users/matt/dev/space_scroller/scripts/enemies/enemy_spawner.gd:231-261] - UFO spawn logic to modify
+- [@/Users/matt/dev/space_scroller/scripts/enemies/enemy_spawner.gd:231-261] - Star pickup spawn logic to extend
 
 #### Tasks
 
@@ -180,7 +188,7 @@ Each slice delivers incremental user value and is tested end-to-end.
 - [ ] 5.2 Run test, verify expected failure
 - [ ] 5.3 Add sidekick_pickup_scene export to enemy_spawner.gd
 - [ ] 5.4 Modify _on_enemy_killed to randomly select pickup type (50/50)
-- [ ] 5.5 Rename _spawn_ufo_friend to _spawn_random_pickup
+- [ ] 5.5 Rename _spawn_star_pickup to _spawn_random_pickup
 - [ ] 5.6 Implement random selection between star and sidekick pickup
 - [ ] 5.7 Run test, observe failure or success
 - [ ] 5.8 Document result and update task list

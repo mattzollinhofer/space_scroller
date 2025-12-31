@@ -9,8 +9,8 @@ extends Node2D
 ## Patrol enemy scene to spawn
 @export var patrol_enemy_scene: PackedScene
 
-## UFO friend scene to spawn when kill threshold is reached
-@export var ufo_friend_scene: PackedScene
+## Star pickup scene to spawn when kill threshold is reached
+@export var star_pickup_scene: PackedScene
 
 ## Minimum spawn interval in seconds
 @export var spawn_rate_min: float = 2.0
@@ -47,9 +47,9 @@ var _game_over: bool = false
 ## Continuous spawning enabled (can be disabled for wave-based levels)
 var _continuous_spawning: bool = true
 
-## Kill tracking for UFO friend spawning
+## Kill tracking for pickup spawning
 var _kill_count: int = 0
-var _next_ufo_threshold: int = 5
+var _next_pickup_threshold: int = 5
 
 
 func _ready() -> void:
@@ -209,7 +209,7 @@ func reset() -> void:
 	_spawn_timer = 0.0
 	_next_spawn_time = _rng.randf_range(spawn_rate_min, spawn_rate_max)
 	_kill_count = 0
-	_next_ufo_threshold = 5
+	_next_pickup_threshold = 5
 
 
 ## Called when an enemy is killed
@@ -221,19 +221,19 @@ func _on_enemy_killed(enemy: Node) -> void:
 		var score_manager = get_node("/root/ScoreManager")
 		score_manager.award_enemy_kill(enemy)
 
-	if _kill_count >= _next_ufo_threshold:
-		_spawn_ufo_friend()
+	if _kill_count >= _next_pickup_threshold:
+		_spawn_star_pickup()
 		_kill_count = 0
-		_next_ufo_threshold *= 2
+		_next_pickup_threshold *= 2
 
 
-## Spawn a UFO friend from a random edge
-func _spawn_ufo_friend() -> void:
-	if not ufo_friend_scene:
-		push_warning("No UFO friend scene assigned to EnemySpawner")
+## Spawn a star pickup from a random edge
+func _spawn_star_pickup() -> void:
+	if not star_pickup_scene:
+		push_warning("No star pickup scene assigned to EnemySpawner")
 		return
 
-	var ufo = ufo_friend_scene.instantiate()
+	var star = star_pickup_scene.instantiate()
 
 	# Pick random edge
 	var edge = _rng.randi() % 4
@@ -254,8 +254,8 @@ func _spawn_ufo_friend() -> void:
 			spawn_pos = Vector2(_rng.randf_range(100, _viewport_width - 100), 1536 + 100)
 			spawn_edge = 3
 
-	ufo.position = spawn_pos
-	ufo.setup(spawn_edge)
+	star.position = spawn_pos
+	star.setup(spawn_edge)
 
 	# Add to Main scene, not EnemySpawner
-	get_parent().add_child(ufo)
+	get_parent().add_child(star)

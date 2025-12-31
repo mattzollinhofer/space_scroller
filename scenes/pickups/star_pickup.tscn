@@ -1,12 +1,12 @@
 [gd_scene load_steps=4 format=3 uid="uid://cufo_friend"]
 
-[ext_resource type="Script" path="res://scripts/pickups/ufo_friend.gd" id="1_script"]
+[ext_resource type="Script" path="res://scripts/pickups/star_pickup.gd" id="1_script"]
 [ext_resource type="Texture2D" path="res://assets/sprites/sparkle-star-1.png" id="2_sprite"]
 
-[sub_resource type="RectangleShape2D" id="RectangleShape2D_ufo"]
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_star"]
 size = Vector2(120, 70)
 
-[node name="UfoFriend" type="Area2D"]
+[node name="StarPickup" type="Area2D"]
 collision_layer = 8
 collision_mask = 1
 script = ExtResource("1_script")
@@ -16,4 +16,4 @@ scale = Vector2(3, 3)
 texture = ExtResource("2_sprite")
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="."]
-shape = SubResource("RectangleShape2D_ufo")
+shape = SubResource("RectangleShape2D_star")

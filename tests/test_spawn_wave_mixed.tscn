@@ -1,4 +1,4 @@
-[gd_scene load_steps=2 format=3 uid="uid://cx8m3k9p2q4ty"]
+[gd_scene load_steps=2 format=3 uid="uid://cx8m3lap2q4ty"]
 
 [ext_resource type="Script" path="res://tests/test_spawn_wave_mixed.gd" id="1_test"]
 

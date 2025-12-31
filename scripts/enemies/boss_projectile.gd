@@ -3,7 +3,7 @@ extends Area2D
 ## Despawns when leaving the left edge of the screen.
 
 ## Movement speed in pixels per second
-@export var speed: float = 600.0
+@export var speed: float = 750.0
 
 ## Direction of movement (normalized vector)
 var direction: Vector2 = Vector2(-1, 0)

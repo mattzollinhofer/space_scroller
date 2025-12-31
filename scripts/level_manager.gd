@@ -448,6 +448,11 @@ func _spawn_boss() -> void:
 	if boss_sprite_path != "" and _boss:
 		_apply_boss_sprite(_boss, boss_sprite_path)
 
+	# Apply boss modulate color from level metadata if specified
+	var boss_modulate = _level_metadata.get("boss_modulate", null)
+	if boss_modulate and _boss:
+		_apply_boss_modulate(_boss, boss_modulate)
+
 	# Position boss off right edge
 	var spawn_x = _viewport_width + 200
 	var spawn_y = _viewport_height / 2.0
@@ -511,6 +516,22 @@ func _apply_boss_sprite(boss: Node, sprite_path: String) -> void:
 		# Update the first frame of the idle animation
 		if frames.has_animation("idle") and frames.get_frame_count("idle") > 0:
 			frames.set_frame("idle", 0, texture)
+
+
+func _apply_boss_modulate(boss: Node, modulate_array: Array) -> void:
+	## Apply a color modulation to the boss sprite from the level metadata
+	if modulate_array.size() < 4:
+		return
+
+	var color = Color(modulate_array[0], modulate_array[1], modulate_array[2], modulate_array[3])
+
+	# Apply modulate to the AnimatedSprite2D
+	var animated_sprite = boss.get_node_or_null("AnimatedSprite2D")
+	if animated_sprite:
+		animated_sprite.modulate = color
+	else:
+		# Fallback: apply to the boss node itself
+		boss.modulate = color
 
 
 func _stop_scrolling_for_boss_fight() -> void:

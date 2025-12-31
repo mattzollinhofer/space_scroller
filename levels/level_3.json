@@ -1,0 +1,86 @@
+{
+  "total_distance": 20000,
+  "metadata": {
+    "scroll_speed_multiplier": 1.22,
+    "background_theme": "outer_solar",
+    "boss_sprite": "res://assets/sprites/boss-1.png",
+    "boss_modulate": [0.6, 0.8, 1.0, 1.0],
+    "obstacle_modulate": [0.7, 0.85, 1.0, 1.0]
+  },
+  "sections": [
+    {
+      "name": "Kuiper Belt Entry",
+      "start_percent": 0,
+      "end_percent": 10,
+      "obstacle_density": "medium",
+      "enemy_waves": [
+        { "enemy_type": "stationary", "count": 3 }
+      ]
+    },
+    {
+      "name": "Ice Giant Pass",
+      "start_percent": 10,
+      "end_percent": 25,
+      "obstacle_density": "medium",
+      "enemy_waves": [
+        { "enemy_type": "shooting", "count": 2 },
+        { "enemy_type": "patrol", "count": 2 }
+      ]
+    },
+    {
+      "name": "Frozen Wasteland",
+      "start_percent": 25,
+      "end_percent": 42,
+      "obstacle_density": "high",
+      "enemy_waves": [
+        { "enemy_type": "charger", "count": 2 },
+        { "enemy_type": "shooting", "count": 2 }
+      ]
+    },
+    {
+      "name": "Oort Cloud Fringe",
+      "start_percent": 42,
+      "end_percent": 58,
+      "obstacle_density": "high",
+      "enemy_waves": [
+        { "enemy_type": "shooting", "count": 3 },
+        { "enemy_type": "patrol", "count": 2 },
+        { "enemy_type": "charger", "count": 1 }
+      ]
+    },
+    {
+      "name": "Deep Freeze Zone",
+      "start_percent": 58,
+      "end_percent": 75,
+      "obstacle_density": "high",
+      "enemy_waves": [
+        { "enemy_type": "charger", "count": 2 },
+        { "enemy_type": "shooting", "count": 3 },
+        { "enemy_type": "patrol", "count": 2 }
+      ]
+    },
+    {
+      "name": "Absolute Zero",
+      "start_percent": 75,
+      "end_percent": 88,
+      "obstacle_density": "high",
+      "enemy_waves": [
+        { "enemy_type": "charger", "count": 3 },
+        { "enemy_type": "shooting", "count": 3 },
+        { "enemy_type": "patrol", "count": 2 },
+        { "enemy_type": "stationary", "count": 2 }
+      ]
+    },
+    {
+      "name": "Edge of Darkness",
+      "start_percent": 88,
+      "end_percent": 100,
+      "obstacle_density": "high",
+      "enemy_waves": [
+        { "enemy_type": "charger", "count": 3 },
+        { "enemy_type": "shooting", "count": 4 },
+        { "enemy_type": "patrol", "count": 2 }
+      ]
+    }
+  ]
+}

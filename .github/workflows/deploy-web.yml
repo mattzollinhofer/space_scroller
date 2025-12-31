@@ -15,6 +15,11 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@v4
 
+      - name: Setup export templates
+        run: |
+          mkdir -p /github/home/.local/share/godot/export_templates/4.3.stable
+          mv /root/.local/share/godot/export_templates/4.3.stable/* /github/home/.local/share/godot/export_templates/4.3.stable/
+
       - name: Create build directory
         run: mkdir -p build/web
 

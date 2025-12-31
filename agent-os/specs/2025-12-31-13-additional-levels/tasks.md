@@ -23,14 +23,16 @@ This feature adds 2 additional levels (Level 2 and Level 3) with unique visual t
 
 #### Tasks
 
-- [ ] 1.1 Write integration test: main menu has "Level Select" button that navigates to level select screen
-- [ ] 1.2 Run test, verify expected failure
-- [ ] 1.3 Make smallest change possible to progress
-- [ ] 1.4 Run test, observe failure or success
-- [ ] 1.5 Document result and update task list
-- [ ] 1.6 Repeat 1.3-1.5 as necessary (create level_select.tscn, level_select.gd, add button to main menu, wire navigation)
-- [ ] 1.7 Refactor if needed (keep tests green)
-- [ ] 1.8 Commit working slice
+- [x] 1.1 Write integration test: main menu has "Level Select" button that navigates to level select screen
+- [x] 1.2 Run test, verify expected failure [Level Select button not found in main menu]
+- [x] 1.3 Add LevelSelectButton to main_menu.tscn between Play and Character Select
+- [x] 1.4 Run test [Main menu missing _on_level_select_button_pressed method]
+- [x] 1.5 Add _on_level_select_button_pressed handler to main_menu.gd
+- [x] 1.6 Run test [Could not load level select scene at res://scenes/ui/level_select.tscn]
+- [x] 1.7 Create level_select.tscn with Level 1 button and level_select.gd with handler
+- [x] 1.8 Run test - Success!
+- [x] 1.9 Verified no regressions (test_main_menu.tscn, test_character_selection.tscn pass)
+- [ ] 1.10 Commit working slice
 
 **Acceptance Criteria:**
 - Main menu shows "Level Select" button between "Play" and "Character Select"

@@ -22,3 +22,6 @@ mono_crash.*.json
 # OS-specific files
 .DS_Store
 Thumbs.db
+
+# Sprite processing
+assets/sprites/raw/

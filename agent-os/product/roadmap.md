@@ -27,7 +27,7 @@ follow. `S`
 7. [x] Boss Battle — Create an end-of-level boss with health bar, attack
    patterns, and victory condition that completes the level. `L`
 
-8. [ ] Score System — Implement scoring for defeating enemies and completing
+8. [x] Score System — Implement scoring for defeating enemies and completing
    levels, with persistent high score storage and display. `S`
 
 9. [ ] Game UI — Build main menu, pause menu, game over screen, and HUD showing

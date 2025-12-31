@@ -25,3 +25,6 @@ Thumbs.db
 
 # Sprite processing
 assets/sprites/raw/
+
+# Build artifacts (export output)
+build/

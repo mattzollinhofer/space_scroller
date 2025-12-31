@@ -9,6 +9,9 @@ extends Node2D
 ## Patrol enemy scene to spawn
 @export var patrol_enemy_scene: PackedScene
 
+## UFO friend scene to spawn when kill threshold is reached
+@export var ufo_friend_scene: PackedScene
+
 ## Minimum spawn interval in seconds
 @export var spawn_rate_min: float = 2.0
 
@@ -43,6 +46,10 @@ var _game_over: bool = false
 
 ## Continuous spawning enabled (can be disabled for wave-based levels)
 var _continuous_spawning: bool = true
+
+## Kill tracking for UFO friend spawning
+var _kill_count: int = 0
+var _next_ufo_threshold: int = 5
 
 
 func _ready() -> void:
@@ -146,6 +153,10 @@ func _setup_enemy(enemy: Node2D) -> void:
 	# Connect to tree_exiting to remove from tracking when despawned
 	enemy.tree_exiting.connect(_on_enemy_despawned.bind(enemy))
 
+	# Connect to died signal for kill tracking
+	if enemy.has_signal("died"):
+		enemy.died.connect(_on_enemy_killed)
+
 
 func _spawn_initial_enemies() -> void:
 	for i in range(initial_count):
@@ -197,3 +208,48 @@ func reset() -> void:
 	_game_over = false
 	_spawn_timer = 0.0
 	_next_spawn_time = _rng.randf_range(spawn_rate_min, spawn_rate_max)
+	_kill_count = 0
+	_next_ufo_threshold = 5
+
+
+## Called when an enemy is killed
+func _on_enemy_killed() -> void:
+	_kill_count += 1
+	if _kill_count >= _next_ufo_threshold:
+		_spawn_ufo_friend()
+		_kill_count = 0
+		_next_ufo_threshold *= 2
+
+
+## Spawn a UFO friend from a random edge
+func _spawn_ufo_friend() -> void:
+	if not ufo_friend_scene:
+		push_warning("No UFO friend scene assigned to EnemySpawner")
+		return
+
+	var ufo = ufo_friend_scene.instantiate()
+
+	# Pick random edge
+	var edge = _rng.randi() % 4
+	var spawn_pos: Vector2
+	var spawn_edge: int
+
+	match edge:
+		0:  # Left
+			spawn_pos = Vector2(-100, _rng.randf_range(PLAYABLE_Y_MIN, PLAYABLE_Y_MAX))
+			spawn_edge = 0
+		1:  # Right
+			spawn_pos = Vector2(_viewport_width + 100, _rng.randf_range(PLAYABLE_Y_MIN, PLAYABLE_Y_MAX))
+			spawn_edge = 1
+		2:  # Top
+			spawn_pos = Vector2(_rng.randf_range(100, _viewport_width - 100), -100)
+			spawn_edge = 2
+		3:  # Bottom
+			spawn_pos = Vector2(_rng.randf_range(100, _viewport_width - 100), 1536 + 100)
+			spawn_edge = 3
+
+	ufo.position = spawn_pos
+	ufo.setup(spawn_edge)
+
+	# Add to Main scene, not EnemySpawner
+	get_parent().add_child(ufo)

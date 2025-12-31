@@ -24,7 +24,7 @@ follow. `S`
 6. [x] Level Structure — Build a complete first level with defined start,
    obstacle sections, enemy placements, and level-end trigger. `M`
 
-7. [ ] Boss Battle — Create an end-of-level boss with health bar, attack
+7. [x] Boss Battle — Create an end-of-level boss with health bar, attack
    patterns, and victory condition that completes the level. `L`
 
 8. [ ] Score System — Implement scoring for defeating enemies and completing

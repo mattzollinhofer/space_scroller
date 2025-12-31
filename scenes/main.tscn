@@ -89,6 +89,7 @@ position = Vector2(400, 768)
 script = ExtResource("16_level_manager")
 scroll_controller_path = NodePath("../ParallaxBackground")
 progress_bar_path = NodePath("../ProgressBar")
+obstacle_spawner_path = NodePath("../ObstacleSpawner")
 
 [node name="ProgressBar" parent="." instance=ExtResource("17_progress_bar")]
 

@@ -38,7 +38,7 @@ visual feedback that the level has structure.
 - [x] 1.9 LevelManager updates ProgressBar each frame based on scroll_offset
 - [x] 1.10 Run test, iterate until progress bar displays and updates - Success
 - [x] 1.11 Refactor if needed (keep tests green) - No refactoring needed
-- [ ] 1.12 Commit working slice
+- [x] 1.12 Commit working slice - Success
 
 **Acceptance Criteria:**
 - Progress bar visible at top of screen during gameplay
@@ -62,17 +62,17 @@ intense (more obstacles). The player experiences distinct phases of difficulty.
 
 #### Tasks
 
-- [ ] 2.1 Write integration test: verify obstacle density changes when section changes
-- [ ] 2.2 Run test, verify expected failure
-- [ ] 2.3 Extend level_1.json with sections array (3-5 sections with duration and obstacle_density)
-- [ ] 2.4 Add `set_density(level: String)` method to ObstacleSpawner accepting "low"/"medium"/"high"
-- [ ] 2.5 LevelManager tracks current section based on progress percentage
-- [ ] 2.6 LevelManager emits `section_changed(section_index)` signal when entering new section
-- [ ] 2.7 Connect LevelManager to ObstacleSpawner, call set_density on section change
-- [ ] 2.8 Run test, iterate until density changes are detectable
-- [ ] 2.9 Manual playtest: verify noticeable difficulty progression
-- [ ] 2.10 Refactor if needed (keep tests green)
-- [ ] 2.11 Run all slice tests (1 and 2) to verify no regressions
+- [x] 2.1 Write integration test: verify obstacle density changes when section changes
+- [x] 2.2 Run test, verify expected failure [set_density method not found] -> Created test
+- [x] 2.3 Extend level_1.json with sections array (4 sections with obstacle_density)
+- [x] 2.4 Add `set_density(level: String)` method to ObstacleSpawner accepting "low"/"medium"/"high"
+- [x] 2.5 LevelManager tracks current section based on progress percentage
+- [x] 2.6 LevelManager emits `section_changed(section_index)` signal when entering new section
+- [x] 2.7 Connect LevelManager to ObstacleSpawner, call set_density on section change
+- [x] 2.8 Run test, iterate until density changes are detectable - Success
+- [x] 2.9 Manual playtest: verify noticeable difficulty progression - Skipped (headless)
+- [x] 2.10 Refactor if needed (keep tests green) - No refactoring needed
+- [x] 2.11 Run all slice tests (1 and 2) to verify no regressions - Success
 - [ ] 2.12 Commit working slice
 
 **Acceptance Criteria:**

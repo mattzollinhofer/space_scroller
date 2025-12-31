@@ -11,6 +11,9 @@ extends Node
 ## Reference to the progress bar UI
 @export var progress_bar_path: NodePath
 
+## Reference to the obstacle spawner
+@export var obstacle_spawner_path: NodePath
+
 ## Signals
 signal section_changed(section_index: int)
 signal level_completed()
@@ -21,11 +24,20 @@ var _level_data: Dictionary = {}
 ## Total distance of the level in pixels
 var _total_distance: float = 9000.0
 
+## Sections array from level data
+var _sections: Array = []
+
+## Current section index
+var _current_section: int = -1
+
 ## Reference to scroll controller
 var _scroll_controller: Node = null
 
 ## Reference to progress bar
 var _progress_bar: Node = null
+
+## Reference to obstacle spawner
+var _obstacle_spawner: Node = null
 
 ## Current progress (0.0 to 1.0)
 var _current_progress: float = 0.0
@@ -34,6 +46,8 @@ var _current_progress: float = 0.0
 func _ready() -> void:
 	_load_level_data()
 	_setup_references()
+	# Set initial section density
+	_check_section_change()
 
 
 func _load_level_data() -> void:
@@ -53,6 +67,7 @@ func _load_level_data() -> void:
 
 	_level_data = json.data
 	_total_distance = _level_data.get("total_distance", 9000.0)
+	_sections = _level_data.get("sections", [])
 
 
 func _setup_references() -> void:
@@ -72,9 +87,18 @@ func _setup_references() -> void:
 	if not _progress_bar:
 		_progress_bar = get_tree().root.get_node_or_null("Main/ProgressBar")
 
+	# Get obstacle spawner reference
+	if not obstacle_spawner_path.is_empty():
+		_obstacle_spawner = get_node_or_null(obstacle_spawner_path)
+
+	# Try to find obstacle spawner automatically if not set
+	if not _obstacle_spawner:
+		_obstacle_spawner = get_tree().root.get_node_or_null("Main/ObstacleSpawner")
+
 
 func _process(_delta: float) -> void:
 	_update_progress()
+	_check_section_change()
 
 
 func _update_progress() -> void:
@@ -90,6 +114,48 @@ func _update_progress() -> void:
 		_progress_bar.set_progress(_current_progress)
 
 
+func _check_section_change() -> void:
+	if _sections.is_empty():
+		return
+
+	var progress_percent = _current_progress * 100.0
+	var new_section = _current_section
+
+	# Find which section we're in based on progress percentage
+	for i in range(_sections.size()):
+		var section = _sections[i]
+		var start = section.get("start_percent", 0)
+		var end = section.get("end_percent", 100)
+
+		if progress_percent >= start and progress_percent < end:
+			new_section = i
+			break
+
+	# If we've reached 100%, we're in the last section
+	if progress_percent >= 100.0:
+		new_section = _sections.size() - 1
+
+	# Check if section changed
+	if new_section != _current_section:
+		_current_section = new_section
+		_on_section_changed(_current_section)
+
+
+func _on_section_changed(section_index: int) -> void:
+	if section_index < 0 or section_index >= _sections.size():
+		return
+
+	var section = _sections[section_index]
+	var density = section.get("obstacle_density", "medium")
+
+	# Update obstacle spawner density
+	if _obstacle_spawner and _obstacle_spawner.has_method("set_density"):
+		_obstacle_spawner.set_density(density)
+
+	# Emit signal for other systems
+	section_changed.emit(section_index)
+
+
 ## Get current progress as a percentage (0.0 to 1.0)
 func get_progress() -> float:
 	return _current_progress
@@ -98,3 +164,15 @@ func get_progress() -> float:
 ## Get total distance of the level
 func get_total_distance() -> float:
 	return _total_distance
+
+
+## Get current section index
+func get_current_section() -> int:
+	return _current_section
+
+
+## Get section data by index
+func get_section(index: int) -> Dictionary:
+	if index >= 0 and index < _sections.size():
+		return _sections[index]
+	return {}

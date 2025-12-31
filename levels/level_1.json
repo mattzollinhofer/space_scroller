@@ -1,3 +1,29 @@
 {
-  "total_distance": 9000
+  "total_distance": 9000,
+  "sections": [
+    {
+      "name": "Opening",
+      "start_percent": 0,
+      "end_percent": 20,
+      "obstacle_density": "low"
+    },
+    {
+      "name": "Building",
+      "start_percent": 20,
+      "end_percent": 50,
+      "obstacle_density": "medium"
+    },
+    {
+      "name": "Intense",
+      "start_percent": 50,
+      "end_percent": 80,
+      "obstacle_density": "high"
+    },
+    {
+      "name": "Final Push",
+      "start_percent": 80,
+      "end_percent": 100,
+      "obstacle_density": "high"
+    }
+  ]
 }

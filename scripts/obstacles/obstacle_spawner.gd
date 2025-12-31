@@ -18,6 +18,13 @@ extends Node2D
 const PLAYABLE_Y_MIN: float = 80.0 + 60.0  # Top boundary + margin for asteroid size
 const PLAYABLE_Y_MAX: float = 1456.0 - 60.0  # Bottom boundary - margin for asteroid size
 
+## Density level spawn rates
+const DENSITY_RATES: Dictionary = {
+	"low": { "min": 6.0, "max": 9.0 },
+	"medium": { "min": 4.0, "max": 7.0 },
+	"high": { "min": 2.0, "max": 4.0 }
+}
+
 ## Viewport dimensions
 var _viewport_width: float = 2048.0
 
@@ -121,6 +128,34 @@ func _on_asteroid_despawned(asteroid: Node) -> void:
 		_active_asteroids.remove_at(idx)
 
 
+## Set the obstacle spawn density level
+## @param level: "low", "medium", or "high"
+func set_density(level: String) -> void:
+	if DENSITY_RATES.has(level):
+		var rates = DENSITY_RATES[level]
+		spawn_rate_min = rates["min"]
+		spawn_rate_max = rates["max"]
+		# Reset next spawn time to use new rates
+		_next_spawn_time = _rng.randf_range(spawn_rate_min, spawn_rate_max)
+	else:
+		push_warning("Unknown density level: %s" % level)
+
+
 ## Get count of active asteroids (for debugging/testing)
 func get_active_count() -> int:
 	return _active_asteroids.size()
+
+
+## Clear all active asteroids (used for checkpoint respawn)
+func clear_all() -> void:
+	for asteroid in _active_asteroids.duplicate():
+		if is_instance_valid(asteroid):
+			asteroid.queue_free()
+	_active_asteroids.clear()
+
+
+## Reset spawner state (used for checkpoint respawn)
+func reset() -> void:
+	_game_over = false
+	_spawn_timer = 0.0
+	_next_spawn_time = _rng.randf_range(spawn_rate_min, spawn_rate_max)

@@ -249,12 +249,25 @@ This feature adds 2 additional levels (Level 2 and Level 3) with unique visual t
 
 #### Tasks
 
-- [ ] 6.1 Write integration test: clicking "Play" starts Level 1 directly (bypasses level select)
-- [ ] 6.2 Run test, verify expected failure or success
-- [ ] 6.3 Ensure main.tscn uses level_1.json by default (already the case)
-- [ ] 6.4 Verify Play button still works as before
-- [ ] 6.5 Run all slice tests (1-6) to verify no regressions
-- [ ] 6.6 Commit working slice
+- [x] 6.1 Write integration test: clicking "Play" starts Level 1 directly (bypasses level select)
+  - Created tests/test_play_starts_level1.gd and .tscn
+  - Test verifies GameState defaults to level 1, default path is level_1.json
+  - Test verifies Play button handler exists and navigates to main.tscn
+- [x] 6.2 Run test, verify expected failure or success
+  - Test PASSED immediately - functionality already working
+- [x] 6.3 Ensure main.tscn uses level_1.json by default (already the case)
+  - GameState defaults _selected_level to DEFAULT_LEVEL (1)
+  - LevelManager reads selected level from GameState
+- [x] 6.4 Verify Play button still works as before
+  - Play button navigates to main.tscn
+  - LevelManager loads level based on GameState.get_selected_level_path()
+- [x] 6.5 Run all slice tests (1-6) to verify no regressions
+  - test_level_select_menu.tscn - PASSED
+  - test_level1_start.tscn - PASSED
+  - test_level_locked_state.tscn - PASSED
+  - test_level_indicator.tscn - PASSED
+  - test_play_starts_level1.tscn - PASSED
+- [x] 6.6 Commit working slice
 
 **Acceptance Criteria:**
 - "Play" button starts Level 1 immediately

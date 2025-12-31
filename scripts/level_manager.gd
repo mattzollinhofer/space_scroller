@@ -519,7 +519,18 @@ func _spawn_boss() -> void:
 		# Spawn boss health bar
 		_spawn_boss_health_bar()
 
+		# Crossfade to boss battle music via AudioManager
+		_start_boss_music()
+
 		boss_spawned.emit()
+
+
+## Start boss battle music via AudioManager crossfade
+func _start_boss_music() -> void:
+	if has_node("/root/AudioManager"):
+		var audio_manager = get_node("/root/AudioManager")
+		if audio_manager.has_method("crossfade_to_boss_music"):
+			audio_manager.crossfade_to_boss_music(_level_number)
 
 
 func _apply_boss_sprite(boss: Node, sprite_path: String) -> void:

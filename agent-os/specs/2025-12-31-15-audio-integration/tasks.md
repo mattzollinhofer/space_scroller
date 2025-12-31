@@ -86,17 +86,17 @@ Each slice delivers incremental user value and is tested end-to-end.
 
 #### Tasks
 
-- [ ] 3.1 Write integration test that verifies boss music plays after boss_spawned signal
-- [ ] 3.2 Run test, verify expected failure
-- [ ] 3.3 Source/create 3 boss music tracks (assets/audio/music/boss_1.ogg, boss_2.ogg, boss_3.ogg)
-- [ ] 3.4 Add second AudioStreamPlayer for boss music (enables crossfade)
-- [ ] 3.5 Implement crossfade_to_boss_music(level_number: int) method with tween animation
-- [ ] 3.6 Track current music state (_is_boss_music_playing) in AudioManager
-- [ ] 3.7 Connect AudioManager to boss_spawned signal from LevelManager
-- [ ] 3.8 Run test, iterate until crossfade works
-- [ ] 3.9 Manually verify smooth crossfade (not abrupt cutoff)
-- [ ] 3.10 Run all slice tests to verify no regressions
-- [ ] 3.11 Commit working slice
+- [x] 3.1 Write integration test that verifies boss music plays after boss_spawned signal
+- [x] 3.2 Run test, verify expected failure - AudioManager methods not found
+- [x] 3.3 Source/create 3 boss music tracks (assets/audio/music/boss_1.wav, boss_2.wav, boss_3.wav)
+- [x] 3.4 Add second AudioStreamPlayer for boss music (enables crossfade) - _music_player_b
+- [x] 3.5 Implement crossfade_to_boss_music(level_number: int) method with tween animation
+- [x] 3.6 Track current music state (_is_boss_music_playing) in AudioManager
+- [x] 3.7 Connect AudioManager to boss_spawned signal from LevelManager (via level_manager.gd call)
+- [x] 3.8 Run test, iterate until crossfade works - Success
+- [x] 3.9 Manually verify smooth crossfade (skipped - headless environment)
+- [x] 3.10 Run all slice tests to verify no regressions - All 4 audio tests pass
+- [x] 3.11 Commit working slice
 
 **Acceptance Criteria:**
 - Boss music starts when boss_spawned signal fires

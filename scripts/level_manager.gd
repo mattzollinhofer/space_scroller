@@ -44,6 +44,9 @@ var _level_data: Dictionary = {}
 ## Level metadata (scroll_speed, background_theme, etc.)
 var _level_metadata: Dictionary = {}
 
+## Enemy configuration from level data
+var _enemy_config: Dictionary = {}
+
 ## Total distance of the level in pixels
 var _total_distance: float = 9000.0
 
@@ -145,6 +148,7 @@ func _load_level_data() -> void:
 	_total_distance = _level_data.get("total_distance", 9000.0)
 	_sections = _level_data.get("sections", [])
 	_level_metadata = _level_data.get("metadata", {})
+	_enemy_config = _level_data.get("enemy_config", {})
 
 
 func _setup_references() -> void:
@@ -241,6 +245,10 @@ func _setup_wave_based_spawning() -> void:
 	# Disable continuous enemy spawning - we'll spawn waves at section boundaries
 	if _enemy_spawner and _enemy_spawner.has_method("set_continuous_spawning"):
 		_enemy_spawner.set_continuous_spawning(false)
+
+	# Pass enemy config to spawner for per-level zigzag parameters
+	if _enemy_spawner and _enemy_spawner.has_method("set_enemy_config"):
+		_enemy_spawner.set_enemy_config(_enemy_config)
 
 
 func _connect_player_signals() -> void:

@@ -74,6 +74,9 @@ var _next_filler_time: float = 0.0
 var _kill_count: int = 0
 var _next_pickup_threshold: int = 5
 
+## Enemy configuration from level (zigzag params, etc.)
+var _enemy_config: Dictionary = {}
+
 
 func _ready() -> void:
 	_rng = RandomNumberGenerator.new()
@@ -147,6 +150,11 @@ func set_filler_spawning(enabled: bool) -> void:
 ## Check if filler spawning is enabled
 func is_filler_spawning() -> bool:
 	return _filler_spawning
+
+
+## Set enemy configuration from level data
+func set_enemy_config(config: Dictionary) -> void:
+	_enemy_config = config
 
 
 ## Spawn a wave of enemies based on configuration
@@ -233,6 +241,9 @@ func _setup_enemy(enemy: Node2D) -> void:
 	var y_pos = _rng.randf_range(PLAYABLE_Y_MIN, PLAYABLE_Y_MAX)
 	enemy.position = Vector2(x_pos, y_pos)
 
+	# Apply level-specific enemy config (zigzag parameters)
+	_apply_enemy_config(enemy)
+
 	# Add to scene and track
 	add_child(enemy)
 	_active_enemies.append(enemy)
@@ -243,6 +254,22 @@ func _setup_enemy(enemy: Node2D) -> void:
 	# Connect to died signal for kill tracking and score
 	if enemy.has_signal("died"):
 		enemy.died.connect(_on_enemy_killed.bind(enemy))
+
+
+func _apply_enemy_config(enemy: Node2D) -> void:
+	# Apply zigzag speed range if specified
+	if _enemy_config.has("zigzag_speed_min") and _enemy_config.has("zigzag_speed_max"):
+		var speed = _rng.randf_range(_enemy_config["zigzag_speed_min"], _enemy_config["zigzag_speed_max"])
+		if "zigzag_speed" in enemy:
+			enemy.zigzag_speed = speed
+
+	# Apply zigzag angle range if specified
+	if _enemy_config.has("zigzag_angle_min"):
+		if "zigzag_angle_min" in enemy:
+			enemy.zigzag_angle_min = _enemy_config["zigzag_angle_min"]
+	if _enemy_config.has("zigzag_angle_max"):
+		if "zigzag_angle_max" in enemy:
+			enemy.zigzag_angle_max = _enemy_config["zigzag_angle_max"]
 
 
 func _spawn_initial_enemies() -> void:

@@ -1,5 +1,11 @@
 {
   "total_distance": 16000,
+  "enemy_config": {
+    "zigzag_speed_min": 120,
+    "zigzag_speed_max": 170,
+    "zigzag_angle_min": 25,
+    "zigzag_angle_max": 60
+  },
   "metadata": {
     "scroll_speed_multiplier": 1.12,
     "background_theme": "inner_solar",

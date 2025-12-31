@@ -1,5 +1,11 @@
 {
   "total_distance": 13500,
+  "enemy_config": {
+    "zigzag_speed_min": 100,
+    "zigzag_speed_max": 140,
+    "zigzag_angle_min": 30,
+    "zigzag_angle_max": 70
+  },
   "sections": [
     {
       "name": "Opening",

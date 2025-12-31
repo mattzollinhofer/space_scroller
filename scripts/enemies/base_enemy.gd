@@ -13,15 +13,23 @@ class_name BaseEnemy
 ## Movement speed (matches world scroll speed)
 var scroll_speed: float = 180.0
 
-## Vertical zigzag speed
+## Zigzag speed
 @export var zigzag_speed: float = 120.0
+
+## Zigzag angle range (degrees from horizontal, toward player)
+## 90 = pure vertical, 45 = diagonal, 30 = more horizontal/aggressive
+@export var zigzag_angle_min: float = 25.0
+@export var zigzag_angle_max: float = 65.0
 
 ## Y bounds for zigzag movement
 const Y_MIN: float = 140.0
 const Y_MAX: float = 1396.0
 
-## Current vertical direction (1 = down, -1 = up)
+## Current zigzag direction (1 or -1)
 var _zigzag_direction: float = 1.0
+
+## Randomized angle for this enemy's zigzag (radians)
+var _zigzag_angle: float = 0.0
 
 ## Whether the enemy is currently being destroyed (prevents double-processing)
 var _is_destroying: bool = false
@@ -43,6 +51,9 @@ func _ready() -> void:
 	area_entered.connect(_on_area_entered)
 	# Randomize initial zigzag direction
 	_zigzag_direction = 1.0 if randf() > 0.5 else -1.0
+	# Randomize zigzag angle within range (convert to radians)
+	var angle_deg = randf_range(zigzag_angle_min, zigzag_angle_max)
+	_zigzag_angle = deg_to_rad(angle_deg)
 
 
 func _process(delta: float) -> void:
@@ -52,10 +63,14 @@ func _process(delta: float) -> void:
 	# Move enemy left at scroll speed
 	position.x -= scroll_speed * delta
 
-	# Zigzag vertical movement
-	position.y += _zigzag_direction * zigzag_speed * delta
+	# Zigzag movement at randomized angle (diagonal toward player)
+	# Angle is from horizontal, so cos = horizontal component, sin = vertical
+	var zigzag_x = -cos(_zigzag_angle) * zigzag_speed * _zigzag_direction * delta
+	var zigzag_y = sin(_zigzag_angle) * zigzag_speed * _zigzag_direction * delta
+	position.x += zigzag_x
+	position.y += zigzag_y
 
-	# Bounce off Y bounds
+	# Bounce off Y bounds and reverse direction
 	if position.y >= Y_MAX:
 		position.y = Y_MAX
 		_zigzag_direction = -1.0

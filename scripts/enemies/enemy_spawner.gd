@@ -1,6 +1,7 @@
 extends Node2D
 ## Spawns and manages enemy entities.
 ## Handles continuous spawning from the right edge and tracks active enemies.
+## Supports wave-based spawning controlled by LevelManager.
 
 ## Stationary enemy scene to spawn
 @export var stationary_enemy_scene: PackedScene
@@ -40,6 +41,9 @@ var _next_spawn_time: float = 0.0
 ## Game over state
 var _game_over: bool = false
 
+## Continuous spawning enabled (can be disabled for wave-based levels)
+var _continuous_spawning: bool = true
+
 
 func _ready() -> void:
 	_rng = RandomNumberGenerator.new()
@@ -53,12 +57,12 @@ func _ready() -> void:
 	# Connect to player died signal to stop spawning
 	_connect_to_player()
 
-	# Spawn initial enemies
-	_spawn_initial_enemies()
+	# Note: Initial enemies are now spawned by LevelManager via spawn_wave
+	# for wave-based levels, or here if continuous spawning is enabled
 
 
 func _process(delta: float) -> void:
-	if _game_over:
+	if _game_over or not _continuous_spawning:
 		return
 
 	_spawn_timer += delta
@@ -78,6 +82,29 @@ func _connect_to_player() -> void:
 
 func _on_player_died() -> void:
 	_game_over = true
+
+
+## Enable or disable continuous random spawning
+func set_continuous_spawning(enabled: bool) -> void:
+	_continuous_spawning = enabled
+	if enabled:
+		# Reset timer when re-enabling
+		_spawn_timer = 0.0
+		_next_spawn_time = _rng.randf_range(spawn_rate_min, spawn_rate_max)
+
+
+## Spawn a wave of enemies based on configuration
+## wave_config is an array of dictionaries with enemy_type and count
+func spawn_wave(wave_configs: Array) -> void:
+	for wave_config in wave_configs:
+		var enemy_type = wave_config.get("enemy_type", "stationary")
+		var count = wave_config.get("count", 1)
+
+		for i in range(count):
+			if enemy_type == "patrol":
+				_spawn_patrol_enemy()
+			else:
+				_spawn_stationary_enemy()
 
 
 func _spawn_random_enemy() -> void:
@@ -107,8 +134,8 @@ func _spawn_patrol_enemy() -> void:
 
 
 func _setup_enemy(enemy: Node2D) -> void:
-	# Position off right edge
-	var x_pos = _viewport_width + 100.0
+	# Position off right edge with slight vertical spread
+	var x_pos = _viewport_width + 100.0 + _rng.randf_range(0, 200)
 	var y_pos = _rng.randf_range(PLAYABLE_Y_MIN, PLAYABLE_Y_MAX)
 	enemy.position = Vector2(x_pos, y_pos)
 
@@ -155,3 +182,18 @@ func _on_enemy_despawned(enemy: Node) -> void:
 ## Get count of active enemies (for debugging/testing)
 func get_active_count() -> int:
 	return _active_enemies.size()
+
+
+## Clear all active enemies (used for checkpoint respawn)
+func clear_all() -> void:
+	for enemy in _active_enemies.duplicate():
+		if is_instance_valid(enemy):
+			enemy.queue_free()
+	_active_enemies.clear()
+
+
+## Reset spawner state (used for checkpoint respawn)
+func reset() -> void:
+	_game_over = false
+	_spawn_timer = 0.0
+	_next_spawn_time = _rng.randf_range(spawn_rate_min, spawn_rate_max)

@@ -5,25 +5,39 @@
       "name": "Opening",
       "start_percent": 0,
       "end_percent": 20,
-      "obstacle_density": "low"
+      "obstacle_density": "low",
+      "enemy_waves": [
+        { "enemy_type": "stationary", "count": 2 }
+      ]
     },
     {
       "name": "Building",
       "start_percent": 20,
       "end_percent": 50,
-      "obstacle_density": "medium"
+      "obstacle_density": "medium",
+      "enemy_waves": [
+        { "enemy_type": "stationary", "count": 2 },
+        { "enemy_type": "patrol", "count": 1 }
+      ]
     },
     {
       "name": "Intense",
       "start_percent": 50,
       "end_percent": 80,
-      "obstacle_density": "high"
+      "obstacle_density": "high",
+      "enemy_waves": [
+        { "enemy_type": "patrol", "count": 2 },
+        { "enemy_type": "stationary", "count": 2 }
+      ]
     },
     {
       "name": "Final Push",
       "start_percent": 80,
       "end_percent": 100,
-      "obstacle_density": "high"
+      "obstacle_density": "high",
+      "enemy_waves": [
+        { "enemy_type": "patrol", "count": 3 }
+      ]
     }
   ]
 }

@@ -14,6 +14,9 @@ extends Node
 ## Reference to the obstacle spawner
 @export var obstacle_spawner_path: NodePath
 
+## Reference to the enemy spawner
+@export var enemy_spawner_path: NodePath
+
 ## Signals
 signal section_changed(section_index: int)
 signal level_completed()
@@ -39,6 +42,9 @@ var _progress_bar: Node = null
 ## Reference to obstacle spawner
 var _obstacle_spawner: Node = null
 
+## Reference to enemy spawner
+var _enemy_spawner: Node = null
+
 ## Current progress (0.0 to 1.0)
 var _current_progress: float = 0.0
 
@@ -46,7 +52,8 @@ var _current_progress: float = 0.0
 func _ready() -> void:
 	_load_level_data()
 	_setup_references()
-	# Set initial section density
+	_setup_wave_based_spawning()
+	# Set initial section density and spawn first wave
 	_check_section_change()
 
 
@@ -94,6 +101,20 @@ func _setup_references() -> void:
 	# Try to find obstacle spawner automatically if not set
 	if not _obstacle_spawner:
 		_obstacle_spawner = get_tree().root.get_node_or_null("Main/ObstacleSpawner")
+
+	# Get enemy spawner reference
+	if not enemy_spawner_path.is_empty():
+		_enemy_spawner = get_node_or_null(enemy_spawner_path)
+
+	# Try to find enemy spawner automatically if not set
+	if not _enemy_spawner:
+		_enemy_spawner = get_tree().root.get_node_or_null("Main/EnemySpawner")
+
+
+func _setup_wave_based_spawning() -> void:
+	# Disable continuous enemy spawning - we'll spawn waves at section boundaries
+	if _enemy_spawner and _enemy_spawner.has_method("set_continuous_spawning"):
+		_enemy_spawner.set_continuous_spawning(false)
 
 
 func _process(_delta: float) -> void:
@@ -147,10 +168,15 @@ func _on_section_changed(section_index: int) -> void:
 
 	var section = _sections[section_index]
 	var density = section.get("obstacle_density", "medium")
+	var enemy_waves = section.get("enemy_waves", [])
 
 	# Update obstacle spawner density
 	if _obstacle_spawner and _obstacle_spawner.has_method("set_density"):
 		_obstacle_spawner.set_density(density)
+
+	# Spawn enemy wave for this section
+	if _enemy_spawner and _enemy_spawner.has_method("spawn_wave") and not enemy_waves.is_empty():
+		_enemy_spawner.spawn_wave(enemy_waves)
 
 	# Emit signal for other systems
 	section_changed.emit(section_index)

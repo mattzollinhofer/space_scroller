@@ -73,7 +73,7 @@ intense (more obstacles). The player experiences distinct phases of difficulty.
 - [x] 2.9 Manual playtest: verify noticeable difficulty progression - Skipped (headless)
 - [x] 2.10 Refactor if needed (keep tests green) - No refactoring needed
 - [x] 2.11 Run all slice tests (1 and 2) to verify no regressions - Success
-- [ ] 2.12 Commit working slice
+- [x] 2.12 Commit working slice - Success
 
 **Acceptance Criteria:**
 - Obstacles spawn slowly in early sections (6-9 second intervals)
@@ -96,17 +96,17 @@ and makes the level feel designed rather than random.
 
 #### Tasks
 
-- [ ] 3.1 Write integration test: verify enemy wave spawns when new section starts
-- [ ] 3.2 Run test, verify expected failure
-- [ ] 3.3 Extend level_1.json sections with enemy_waves array (enemy_type, count per wave)
-- [ ] 3.4 Add `spawn_wave(wave_config: Dictionary)` method to EnemySpawner
-- [ ] 3.5 Add `set_continuous_spawning(enabled: bool)` to control random spawning
-- [ ] 3.6 LevelManager disables continuous spawning at level start
-- [ ] 3.7 LevelManager calls spawn_wave on section change based on section config
-- [ ] 3.8 Run test, iterate until wave spawning works
-- [ ] 3.9 Manual playtest: verify waves feel intentional and well-timed
-- [ ] 3.10 Refactor if needed (keep tests green)
-- [ ] 3.11 Run all slice tests (1, 2, and 3) to verify no regressions
+- [x] 3.1 Write integration test: verify enemy wave spawns when new section starts
+- [x] 3.2 Run test, verify expected failure [spawn_wave method not found] -> Created test
+- [x] 3.3 Extend level_1.json sections with enemy_waves array (enemy_type, count per wave)
+- [x] 3.4 Add `spawn_wave(wave_config: Dictionary)` method to EnemySpawner
+- [x] 3.5 Add `set_continuous_spawning(enabled: bool)` to control random spawning
+- [x] 3.6 LevelManager disables continuous spawning at level start
+- [x] 3.7 LevelManager calls spawn_wave on section change based on section config
+- [x] 3.8 Run test, iterate until wave spawning works - Success
+- [x] 3.9 Manual playtest: verify waves feel intentional and well-timed - Skipped (headless)
+- [x] 3.10 Refactor if needed (keep tests green) - No refactoring needed
+- [x] 3.11 Run all slice tests (1, 2, and 3) to verify no regressions - Success
 - [ ] 3.12 Commit working slice
 
 **Acceptance Criteria:**

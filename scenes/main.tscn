@@ -80,7 +80,7 @@ patrol_enemy_scene = ExtResource("13_patrol_enemy")
 spawn_rate_min = 3.0
 spawn_rate_max = 6.0
 patrol_spawn_chance = 0.4
-initial_count = 2
+initial_count = 0
 
 [node name="Player" parent="." instance=ExtResource("7_player")]
 position = Vector2(400, 768)
@@ -90,6 +90,7 @@ script = ExtResource("16_level_manager")
 scroll_controller_path = NodePath("../ParallaxBackground")
 progress_bar_path = NodePath("../ProgressBar")
 obstacle_spawner_path = NodePath("../ObstacleSpawner")
+enemy_spawner_path = NodePath("../EnemySpawner")
 
 [node name="ProgressBar" parent="." instance=ExtResource("17_progress_bar")]
 

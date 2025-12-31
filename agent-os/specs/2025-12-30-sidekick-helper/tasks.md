@@ -101,7 +101,8 @@ Each slice delivers incremental user value and is tested end-to-end.
   - Sidekick smoothly lerps to follow player movement
 - [x] 2.12 Refactor if needed (keep tests green)
   - All tests pass: test_sidekick_pickup, test_star_pickup, test_score_ufo_friend
-- [ ] 2.13 Commit working slice
+- [x] 2.13 Commit working slice
+  - Committed: 9dc0f56 "Add sidekick pickup that spawns UFO companion following player"
 
 **Acceptance Criteria:**
 - [x] Sidekick pickup spawns with UFO sprite and zigzag movement
@@ -124,26 +125,43 @@ Each slice delivers incremental user value and is tested end-to-end.
 
 #### Tasks
 
-- [ ] 3.1 Write integration test: sidekick fires when player fires
+- [x] 3.1 Write integration test: sidekick fires when player fires
   - Spawn sidekick pickup, collect it
   - Trigger player shoot action
   - Verify two projectiles spawned (player + sidekick)
-- [ ] 3.2 Run test, verify expected failure
-- [ ] 3.3 Connect sidekick to player's projectile_fired signal
-- [ ] 3.4 Implement sidekick shoot() method using projectile.tscn
-- [ ] 3.5 Position sidekick projectile with slight Y offset from player projectile
-- [ ] 3.6 Run test, observe failure or success
-- [ ] 3.7 Document result and update task list
-- [ ] 3.8 Repeat 3.5-3.7 as necessary
-- [ ] 3.9 Verify projectile collision layers correct (layer 4, mask 2 - hits enemies)
-- [ ] 3.10 Refactor if needed (keep tests green)
-- [ ] 3.11 Commit working slice
+  - Created test_sidekick_shooting.gd and test_sidekick_shooting.tscn
+- [x] 3.2 Run test, verify expected failure
+  - [Expected 2 projectiles but only 1 was spawned] -> Test failed as expected
+  - Player projectile spawned but sidekick had no shooting functionality
+- [x] 3.3 Connect sidekick to player's projectile_fired signal
+  - Added signal connection in setup() method
+  - Connected to _on_player_projectile_fired handler
+- [x] 3.4 Implement sidekick shoot() method using projectile.tscn
+  - Loads projectile.tscn in _ready()
+  - Instantiates and positions projectile at sidekick position + offset
+  - Adds projectile to Main scene (parent)
+- [x] 3.5 Position sidekick projectile with slight Y offset from player projectile
+  - Sidekick offset Vector2(-50, -30) naturally provides Y offset
+  - Projectile spawns at sidekick position + Vector2(80, 0)
+  - Result: player projectile at (486, 768), sidekick at (436, 738)
+- [x] 3.6 Run test, observe failure or success
+  - Success - test passes on first run after implementation
+- [x] 3.7 Document result and update task list
+- [x] 3.8 Repeat 3.5-3.7 as necessary
+  - No repetition needed - passed on first try
+- [x] 3.9 Verify projectile collision layers correct (layer 4, mask 2 - hits enemies)
+  - Confirmed: projectile.tscn has collision_layer=4, collision_mask=2
+  - Sidekick projectiles can hit and damage enemies
+- [x] 3.10 Refactor if needed (keep tests green)
+  - No refactoring needed
+  - All tests pass: test_sidekick_pickup, test_sidekick_shooting, test_star_pickup
+- [x] 3.11 Commit working slice
 
 **Acceptance Criteria:**
-- Sidekick fires projectile when player fires (synchronized)
-- Sidekick projectile uses same projectile.tscn scene
-- Sidekick projectile spawns from sidekick's position
-- Sidekick projectiles can hit and damage enemies
+- [x] Sidekick fires projectile when player fires (synchronized)
+- [x] Sidekick projectile uses same projectile.tscn scene
+- [x] Sidekick projectile spawns from sidekick's position
+- [x] Sidekick projectiles can hit and damage enemies
 
 ---
 

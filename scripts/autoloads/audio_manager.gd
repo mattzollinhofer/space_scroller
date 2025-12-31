@@ -64,6 +64,9 @@ func _ready() -> void:
 	_preload_music()
 	_preload_sfx()
 
+	# Load saved audio settings (mute state)
+	_load_settings()
+
 
 func _preload_music() -> void:
 	## Preload all music resources for quick playback
@@ -247,3 +250,42 @@ func _stop_crossfade_tween() -> void:
 	if _crossfade_tween and _crossfade_tween.is_valid():
 		_crossfade_tween.kill()
 	_crossfade_tween = null
+
+
+## Toggle mute state for all audio
+func toggle_mute() -> void:
+	_is_muted = not _is_muted
+	_apply_mute_state()
+	_save_settings()
+
+
+## Check if audio is currently muted
+func is_muted() -> bool:
+	return _is_muted
+
+
+## Apply mute state to audio buses
+func _apply_mute_state() -> void:
+	var music_bus_idx = AudioServer.get_bus_index(MUSIC_BUS)
+	var sfx_bus_idx = AudioServer.get_bus_index(SFX_BUS)
+
+	if music_bus_idx >= 0:
+		AudioServer.set_bus_mute(music_bus_idx, _is_muted)
+	if sfx_bus_idx >= 0:
+		AudioServer.set_bus_mute(sfx_bus_idx, _is_muted)
+
+
+## Save audio settings to file
+func _save_settings() -> void:
+	var config = ConfigFile.new()
+	config.set_value("audio", "muted", _is_muted)
+	config.save(AUDIO_SETTINGS_PATH)
+
+
+## Load audio settings from file
+func _load_settings() -> void:
+	var config = ConfigFile.new()
+	var err = config.load(AUDIO_SETTINGS_PATH)
+	if err == OK:
+		_is_muted = config.get_value("audio", "muted", false)
+		_apply_mute_state()

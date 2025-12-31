@@ -6,6 +6,9 @@ extends CanvasLayer
 ## Reference to resume button
 @onready var _resume_button: Button = $CenterContainer/VBoxContainer/ResumeButton
 
+## Reference to mute button
+@onready var _mute_button: Button = $CenterContainer/VBoxContainer/MuteButton
+
 ## Reference to quit button
 @onready var _quit_button: Button = $CenterContainer/VBoxContainer/QuitButton
 
@@ -19,6 +22,8 @@ func _ready() -> void:
 	# Connect button signals
 	if _resume_button:
 		_resume_button.pressed.connect(_on_resume_button_pressed)
+	if _mute_button:
+		_mute_button.pressed.connect(_on_mute_button_pressed)
 	if _quit_button:
 		_quit_button.pressed.connect(_on_quit_button_pressed)
 
@@ -35,6 +40,7 @@ func _unhandled_input(event: InputEvent) -> void:
 
 ## Show the pause menu and pause the game
 func show_pause_menu() -> void:
+	_update_mute_button_text()
 	visible = true
 	get_tree().paused = true
 
@@ -70,3 +76,25 @@ func _stop_gameplay_music() -> void:
 		var audio_manager = get_node("/root/AudioManager")
 		if audio_manager.has_method("stop_music"):
 			audio_manager.stop_music()
+
+
+## Mute button pressed handler
+func _on_mute_button_pressed() -> void:
+	if has_node("/root/AudioManager"):
+		var audio_manager = get_node("/root/AudioManager")
+		if audio_manager.has_method("toggle_mute"):
+			audio_manager.toggle_mute()
+			_update_mute_button_text()
+
+
+## Update mute button text based on current state
+func _update_mute_button_text() -> void:
+	if not _mute_button:
+		return
+	if has_node("/root/AudioManager"):
+		var audio_manager = get_node("/root/AudioManager")
+		if audio_manager.has_method("is_muted"):
+			if audio_manager.is_muted():
+				_mute_button.text = "Unmute Audio"
+			else:
+				_mute_button.text = "Mute Audio"

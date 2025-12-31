@@ -38,6 +38,11 @@ layout_mode = 2
 theme_override_font_sizes/font_size = 48
 text = "Resume"
 
+[node name="MuteButton" type="Button" parent="CenterContainer/VBoxContainer"]
+layout_mode = 2
+theme_override_font_sizes/font_size = 48
+text = "Mute Audio"
+
 [node name="QuitButton" type="Button" parent="CenterContainer/VBoxContainer"]
 layout_mode = 2
 theme_override_font_sizes/font_size = 48

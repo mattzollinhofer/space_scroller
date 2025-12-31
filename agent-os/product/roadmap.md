@@ -47,7 +47,7 @@ follow. `S`
 12.5. [x] Additional level through length and enemy difficulty. More enemies,
       different enemies. Shooting enemy. Longer time span. Different boss.
 
-13. [ ] Additional Levels — Create 2-3 more levels with unique visual themes
+13. [x] Additional Levels — Create 2-3 more levels with unique visual themes
     (different planets/areas of solar system), new obstacles, and escalating
     difficulty. `L`
 

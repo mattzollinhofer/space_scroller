@@ -1,4 +1,4 @@
-[gd_scene load_steps=23 format=3 uid="uid://d0n8g3kv2kq7y"]
+[gd_scene load_steps=25 format=3 uid="uid://d0n8g3kv2kq7y"]
 
 [ext_resource type="Script" path="res://scripts/scroll_controller.gd" id="1_scroll"]
 [ext_resource type="Script" path="res://scripts/background/star_field.gd" id="2_starfield"]
@@ -20,6 +20,8 @@
 [ext_resource type="PackedScene" uid="uid://chealth_display" path="res://scenes/ui/health_display.tscn" id="19_health_display"]
 [ext_resource type="PackedScene" uid="uid://clevel_complete_screen" path="res://scenes/ui/level_complete_screen.tscn" id="20_level_complete"]
 [ext_resource type="PackedScene" uid="uid://cscore_display" path="res://scenes/ui/score_display.tscn" id="21_score_display"]
+[ext_resource type="PackedScene" uid="uid://cpause_menu" path="res://scenes/ui/pause_menu.tscn" id="22_pause_menu"]
+[ext_resource type="PackedScene" uid="uid://cpause_button" path="res://scenes/ui/pause_button.tscn" id="23_pause_button"]
 
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_top"]
 size = Vector2(2048, 80)
@@ -112,6 +114,10 @@ level_complete_screen_path = NodePath("../LevelCompleteScreen")
 
 [node name="FireButton" parent="UILayer" instance=ExtResource("15_fire_button")]
 
+[node name="PauseButton" parent="UILayer" instance=ExtResource("23_pause_button")]
+
 [node name="GameOverScreen" parent="." instance=ExtResource("10_gameover")]
 
 [node name="LevelCompleteScreen" parent="." instance=ExtResource("20_level_complete")]
+
+[node name="PauseMenu" parent="." instance=ExtResource("22_pause_menu")]

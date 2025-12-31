@@ -174,47 +174,52 @@ Each slice delivers incremental user value and is tested end-to-end.
 
 #### Tasks
 
-- [ ] 4.1 Write integration test: press pause button, game pauses, press resume, game continues; press quit, returns to menu
-- [ ] 4.2 Run test, verify expected failure
-- [ ] 4.3 Make smallest change possible to progress
-- [ ] 4.4 Run test, observe failure or success
-- [ ] 4.5 Document result and update task list
-- [ ] 4.6 Repeat 4.3-4.5 as necessary (expected iterations):
-  - [ ] Add "pause" action to project.godot InputMap with P key and ESC key
-  - [ ] Create pause_menu.gd script extending CanvasLayer
-  - [ ] Create pause_menu.tscn scene at layer 10
-  - [ ] Add semi-transparent background ColorRect (full screen, dark overlay)
-  - [ ] Add CenterContainer > VBoxContainer layout for menu
-  - [ ] Add "PAUSED" title Label (large font)
-  - [ ] Add Resume button
-  - [ ] Add Quit to Menu button
-  - [ ] Set process_mode = Node.PROCESS_MODE_ALWAYS
-  - [ ] Start hidden (visible = false in _ready)
-  - [ ] Implement show_pause_menu() - set visible = true, get_tree().paused = true
-  - [ ] Implement hide_pause_menu() - set visible = false, get_tree().paused = false
-  - [ ] Connect Resume button to hide_pause_menu()
-  - [ ] Connect Quit to Menu button to change_scene and unpause
-  - [ ] Add PauseMenu instance to main.tscn
-  - [ ] Create pause_button.gd script extending Control
-  - [ ] Create pause_button.tscn scene (small button, top-right corner)
-  - [ ] Position: anchor top-right, offset to avoid fire button zone (y < 150)
-  - [ ] Add pause icon or "II" text
-  - [ ] Connect pause button press to toggle pause menu
-  - [ ] Add _unhandled_input() in pause_menu.gd for P/ESC toggle
-  - [ ] Add PauseButton instance to main.tscn UILayer
-- [ ] 4.7 Refactor if needed (keep tests green)
-- [ ] 4.8 Run all slice tests to verify no regressions
-- [ ] 4.9 Commit working slice
+- [x] 4.1 Write integration test: press pause button, game pauses, press resume, game continues; press quit, returns to menu
+- [x] 4.2 Run test, verify expected failure
+  - Iteration 1: [PauseMenu node not found in main scene] -> Need to create pause menu and add to main.tscn
+- [x] 4.3-4.6 Red-green iterations:
+  - Iteration 2: [Added pause action to InputMap, created pause_menu.gd, pause_menu.tscn, pause_button.gd, pause_button.tscn, added to main.tscn] -> Success
+  - [x] Add "pause" action to project.godot InputMap with P key (physical_keycode 80) and ESC key (physical_keycode 4194305)
+  - [x] Create pause_menu.gd script extending CanvasLayer
+  - [x] Create pause_menu.tscn scene at layer 10
+  - [x] Add semi-transparent background ColorRect (full screen, dark overlay with 70% opacity)
+  - [x] Add CenterContainer > VBoxContainer layout for menu
+  - [x] Add "PAUSED" title Label (128pt, gold color)
+  - [x] Add Resume button (48pt font)
+  - [x] Add Quit to Menu button (48pt font)
+  - [x] Set process_mode = Node.PROCESS_MODE_ALWAYS
+  - [x] Start hidden (visible = false in _ready)
+  - [x] Implement show_pause_menu() - set visible = true, get_tree().paused = true
+  - [x] Implement hide_pause_menu() - set visible = false, get_tree().paused = false
+  - [x] Connect Resume button to hide_pause_menu()
+  - [x] Connect Quit to Menu button to change_scene and unpause
+  - [x] Add PauseMenu instance to main.tscn
+  - [x] Create pause_button.gd script extending Control
+  - [x] Create pause_button.tscn scene (100x100 button, top-right corner)
+  - [x] Position: anchor top-right, offset -120 to -20 horizontally, 20 to 120 vertically (avoids fire button zone)
+  - [x] Add pause icon "II" text (48pt)
+  - [x] Connect pause button press to emit InputEventAction for pause
+  - [x] Add _unhandled_input() in pause_menu.gd for P/ESC toggle
+  - [x] Add PauseButton instance to main.tscn UILayer
+- [x] 4.7 Refactor if needed (keep tests green) - No refactoring needed
+- [x] 4.8 Run all slice tests to verify no regressions
+  - test_pause_menu.tscn: PASSED
+  - test_main_menu.tscn: PASSED
+  - test_score_display.tscn: PASSED
+  - test_character_selection.tscn: PASSED
+- [x] 4.9 Commit working slice
+
+**Test Result:** Success
 
 **Acceptance Criteria:**
-- Pause button visible in top-right during gameplay (not overlapping controls)
-- Tapping pause button shows pause menu and freezes gameplay
-- P key toggles pause menu
-- ESC key toggles pause menu
-- Resume button hides menu and continues gameplay
-- Quit to Menu button returns to main menu
-- Game tree properly paused/unpaused
-- Previous slice functionality still works
+- [x] Pause button visible in top-right during gameplay (not overlapping controls)
+- [x] Tapping pause button shows pause menu and freezes gameplay
+- [x] P key toggles pause menu
+- [x] ESC key toggles pause menu
+- [x] Resume button hides menu and continues gameplay
+- [x] Quit to Menu button returns to main menu
+- [x] Game tree properly paused/unpaused
+- [x] Previous slice functionality still works
 
 ---
 

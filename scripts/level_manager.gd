@@ -62,6 +62,12 @@ var _boss_fight_active: bool = false
 var _boss: Node = null
 var _boss_health_bar: Node = null
 
+## Boss battle position (stored for respawn)
+var _boss_battle_position: Vector2 = Vector2.ZERO
+
+## Original scroll speed (stored to restore after boss fight if needed)
+var _original_scroll_speed: float = 180.0
+
 ## Reference to scroll controller
 var _scroll_controller: Node = null
 
@@ -129,6 +135,10 @@ func _setup_references() -> void:
 	if not _scroll_controller:
 		_scroll_controller = get_tree().root.get_node_or_null("Main/ParallaxBackground")
 
+	# Store original scroll speed
+	if _scroll_controller and "scroll_speed" in _scroll_controller:
+		_original_scroll_speed = _scroll_controller.scroll_speed
+
 	# Get progress bar reference
 	if not progress_bar_path.is_empty():
 		_progress_bar = get_node_or_null(progress_bar_path)
@@ -183,6 +193,11 @@ func _connect_player_signals() -> void:
 
 
 func _on_player_died() -> void:
+	# Check if boss fight is active - respawn at boss instead of game over
+	if _boss_fight_active and _boss and is_instance_valid(_boss):
+		_respawn_at_boss()
+		return
+
 	# Check if we have a checkpoint (section > 0)
 	if _checkpoint_section > 0:
 		# Respawn at checkpoint
@@ -193,10 +208,97 @@ func _on_player_died() -> void:
 			_game_over_screen.show_game_over()
 
 
+func _respawn_at_boss() -> void:
+	## Respawn player at boss entrance and reset boss to full health
+
+	# Clear boss projectiles
+	_clear_boss_projectiles()
+
+	# Reset player position and lives
+	if _player:
+		_player.position = Vector2(400, 768)  # Default spawn position
+		if _player.has_method("reset_lives"):
+			_player.reset_lives()
+		else:
+			# Fallback: set lives directly
+			_player._lives = _player.starting_lives
+			_player._is_invincible = false
+			if _player.has_method("_end_invincibility"):
+				_player._end_invincibility()
+
+	# Reset boss to full health and battle position
+	if _boss and is_instance_valid(_boss):
+		if _boss.has_method("reset_health"):
+			_boss.reset_health()
+		else:
+			# Fallback: reset health directly
+			_boss.health = _boss._max_health if "_max_health" in _boss else 13
+
+		# Reset boss position to battle position
+		if _boss_battle_position != Vector2.ZERO:
+			_boss.position = _boss_battle_position
+
+		# Update health bar
+		if _boss_health_bar and _boss_health_bar.has_method("set_health"):
+			var boss_health = _boss.health if "health" in _boss else 13
+			var boss_max_health = _boss._max_health if "_max_health" in _boss else 13
+			_boss_health_bar.set_health(boss_health, boss_max_health)
+
+	# Emit respawn signal
+	player_respawned.emit()
+
+
+func _clear_boss_projectiles() -> void:
+	## Clear all boss projectiles from the scene
+	var main = get_parent()
+	if not main:
+		return
+
+	# Find and remove all boss projectiles
+	for child in main.get_children():
+		if child.name.begins_with("BossProjectile") or "boss_projectile" in child.name.to_lower():
+			child.queue_free()
+		elif child.get_script():
+			var script_path = child.get_script().resource_path
+			if "boss_projectile" in script_path:
+				child.queue_free()
+
+
 func _process(_delta: float) -> void:
 	if _level_complete:
 		return
 
+	_update_progress()
+	_check_section_change()
+	_check_level_complete()
+
+
+func _unhandled_input(event: InputEvent) -> void:
+	# Debug: Cmd+Ctrl+Right Arrow to skip to next checkpoint
+	if event is InputEventKey and event.pressed:
+		if event.keycode == KEY_RIGHT and event.ctrl_pressed and event.meta_pressed:
+			_debug_skip_to_next_section()
+
+
+func _debug_skip_to_next_section() -> void:
+	if _sections.is_empty() or not _scroll_controller:
+		return
+
+	# Find next section
+	var next_section = _current_section + 1
+	if next_section >= _sections.size():
+		# Skip to end (boss fight)
+		next_section = _sections.size() - 1
+		var end_percent = _sections[next_section].get("end_percent", 100)
+		var target_distance = (_total_distance * end_percent / 100.0) + 100
+		_scroll_controller.scroll_offset.x = -target_distance
+	else:
+		# Skip to next section start
+		var start_percent = _sections[next_section].get("start_percent", 0)
+		var target_distance = _total_distance * start_percent / 100.0
+		_scroll_controller.scroll_offset.x = -target_distance
+
+	# Force update
 	_update_progress()
 	_check_section_change()
 	_check_level_complete()
@@ -278,6 +380,9 @@ func _spawn_boss() -> void:
 	var battle_x = _viewport_width * 0.75
 	var battle_position = Vector2(battle_x, spawn_y)
 
+	# Store battle position for respawns
+	_boss_battle_position = battle_position
+
 	# Add to main scene
 	var main = get_parent()
 	if main:
@@ -300,10 +405,47 @@ func _spawn_boss() -> void:
 
 		_boss_fight_active = true
 
+		# Stop scrolling during boss fight (arena mode)
+		_stop_scrolling_for_boss_fight()
+
+		# Disable spawners during boss fight
+		_disable_spawners_for_boss_fight()
+
 		# Spawn boss health bar
 		_spawn_boss_health_bar()
 
 		boss_spawned.emit()
+
+
+func _stop_scrolling_for_boss_fight() -> void:
+	## Stop screen scrolling for fixed arena during boss fight
+	if _scroll_controller and "scroll_speed" in _scroll_controller:
+		_scroll_controller.scroll_speed = 0.0
+
+
+func _disable_spawners_for_boss_fight() -> void:
+	## Disable obstacle and enemy spawners during boss fight
+	if _obstacle_spawner:
+		if _obstacle_spawner.has_method("set_enabled"):
+			_obstacle_spawner.set_enabled(false)
+		elif _obstacle_spawner.has_method("stop"):
+			_obstacle_spawner.stop()
+		elif "enabled" in _obstacle_spawner:
+			_obstacle_spawner.enabled = false
+
+	if _enemy_spawner:
+		if _enemy_spawner.has_method("set_enabled"):
+			_enemy_spawner.set_enabled(false)
+		elif _enemy_spawner.has_method("stop"):
+			_enemy_spawner.stop()
+		elif "enabled" in _enemy_spawner:
+			_enemy_spawner.enabled = false
+
+	# Also clear existing enemies and obstacles for clean arena
+	if _enemy_spawner and _enemy_spawner.has_method("clear_all"):
+		_enemy_spawner.clear_all()
+	if _obstacle_spawner and _obstacle_spawner.has_method("clear_all"):
+		_obstacle_spawner.clear_all()
 
 
 func _spawn_boss_health_bar() -> void:

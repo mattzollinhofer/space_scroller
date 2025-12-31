@@ -542,6 +542,44 @@ func stop_attack_cycle() -> void:
 		_attack_tween.kill()
 
 
+## Reset boss health to full and reset attack state for player respawn
+func reset_health() -> void:
+	## Restore health to max
+	health = _max_health
+
+	## Clear destroying state in case it was set
+	_is_destroying = false
+
+	## Re-enable collision using set_deferred to avoid signal conflicts
+	set_deferred("monitoring", true)
+	set_deferred("monitorable", true)
+
+	## Reset attack state machine
+	_attack_cycle_active = true
+	_attack_state = AttackState.IDLE
+	_current_pattern = 0
+	_attack_timer = 0.0
+
+	## Clear any active attack states
+	_sweep_active = false
+	_charge_active = false
+
+	## Kill any active tweens
+	if _flash_tween and _flash_tween.is_valid():
+		_flash_tween.kill()
+	if _attack_tween and _attack_tween.is_valid():
+		_attack_tween.kill()
+
+	## Ensure sprite is visible
+	var sprite = get_node_or_null("AnimatedSprite2D")
+	if sprite:
+		sprite.visible = true
+		sprite.modulate = Color(1, 1, 1, 1)
+
+	## Emit health changed to update health bar
+	health_changed.emit(health, _max_health)
+
+
 ## Get current attack state (for testing)
 func get_attack_state() -> AttackState:
 	return _attack_state

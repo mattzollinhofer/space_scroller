@@ -306,48 +306,63 @@ The boss battle feature adds an end-of-level boss encounter with health bar, thr
 
 #### Tasks
 
-- [ ] 6.1 Write integration test: player respawns at boss on death
+- [x] 6.1 Write integration test: player respawns at boss on death
   - Start boss fight, trigger player death
   - Verify game over screen does NOT show
   - Verify player respawns
   - Verify boss has full health again
-- [ ] 6.2 Run test, verify expected failure
-- [ ] 6.3 Modify LevelManager to save boss checkpoint
+  - Created tests/test_boss_respawn.gd and test_boss_respawn.tscn
+- [x] 6.2 Run test, verify expected failure
+  - [failure: Boss health not reset to full. Current: 10, Max: 13] -> Boss reset not implemented
+- [x] 6.3 Modify LevelManager to save boss checkpoint
   - Save checkpoint state when boss fight begins
-  - Set `_boss_fight_active = true` flag
-  - Store reference to boss instance
-- [ ] 6.4 Modify LevelManager._on_player_died() for boss fight
-  - Check if boss fight is active
-  - If so, respawn player instead of game over
-  - Reset boss to full health
-- [ ] 6.5 Implement boss.reset_health() method
-  - Restore health to 13
-  - Update health bar to full
-  - Clear destroying state
-  - Reset attack state machine
-- [ ] 6.6 Clear boss projectiles on player respawn
-  - Add method to clear all active boss projectiles
-  - Call from LevelManager.respawn_player() during boss fight
-- [ ] 6.7 Reset boss position to battle position on respawn
-  - Boss should be in battle position, not do entrance again
-- [ ] 6.8 Stop scrolling during boss fight (arena mode)
-  - Set scroll_controller.scroll_speed = 0 when boss spawns
-  - Disable obstacle and enemy spawners
-- [ ] 6.9 Run all slice tests to verify complete feature works
-- [ ] 6.10 Commit working slice
+  - Set `_boss_fight_active = true` flag (already exists)
+  - Store reference to boss instance (_boss) and battle position (_boss_battle_position)
+- [x] 6.4 Modify LevelManager._on_player_died() for boss fight
+  - Check if boss fight is active before checkpoint check
+  - If boss fight active, call _respawn_at_boss() instead of game over
+  - New method handles boss-specific respawn logic
+- [x] 6.5 Implement boss.reset_health() method
+  - Restore health to _max_health (13)
+  - Clear _is_destroying flag
+  - Re-enable collision with set_deferred for safety
+  - Reset attack state machine to IDLE
+  - Clear sweep/charge active flags
+  - Kill active tweens
+  - Restore sprite visibility
+  - Emit health_changed signal to update UI
+- [x] 6.6 Clear boss projectiles on player respawn
+  - Added _clear_boss_projectiles() method to level_manager.gd
+  - Finds and queue_free()s all BossProjectile nodes in scene
+- [x] 6.7 Reset boss position to battle position on respawn
+  - Boss position set to _boss_battle_position stored during spawn
+  - No entrance animation replay
+- [x] 6.8 Stop scrolling during boss fight (arena mode)
+  - Added _stop_scrolling_for_boss_fight() to set scroll_speed = 0
+  - Added _disable_spawners_for_boss_fight() to disable spawners
+  - Both called from _spawn_boss()
+- [x] 6.9 Run all slice tests to verify complete feature works
+  - test_boss_spawn.tscn: PASSED
+  - test_boss_damage.tscn: PASSED
+  - test_boss_attack.tscn: PASSED
+  - test_boss_victory.tscn: PASSED
+  - test_boss_respawn.tscn: PASSED
+  - test_level_complete.tscn: PASSED
+  - test_checkpoint_respawn.tscn: PASSED
+- [x] 6.10 Commit working slice
 
 **Acceptance Criteria:**
-- Player death during boss fight triggers respawn, not game over
-- Boss resets to full 13 HP on player respawn
-- Boss projectiles are cleared on respawn
-- Screen scrolling is stopped during entire boss fight
-- Spawners disabled during boss fight (fixed arena)
+- [x] Player death during boss fight triggers respawn, not game over
+- [x] Boss resets to full 13 HP on player respawn
+- [x] Boss projectiles are cleared on respawn
+- [x] Screen scrolling is stopped during entire boss fight
+- [x] Spawners disabled during boss fight (fixed arena)
 
 ---
 
 ## Post-Implementation Checklist
 
-- [ ] All 6 slices complete and tested
+- [x] All 6 slices complete and tested
 - [ ] Manual playthrough: complete level and defeat boss
 - [ ] Manual playthrough: die to boss and verify respawn
 - [ ] Verify all three attack patterns cycle correctly

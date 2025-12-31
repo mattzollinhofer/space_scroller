@@ -34,7 +34,6 @@ Configure automated web (HTML5) export and GitHub Pages deployment for Solar Sys
 - Deploy from `build/web` folder to `gh-pages` branch
 - Install rsync in container (required by deploy action)
 - Repository must be configured to serve GitHub Pages from gh-pages branch
-- Note: Repository is currently private; user may need to make public or have GitHub Pro for public Pages access
 
 **High scores persist across browser sessions**
 

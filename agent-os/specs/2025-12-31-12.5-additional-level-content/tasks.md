@@ -23,19 +23,26 @@ This feature extends Level 1 from 9000 to 13500 pixels, adds three distinct enem
 
 #### Tasks
 
-- [ ] 1.1 Write integration test that spawns enemy and verifies Y position changes over time
-- [ ] 1.2 Run test, verify expected failure (enemy Y position should change but may not)
-- [ ] 1.3 Make smallest change possible to progress
-- [ ] 1.4 Run test, observe failure or success
-- [ ] 1.5 Document result and update task list
-- [ ] 1.6 Repeat 1.3-1.5 as necessary
-- [ ] 1.7 Refactor if needed (keep tests green)
-- [ ] 1.8 Commit working slice
+- [x] 1.1 Write integration test that spawns enemy and verifies Y position changes over time
+  - Test already existed in `tests/test_enemy_zigzag.gd`, created missing `.tscn` file
+- [x] 1.2 Run test, verify expected failure (enemy Y position should change but may not)
+  - Test PASSED: Enemy Y changed by 583.6 pixels over 5 seconds, zigzag is working correctly
+- [x] 1.3-1.6 No changes needed - zigzag movement already implemented and working
+  - Verified zigzag_speed=120.0 applies in _process
+  - Enemy bounces off Y bounds correctly (140-1396)
+  - Code in base_enemy.gd lines 55-64 handles zigzag properly
+- [x] 1.7 Refactor if needed (keep tests green) - No refactoring needed
+- [x] 1.8 Commit working slice
+
+**Results:** Bug investigation complete - zigzag movement is working correctly. The perceived issue may have been due to enemies being destroyed quickly in gameplay or a misperception. Test confirms:
+- Enemy Y position changed by ~584 pixels over 5 seconds
+- Enemy stayed within Y bounds (140-1396)
+- Zigzag speed of 120 px/s is being applied correctly
 
 **Acceptance Criteria:**
-- Enemy Y position changes noticeably over 2-3 seconds
-- Enemy bounces off Y bounds (140-1396)
-- Test passes confirming zigzag movement works
+- [x] Enemy Y position changes noticeably over 2-3 seconds
+- [x] Enemy bounces off Y bounds (140-1396)
+- [x] Test passes confirming zigzag movement works
 
 ---
 

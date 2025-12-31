@@ -110,6 +110,7 @@ func take_hit(damage: int) -> void:
 
 	# Emit signal for audio hook
 	hit_by_projectile.emit()
+	_play_sfx("enemy_hit")
 
 	# Store health before damage to check if enemy survives
 	var health_before = health
@@ -158,6 +159,7 @@ func _on_health_depleted() -> void:
 
 	# Emit died signal before destruction
 	died.emit()
+	_play_sfx("enemy_destroyed")
 
 	# Play destruction animation
 	_play_destruction_animation()
@@ -192,3 +194,9 @@ func _play_destruction_animation() -> void:
 
 func _despawn() -> void:
 	queue_free()
+
+
+## Play a sound effect via AudioManager
+func _play_sfx(sfx_name: String) -> void:
+	if has_node("/root/AudioManager"):
+		get_node("/root/AudioManager").play_sfx(sfx_name)

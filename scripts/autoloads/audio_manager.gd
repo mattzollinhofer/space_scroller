@@ -16,6 +16,13 @@ const CROSSFADE_DURATION := 1.0
 var _gameplay_music: AudioStream = null
 var _boss_music: Dictionary = {}  # level_number -> AudioStream
 
+## SFX resources
+var _sfx_resources: Dictionary = {}  # sfx_name -> AudioStream
+
+## SFX player pool (for overlapping sounds)
+var _sfx_players: Array[AudioStreamPlayer] = []
+const SFX_POOL_SIZE := 8
+
 ## Music players (two for crossfade)
 var _music_player_a: AudioStreamPlayer = null
 var _music_player_b: AudioStreamPlayer = null
@@ -45,8 +52,17 @@ func _ready() -> void:
 	# Set initial active player
 	_active_music_player = _music_player_a
 
-	# Preload music resources
+	# Create SFX player pool
+	for i in range(SFX_POOL_SIZE):
+		var sfx_player = AudioStreamPlayer.new()
+		sfx_player.name = "SFXPlayer%d" % i
+		sfx_player.bus = SFX_BUS
+		add_child(sfx_player)
+		_sfx_players.append(sfx_player)
+
+	# Preload music and SFX resources
 	_preload_music()
+	_preload_sfx()
 
 
 func _preload_music() -> void:
@@ -69,6 +85,55 @@ func _preload_music() -> void:
 			_boss_music[level] = load(boss_ogg)
 		elif ResourceLoader.exists(boss_wav):
 			_boss_music[level] = load(boss_wav)
+
+
+func _preload_sfx() -> void:
+	## Preload all SFX resources for quick playback
+	var sfx_names = [
+		"player_shoot",
+		"enemy_hit",
+		"enemy_destroyed",
+		"player_damage",
+		"player_death",
+		"boss_attack",
+		"boss_damage",
+		"level_complete",
+		"game_over",
+		"button_click",
+		"pickup_collect",
+		"sidekick_shoot"
+	]
+
+	for sfx_name in sfx_names:
+		var wav_path = "res://assets/audio/sfx/%s.wav" % sfx_name
+		var ogg_path = "res://assets/audio/sfx/%s.ogg" % sfx_name
+
+		if ResourceLoader.exists(wav_path):
+			_sfx_resources[sfx_name] = load(wav_path)
+		elif ResourceLoader.exists(ogg_path):
+			_sfx_resources[sfx_name] = load(ogg_path)
+
+
+## Play a sound effect by name
+func play_sfx(sfx_name: String) -> void:
+	if not sfx_name in _sfx_resources:
+		return  # SFX not found, silently skip
+
+	var sfx_stream = _sfx_resources[sfx_name]
+	if not sfx_stream:
+		return
+
+	# Find an available player from the pool
+	for player in _sfx_players:
+		if not player.playing:
+			player.stream = sfx_stream
+			player.play()
+			return
+
+	# All players busy - use the first one (interrupts oldest sound)
+	if _sfx_players.size() > 0:
+		_sfx_players[0].stream = sfx_stream
+		_sfx_players[0].play()
 
 
 ## Play background gameplay music

@@ -206,6 +206,7 @@ func shoot(is_new_tap: bool = false) -> void:
 
 	# Emit signal for audio hook
 	projectile_fired.emit()
+	_play_sfx("player_shoot")
 
 
 ## Called when player takes damage from an obstacle
@@ -222,7 +223,11 @@ func take_damage() -> void:
 	# Check for death
 	if _lives <= 0:
 		died.emit()
+		_play_sfx("player_death")
 		return
+
+	# Play damage sound (not death)
+	_play_sfx("player_damage")
 
 	# Start invincibility
 	_start_invincibility()
@@ -275,3 +280,9 @@ func reset_lives() -> void:
 ## Check if player is currently invincible
 func is_invincible() -> bool:
 	return _is_invincible
+
+
+## Play a sound effect via AudioManager
+func _play_sfx(sfx_name: String) -> void:
+	if has_node("/root/AudioManager"):
+		get_node("/root/AudioManager").play_sfx(sfx_name)

@@ -163,7 +163,8 @@ The boss battle feature adds an end-of-level boss encounter with health bar, thr
   - test_boss_spawn.tscn: PASSED
   - test_boss_damage.tscn: PASSED
   - test_boss_attack.tscn: PASSED
-- [ ] 3.9 Commit working slice
+- [x] 3.9 Commit working slice
+  - Committed: eb8a0d3 Add boss horizontal barrage attack with player damage
 
 **Acceptance Criteria:**
 - [x] Boss periodically fires a spread of 5-7 projectiles

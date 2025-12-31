@@ -161,29 +161,46 @@ Each slice delivers incremental user value and is tested end-to-end.
 
 #### Tasks
 
-- [ ] 5.1 Write integration test that verifies high score is saved and loaded between sessions
-- [ ] 5.2 Run test, verify expected failure
-- [ ] 5.3 Make smallest change possible to progress
-- [ ] 5.4 Run test, observe failure or success
-- [ ] 5.5 Document result and update task list
-- [ ] 5.6 Repeat 5.3-5.5 as necessary (add high score loading/saving to ScoreManager using ConfigFile)
-- [ ] 5.7 Write test for top 10 high scores list (sorted descending)
-- [ ] 5.8 Run test and iterate until passing
-- [ ] 5.9 Add HIGH SCORE label to Game Over screen
-- [ ] 5.10 Add HIGH SCORE label to Level Complete screen
-- [ ] 5.11 Add "NEW HIGH SCORE!" indicator when applicable
-- [ ] 5.12 Refactor if needed (keep tests green)
-- [ ] 5.13 Run all feature tests to verify everything works together
-- [ ] 5.14 Commit working slice
+- [x] 5.1 Write integration test that verifies high score is saved and loaded between sessions
+  - Created test_high_score_save_load.gd and test_high_score_save_load.tscn
+- [x] 5.2 Run test, verify expected failure [ScoreManager missing save_high_score() method]
+- [x] 5.3-5.6 Red-green iterations for high score persistence:
+  - [x] Iteration 1: [save_high_score() missing] -> Added full high score system to ScoreManager:
+    - _high_scores array, MAX_HIGH_SCORES constant (10), HIGH_SCORE_PATH constant
+    - get_high_score(), get_high_scores(), save_high_score(), load_high_scores()
+    - is_new_high_score(), qualifies_for_top_10()
+    - _save_to_file() and _sort_high_scores() helpers
+    - new_high_score signal
+    - Automatic load on _ready()
+  - Success: Test passes - High scores saved and loaded correctly
+- [x] 5.7 Write test for top 10 high scores list (sorted descending)
+  - Created test_high_score_top10.gd and test_high_score_top10.tscn
+- [x] 5.8 Run test and iterate until passing
+  - Success: Test passes - Top 10 sorted descending, entries include dates, lowest scores dropped
+- [x] 5.9 Add HIGH SCORE label to Game Over screen
+  - Added HighScoreLabel node to game_over_screen.tscn (gold color, 48pt font)
+  - Updated game_over_screen.gd with _high_score_label and _update_high_score_display()
+- [x] 5.10 Add HIGH SCORE label to Level Complete screen
+  - Added HighScoreLabel node to level_complete_screen.tscn (gold color, 48pt font)
+  - Updated level_complete_screen.gd with _high_score_label and _update_high_score_display()
+- [x] 5.11 Add "NEW HIGH SCORE!" indicator when applicable
+  - Added NewHighScoreLabel to both screens (hidden by default, gold color, 56pt font)
+  - Updated _update_high_score_display() in both screens to show/hide based on is_new_high_score()
+  - Fixed is_new_high_score() to only return true when beating #1 score, not just making top 10
+  - Created test_high_score_game_over.gd/tscn, test_high_score_level_complete.gd/tscn
+  - Created test_high_score_not_new.gd/tscn to verify indicator hidden when not beating high score
+- [x] 5.12 Refactor if needed (keep tests green) - No refactoring needed
+- [x] 5.13 Run all feature tests to verify everything works together - All 12 tests pass
+- [x] 5.14 Commit working slice
 
 **Acceptance Criteria:**
-- High scores saved to user://high_scores.cfg using ConfigFile
-- Top 10 high scores stored with score (int) and date (ISO string)
-- Scores sorted descending, oldest duplicate scores dropped first
-- Game Over screen shows "HIGH SCORE: X,XXX"
-- Level Complete screen shows "HIGH SCORE: X,XXX"
-- "NEW HIGH SCORE!" indicator appears when player achieves a new high score
-- High scores persist across game sessions
+- [x] High scores saved to user://high_scores.cfg using ConfigFile
+- [x] Top 10 high scores stored with score (int) and date (ISO string)
+- [x] Scores sorted descending, oldest duplicate scores dropped first
+- [x] Game Over screen shows "HIGH SCORE: X,XXX"
+- [x] Level Complete screen shows "HIGH SCORE: X,XXX"
+- [x] "NEW HIGH SCORE!" indicator appears when player achieves a new high score
+- [x] High scores persist across game sessions
 
 ---
 

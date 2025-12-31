@@ -31,7 +31,7 @@ jobs:
 
       - name: Add Cross-Origin Isolation service worker
         run: |
-          wget -q https://raw.githubusercontent.com/nicegraf/nicegraf.github.io/refs/heads/master/nicegraf-samples/coi-serviceworker.js -O build/web/coi-serviceworker.js
+          wget -q https://raw.githubusercontent.com/gzuidhof/coi-serviceworker/master/coi-serviceworker.js -O build/web/coi-serviceworker.js
           sed -i 's|<head>|<head><script src="coi-serviceworker.js"></script>|' build/web/index.html
 
       - name: Upload build artifact

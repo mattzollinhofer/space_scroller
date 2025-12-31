@@ -12,6 +12,9 @@ extends Node2D
 ## Star pickup scene to spawn when kill threshold is reached
 @export var star_pickup_scene: PackedScene
 
+## Sidekick pickup scene to spawn when kill threshold is reached
+@export var sidekick_pickup_scene: PackedScene
+
 ## Minimum spawn interval in seconds
 @export var spawn_rate_min: float = 2.0
 
@@ -222,18 +225,24 @@ func _on_enemy_killed(enemy: Node) -> void:
 		score_manager.award_enemy_kill(enemy)
 
 	if _kill_count >= _next_pickup_threshold:
-		_spawn_star_pickup()
+		_spawn_random_pickup()
 		_kill_count = 0
 		_next_pickup_threshold *= 2
 
 
-## Spawn a star pickup from a random edge
-func _spawn_star_pickup() -> void:
-	if not star_pickup_scene:
-		push_warning("No star pickup scene assigned to EnemySpawner")
-		return
+## Spawn a random pickup (star or sidekick) from a random edge
+func _spawn_random_pickup() -> void:
+	# Randomly select pickup type (50/50 chance)
+	var spawn_sidekick = _rng.randf() < 0.5
 
-	var star = star_pickup_scene.instantiate()
+	var pickup: Node2D
+	if spawn_sidekick and sidekick_pickup_scene:
+		pickup = sidekick_pickup_scene.instantiate()
+	elif star_pickup_scene:
+		pickup = star_pickup_scene.instantiate()
+	else:
+		push_warning("No pickup scene assigned to EnemySpawner")
+		return
 
 	# Pick random edge
 	var edge = _rng.randi() % 4
@@ -254,8 +263,8 @@ func _spawn_star_pickup() -> void:
 			spawn_pos = Vector2(_rng.randf_range(100, _viewport_width - 100), 1536 + 100)
 			spawn_edge = 3
 
-	star.position = spawn_pos
-	star.setup(spawn_edge)
+	pickup.position = spawn_pos
+	pickup.setup(spawn_edge)
 
 	# Add to Main scene, not EnemySpawner
-	get_parent().add_child(star)
+	get_parent().add_child(pickup)

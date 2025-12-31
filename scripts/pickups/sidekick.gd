@@ -2,7 +2,7 @@ extends Area2D
 class_name Sidekick
 ## UFO sidekick companion that follows the player with a position offset.
 ## Provides extra firepower by shooting when the player shoots.
-## Destroyed on contact with enemies.
+## Destroyed on contact with enemies or when player dies.
 
 ## Position offset from player (behind and above)
 @export var follow_offset: Vector2 = Vector2(-50, -30)
@@ -40,6 +40,9 @@ func setup(player: Node2D) -> void:
 		# Connect to player's projectile_fired signal for synchronized shooting
 		if _player.has_signal("projectile_fired"):
 			_player.projectile_fired.connect(_on_player_projectile_fired)
+		# Connect to player's died signal for cleanup
+		if _player.has_signal("died"):
+			_player.died.connect(_on_player_died)
 
 
 func _process(delta: float) -> void:
@@ -77,6 +80,14 @@ func _on_player_projectile_fired() -> void:
 	shoot()
 
 
+## Called when player dies - sidekick should be destroyed
+func _on_player_died() -> void:
+	if _is_destroying:
+		return
+	print("Player died - destroying sidekick")
+	_destroy()
+
+
 ## Spawn a projectile from the sidekick's position
 func shoot() -> void:
 	if _is_destroying:
@@ -102,9 +113,13 @@ func _destroy() -> void:
 	_is_destroying = true
 
 	# Disconnect from player signals to avoid errors
-	if _player and is_instance_valid(_player) and _player.has_signal("projectile_fired"):
-		if _player.projectile_fired.is_connected(_on_player_projectile_fired):
-			_player.projectile_fired.disconnect(_on_player_projectile_fired)
+	if _player and is_instance_valid(_player):
+		if _player.has_signal("projectile_fired"):
+			if _player.projectile_fired.is_connected(_on_player_projectile_fired):
+				_player.projectile_fired.disconnect(_on_player_projectile_fired)
+		if _player.has_signal("died"):
+			if _player.died.is_connected(_on_player_died):
+				_player.died.disconnect(_on_player_died)
 
 	# Disable collision during animation
 	set_deferred("monitoring", false)

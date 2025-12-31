@@ -241,34 +241,73 @@ Each slice delivers incremental user value and is tested end-to-end.
 
 #### Tasks
 
-- [ ] 5.1 Write integration test: kill 5 enemies, random pickup spawns
+- [x] 5.1 Write integration test: kill 5 enemies, random pickup spawns
   - Kill 5 enemies in sequence
   - Verify a pickup spawns (either star or sidekick)
   - Verify kill counter resets and threshold doubles
-- [ ] 5.2 Run test, verify expected failure
-- [ ] 5.3 Add sidekick_pickup_scene export to enemy_spawner.gd
-- [ ] 5.4 Modify _on_enemy_killed to randomly select pickup type (50/50)
-- [ ] 5.5 Rename _spawn_star_pickup to _spawn_random_pickup
-- [ ] 5.6 Implement random selection between star and sidekick pickup
-- [ ] 5.7 Run test, observe failure or success
-- [ ] 5.8 Document result and update task list
-- [ ] 5.9 Repeat 5.6-5.8 as necessary
-- [ ] 5.10 Verify threshold doubling preserved (5, 10, 20, 40...)
-- [ ] 5.11 Update Main scene to assign sidekick_pickup_scene to spawner
-- [ ] 5.12 Test edge case: collecting sidekick when one already active
-  - [ ] 5.12.1 Decide behavior: ignore pickup or replace existing sidekick
-  - [ ] 5.12.2 Implement chosen behavior
-- [ ] 5.13 Test edge case: sidekick destroyed on player death
-- [ ] 5.14 Refactor if needed (keep tests green)
-- [ ] 5.15 Run all feature tests (1-5) to verify everything works together
-- [ ] 5.16 Commit working slice
+  - Created test_random_pickup_spawn.gd and test_random_pickup_spawn.tscn
+- [x] 5.2 Run test, verify expected failure
+  - Initially test had script errors (SidekickPickup class not found)
+  - Fixed by using script path-based type detection instead of direct class reference
+  - Test then passed because star pickup still spawns (only star_pickup_scene was assigned)
+- [x] 5.3 Add sidekick_pickup_scene export to enemy_spawner.gd
+  - Added: @export var sidekick_pickup_scene: PackedScene
+- [x] 5.4 Modify _on_enemy_killed to randomly select pickup type (50/50)
+  - Changed from _spawn_star_pickup() to _spawn_random_pickup()
+- [x] 5.5 Rename _spawn_star_pickup to _spawn_random_pickup
+  - Renamed and refactored to support both pickup types
+- [x] 5.6 Implement random selection between star and sidekick pickup
+  - Uses _rng.randf() < 0.5 for 50/50 chance
+  - Falls back to star pickup if sidekick_pickup_scene not assigned
+- [x] 5.7 Run test, observe failure or success
+  - Success - test passes with both StarPickup and SidekickPickup spawning randomly
+- [x] 5.8 Document result and update task list
+- [x] 5.9 Repeat 5.6-5.8 as necessary
+  - No additional iterations needed
+- [x] 5.10 Verify threshold doubling preserved (5, 10, 20, 40...)
+  - Created test_pickup_threshold_doubling.gd and test_pickup_threshold_doubling.tscn
+  - Test verifies: initial threshold 5, then 10 after first spawn, then 20
+  - Test passes - threshold doubling works correctly
+- [x] 5.11 Update Main scene to assign sidekick_pickup_scene to spawner
+  - Added sidekick_pickup_scene = ExtResource("19_sidekick_pickup") to EnemySpawner node
+  - Updated load_steps from 25 to 26 for new resource
+- [x] 5.12 Test edge case: collecting sidekick when one already active
+  - [x] 5.12.1 Decide behavior: ignore pickup or replace existing sidekick
+    - Decided: Ignore pickup (don't spawn new sidekick if one exists)
+  - [x] 5.12.2 Implement chosen behavior
+    - Fixed sidekick_pickup.gd to use group-based check instead of node path
+    - Uses get_tree().get_nodes_in_group("sidekick") for robust detection
+    - Created test_sidekick_duplicate.gd and test_sidekick_duplicate.tscn
+    - Test passes - second pickup collected but no duplicate sidekick spawned
+- [x] 5.13 Test edge case: sidekick destroyed on player death
+  - Added player.died signal connection in sidekick.gd setup()
+  - Added _on_player_died() handler that calls _destroy()
+  - Created test_sidekick_player_death.gd and test_sidekick_player_death.tscn
+  - Test passes - sidekick is destroyed when player dies
+- [x] 5.14 Refactor if needed (keep tests green)
+  - Updated sidekick_pickup.gd to use group-based sidekick detection
+  - Updated sidekick.gd to connect to player.died signal
+  - All tests still pass after refactoring
+- [x] 5.15 Run all feature tests (1-5) to verify everything works together
+  - All 10 tests pass:
+    - test_star_pickup
+    - test_sidekick_pickup
+    - test_sidekick_shooting
+    - test_sidekick_destruction
+    - test_sidekick_no_invincibility
+    - test_score_ufo_friend
+    - test_random_pickup_spawn
+    - test_sidekick_duplicate
+    - test_pickup_threshold_doubling
+    - test_sidekick_player_death
+- [x] 5.16 Commit working slice
 
 **Acceptance Criteria:**
-- Every 5 enemy kills triggers pickup spawn
-- Random selection between star (extra life) and sidekick pickup
-- Threshold doubles after each spawn (5, 10, 20...)
-- Only one sidekick active at a time
-- Sidekick destroyed when player dies
+- [x] Every 5 enemy kills triggers pickup spawn
+- [x] Random selection between star (extra life) and sidekick pickup
+- [x] Threshold doubles after each spawn (5, 10, 20...)
+- [x] Only one sidekick active at a time
+- [x] Sidekick destroyed when player dies
 
 ---
 

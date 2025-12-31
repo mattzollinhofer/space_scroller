@@ -112,13 +112,11 @@ func _spawn_sidekick(player: Node2D) -> void:
 	if not is_instance_valid(player):
 		return
 
-	# Check if a sidekick already exists
-	var main = get_tree().root.get_node_or_null("Main")
-	if main:
-		var existing_sidekick = main.get_node_or_null("Sidekick")
-		if existing_sidekick:
-			# Sidekick already exists, don't spawn another
-			return
+	# Check if a sidekick already exists using the "sidekick" group
+	var existing_sidekicks = get_tree().get_nodes_in_group("sidekick")
+	if existing_sidekicks.size() > 0:
+		# Sidekick already exists, don't spawn another
+		return
 
 	# Spawn the sidekick
 	var sidekick = sidekick_scene.instantiate()
@@ -129,11 +127,8 @@ func _spawn_sidekick(player: Node2D) -> void:
 	if sidekick.has_method("setup"):
 		sidekick.setup(player)
 
-	# Add to Main scene (not player) so it persists independently
-	if main:
-		main.add_child(sidekick)
-	else:
-		get_parent().add_child(sidekick)
+	# Add to the same parent as this pickup (Main scene or test scene)
+	get_parent().add_child(sidekick)
 
 
 func _play_collect_animation() -> void:

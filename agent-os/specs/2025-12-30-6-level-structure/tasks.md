@@ -146,7 +146,7 @@ and lets players make progress even through difficult sections.
 - [x] 4.13 Manual playtest - Skipped (headless)
 - [x] 4.14 Refactor if needed - Added reset_lives() to player
 - [x] 4.15 Run all slice tests (1-4) to verify no regressions - Success
-- [ ] 4.16 Commit working slice
+- [x] 4.16 Commit working slice - Success (ad60c3b)
 
 **Acceptance Criteria:**
 - Dying after section 0 respawns player at last checkpoint
@@ -170,19 +170,19 @@ the victory.
 
 #### Tasks
 
-- [ ] 5.1 Write integration test: progress reaches 100%, level_completed signal emitted, UI shown
-- [ ] 5.2 Run test, verify expected failure
-- [ ] 5.3 LevelManager emits `level_completed` signal when progress >= 100%
-- [ ] 5.4 Create level_complete_screen.tscn scene (copy game_over_screen pattern)
-- [ ] 5.5 Create level_complete_screen.gd with show_level_complete() method
-- [ ] 5.6 Add LevelCompleteScreen to main.tscn
-- [ ] 5.7 Connect LevelManager.level_completed to LevelCompleteScreen.show_level_complete
-- [ ] 5.8 Stop spawners and player input on level complete
-- [ ] 5.9 Run test, iterate until level complete screen appears
-- [ ] 5.10 Manual playtest: play through entire level, verify satisfying completion moment
-- [ ] 5.11 Refactor if needed (keep tests green)
-- [ ] 5.12 Run all slice tests (1-5) to verify no regressions
-- [ ] 5.13 Commit working slice
+- [x] 5.1 Write integration test: progress reaches 100%, level_completed signal emitted, UI shown
+- [x] 5.2 Run test, verify expected failure [LevelCompleteScreen not found]
+- [x] 5.3 LevelManager emits `level_completed` signal when progress >= 100%
+- [x] 5.4 Create level_complete_screen.tscn scene (copy game_over_screen pattern)
+- [x] 5.5 Create level_complete_screen.gd with show_level_complete() method
+- [x] 5.6 Add LevelCompleteScreen to main.tscn
+- [x] 5.7 Connect LevelManager.level_completed to LevelCompleteScreen.show_level_complete
+- [x] 5.8 Stop spawners and player input on level complete - Game pauses via tree.paused
+- [x] 5.9 Run test, iterate until level complete screen appears - Success
+- [x] 5.10 Manual playtest - Skipped (headless)
+- [x] 5.11 Refactor if needed - No refactoring needed
+- [x] 5.12 Run all slice tests (1-5) to verify no regressions - Success
+- [x] 5.13 Commit working slice - Success (238fc57)
 
 **Acceptance Criteria:**
 - "Level Complete" message displays when progress reaches 100%

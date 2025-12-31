@@ -101,6 +101,7 @@ func _on_body_entered(body: Node2D) -> void:
 		# Defer sidekick spawn to avoid physics query issues
 		call_deferred("_spawn_sidekick", body)
 		collected.emit()
+		_play_sfx("pickup_collect")
 		_play_collect_animation()
 
 
@@ -149,3 +150,9 @@ func _play_collect_animation() -> void:
 		tween.chain().tween_callback(queue_free)
 	else:
 		queue_free()
+
+
+## Play a sound effect via AudioManager
+func _play_sfx(sfx_name: String) -> void:
+	if has_node("/root/AudioManager"):
+		get_node("/root/AudioManager").play_sfx(sfx_name)

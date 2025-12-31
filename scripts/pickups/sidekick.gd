@@ -105,6 +105,9 @@ func shoot() -> void:
 	# Add to Main scene so it persists independently
 	get_parent().add_child(projectile)
 
+	# Play sidekick shoot sound (different from player)
+	_play_sfx("sidekick_shoot")
+
 
 ## Destroy the sidekick with visual animation
 func _destroy() -> void:
@@ -147,3 +150,9 @@ func _play_destruction_animation() -> void:
 
 	# Queue free after animation completes
 	tween.chain().tween_callback(queue_free)
+
+
+## Play a sound effect via AudioManager
+func _play_sfx(sfx_name: String) -> void:
+	if has_node("/root/AudioManager"):
+		get_node("/root/AudioManager").play_sfx(sfx_name)

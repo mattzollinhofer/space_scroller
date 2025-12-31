@@ -96,6 +96,7 @@ func _on_body_entered(body: Node2D) -> void:
 	if body.has_method("gain_life"):
 		if body.gain_life():
 			collected.emit()
+			_play_sfx("pickup_collect")
 			_award_bonus_points()
 			_spawn_floating_heart()
 			_play_collect_animation()
@@ -135,3 +136,9 @@ func _play_collect_animation() -> void:
 		tween.chain().tween_callback(queue_free)
 	else:
 		queue_free()
+
+
+## Play a sound effect via AudioManager
+func _play_sfx(sfx_name: String) -> void:
+	if has_node("/root/AudioManager"):
+		get_node("/root/AudioManager").play_sfx(sfx_name)

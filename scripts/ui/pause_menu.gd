@@ -53,11 +53,13 @@ func hide_pause_menu() -> void:
 
 ## Resume button pressed handler
 func _on_resume_button_pressed() -> void:
+	_play_sfx("button_click")
 	hide_pause_menu()
 
 
 ## Quit to menu button pressed handler
 func _on_quit_button_pressed() -> void:
+	_play_sfx("button_click")
 	# Unpause before changing scene
 	get_tree().paused = false
 	# Stop music before returning to menu
@@ -80,6 +82,7 @@ func _stop_gameplay_music() -> void:
 
 ## Mute button pressed handler
 func _on_mute_button_pressed() -> void:
+	_play_sfx("button_click")
 	if has_node("/root/AudioManager"):
 		var audio_manager = get_node("/root/AudioManager")
 		if audio_manager.has_method("toggle_mute"):
@@ -98,3 +101,9 @@ func _update_mute_button_text() -> void:
 				_mute_button.text = "Unmute Audio"
 			else:
 				_mute_button.text = "Mute Audio"
+
+
+## Play a sound effect via AudioManager
+func _play_sfx(sfx_name: String) -> void:
+	if has_node("/root/AudioManager"):
+		get_node("/root/AudioManager").play_sfx(sfx_name)

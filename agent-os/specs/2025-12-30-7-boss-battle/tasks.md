@@ -217,7 +217,8 @@ The boss battle feature adds an end-of-level boss encounter with health bar, thr
   - test_boss_damage.tscn: PASSED
   - test_boss_attack.tscn: PASSED
   - test_boss_patterns.tscn: PASSED
-- [ ] 4.8 Commit working slice
+- [x] 4.8 Commit working slice
+  - Committed: ea034a1 Add vertical sweep and charge attacks to boss battle
 
 **Acceptance Criteria:**
 - [x] Boss performs vertical sweep while firing
@@ -241,39 +242,54 @@ The boss battle feature adds an end-of-level boss encounter with health bar, thr
 
 #### Tasks
 
-- [ ] 5.1 Write integration test: defeating boss shows victory sequence
+- [x] 5.1 Write integration test: defeating boss shows victory sequence
   - Spawn boss, deal 13 damage
   - Verify screen shake occurs
   - Verify explosion animation plays
   - Verify level complete screen appears after delay
-- [ ] 5.2 Run test, verify expected failure
-- [ ] 5.3 Implement _on_health_depleted() in boss.gd
+  - Created tests/test_boss_victory.gd and test_boss_victory.tscn
+- [x] 5.2 Run test, verify expected failure
+  - [failure: Screen shake effect was not detected] -> Screen shake not implemented
+- [x] 5.3 Implement _on_health_depleted() in boss.gd
   - Set `_is_destroying = true` flag
   - Disable collision (monitoring = false)
   - Emit `boss_defeated` signal
-- [ ] 5.4 Implement screen shake effect
-  - Create camera shake or viewport offset shake
-  - Duration ~0.5 seconds, intensity decreasing
-  - Can use tween with random offset applied to Camera2D or root node
-- [ ] 5.5 Implement boss explosion animation
+  - Already implemented in earlier slices, enhanced with screen shake
+- [x] 5.4 Implement screen shake effect
+  - Shake main node position with decreasing intensity
+  - Duration ~0.5 seconds, 10 shake steps
+  - Uses tween with random offset applied to Main node position
+  - Added _play_screen_shake() method to boss.gd
+- [x] 5.5 Implement boss explosion animation
   - Load explosion.png texture
-  - Scale up 4-6x for boss-sized explosion
-  - Animate scale up further and fade out
-- [ ] 5.6 Hide boss health bar when boss defeated
-- [ ] 5.7 Connect LevelManager to boss_defeated signal
-  - Wait for explosion to complete (~1 second)
-  - Then show level complete screen
-  - Clear any remaining boss projectiles
-- [ ] 5.8 Add boss_defeated signal emit for future audio hooks
-- [ ] 5.9 Run all slice tests to verify no regressions
-- [ ] 5.10 Commit working slice
+  - Scale up 6x for boss-sized explosion (explosion_scale export)
+  - Animate scale up further (1.5x) and fade out over 0.8s
+  - Enhanced _play_destruction_animation() in boss.gd
+- [x] 5.6 Hide boss health bar when boss defeated
+  - Already implemented in level_manager.gd _on_boss_defeated()
+  - Calls health_bar.hide_bar() or sets visible = false
+- [x] 5.7 Connect LevelManager to boss_defeated signal
+  - Already connected in _spawn_boss()
+  - _on_boss_defeated waits 1.0s then shows level complete screen
+  - Boss projectiles are cleared when boss queue_free is called
+- [x] 5.8 Add boss_defeated signal emit for future audio hooks
+  - boss_defeated signal already defined and emitted in _on_health_depleted()
+  - attack_fired signal also available for audio integration
+- [x] 5.9 Run all slice tests to verify no regressions
+  - test_boss_spawn.tscn: PASSED
+  - test_boss_damage.tscn: PASSED
+  - test_boss_attack.tscn: PASSED
+  - test_boss_patterns.tscn: PASSED
+  - test_boss_victory.tscn: PASSED
+  - test_level_complete.tscn: PASSED
+- [x] 5.10 Commit working slice
 
 **Acceptance Criteria:**
-- Boss death triggers screen shake effect
-- Large explosion animation plays at boss position
-- Level complete screen appears after explosion
-- Boss health bar disappears on defeat
-- boss_defeated signal emitted for future audio integration
+- [x] Boss death triggers screen shake effect
+- [x] Large explosion animation plays at boss position
+- [x] Level complete screen appears after explosion
+- [x] Boss health bar disappears on defeat
+- [x] boss_defeated signal emitted for future audio integration
 
 ---
 

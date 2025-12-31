@@ -32,6 +32,9 @@ var _entrance_tween: Tween = null
 ## Tween for attack movement
 var _attack_tween: Tween = null
 
+## Tween for screen shake
+var _shake_tween: Tween = null
+
 ## Battle position (right third of screen)
 var _battle_position: Vector2 = Vector2.ZERO
 
@@ -81,6 +84,18 @@ var _charge_target_x: float = 0.0
 
 ## Charge damage amount
 @export var charge_damage: int = 1
+
+## Screen shake intensity
+@export var shake_intensity: float = 30.0
+
+## Screen shake duration
+@export var shake_duration: float = 0.5
+
+## Explosion scale multiplier (boss is larger than regular enemies)
+@export var explosion_scale: float = 6.0
+
+## Shake node for screen shake effect
+var _shake_node: Node2D = null
 
 ## Emitted when the boss is defeated
 signal boss_defeated()
@@ -426,36 +441,84 @@ func _on_health_depleted() -> void:
 	if _attack_tween and _attack_tween.is_valid():
 		_attack_tween.kill()
 
-	# Emit defeated signal
-	boss_defeated.emit()
-
-	# Play destruction animation (to be implemented in Slice 5)
-	_play_destruction_animation()
-
-
-func _play_destruction_animation() -> void:
 	# Disable collision
 	set_deferred("monitoring", false)
 	set_deferred("monitorable", false)
 
+	# Emit defeated signal (for audio hooks and level manager)
+	boss_defeated.emit()
+
+	# Play destruction sequence: screen shake, then explosion
+	_play_screen_shake()
+	_play_destruction_animation()
+
+
+func _play_screen_shake() -> void:
+	## Apply screen shake effect by shaking the main node position
+	# Find the main node (parent of the boss)
+	var main_node = get_parent()
+	if not main_node or not main_node is Node2D:
+		return
+
+	# Store reference for shake detection
+	_shake_node = main_node
+
+	# Kill any existing shake tween
+	if _shake_tween and _shake_tween.is_valid():
+		_shake_tween.kill()
+
+	# Store original position
+	var original_position = main_node.position
+
+	# Create shake tween with decreasing intensity
+	_shake_tween = create_tween()
+
+	var shake_steps = 10
+	var step_duration = shake_duration / shake_steps
+
+	for i in range(shake_steps):
+		# Intensity decreases over time
+		var intensity_factor = 1.0 - (float(i) / shake_steps)
+		var current_intensity = shake_intensity * intensity_factor
+
+		# Random offset for this step
+		var random_offset = Vector2(
+			randf_range(-current_intensity, current_intensity),
+			randf_range(-current_intensity, current_intensity)
+		)
+
+		_shake_tween.tween_property(main_node, "position", original_position + random_offset, step_duration)
+
+	# Return to original position
+	_shake_tween.tween_property(main_node, "position", original_position, step_duration)
+
+
+func _play_destruction_animation() -> void:
 	# Hide sprite
 	var sprite = get_node_or_null("AnimatedSprite2D")
 	if sprite:
 		sprite.visible = false
 
-	# Create explosion (basic version, will be enhanced in Slice 5)
+	# Create large boss explosion
 	var explosion_texture = load("res://assets/sprites/explosion.png")
 	var explosion = Sprite2D.new()
 	explosion.texture = explosion_texture
-	explosion.scale = Vector2(4, 4)
+	explosion.scale = Vector2(explosion_scale, explosion_scale)
 	add_child(explosion)
 
-	# Animate explosion
+	# Animate explosion: scale up further and fade out
 	var tween = create_tween()
 	tween.set_parallel(true)
-	tween.tween_property(explosion, "scale", Vector2(8, 8), 0.5).set_ease(Tween.EASE_OUT)
-	tween.tween_property(explosion, "modulate:a", 0.0, 0.5).set_ease(Tween.EASE_IN)
+	tween.tween_property(explosion, "scale", Vector2(explosion_scale * 1.5, explosion_scale * 1.5), 0.8).set_ease(Tween.EASE_OUT)
+	tween.tween_property(explosion, "modulate:a", 0.0, 0.8).set_ease(Tween.EASE_IN)
+
+	# Queue free after animation completes
 	tween.chain().tween_callback(queue_free)
+
+
+## Get the shake node for testing
+func get_shake_node() -> Node2D:
+	return _shake_node
 
 
 ## Start the attack cycle

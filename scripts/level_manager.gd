@@ -651,6 +651,7 @@ func _on_boss_defeated() -> void:
 
 
 func _show_level_complete_screen() -> void:
+	_play_sfx("level_complete")
 	if _level_complete_screen:
 		# Set the current level number before showing
 		if _level_complete_screen.has_method("set_current_level"):
@@ -786,3 +787,9 @@ func get_boss_health_bar() -> Node:
 ## Get level metadata
 func get_metadata() -> Dictionary:
 	return _level_metadata
+
+
+## Play a sound effect via AudioManager
+func _play_sfx(sfx_name: String) -> void:
+	if has_node("/root/AudioManager"):
+		get_node("/root/AudioManager").play_sfx(sfx_name)

@@ -27,6 +27,7 @@ func show_game_over() -> void:
 	_update_score_display()
 	_update_high_score_display()
 	visible = true
+	_play_sfx("game_over")
 	# Pause the game tree
 	get_tree().paused = true
 
@@ -113,3 +114,9 @@ func _format_number(number: int) -> String:
 		count += 1
 
 	return result
+
+
+## Play a sound effect via AudioManager
+func _play_sfx(sfx_name: String) -> void:
+	if has_node("/root/AudioManager"):
+		get_node("/root/AudioManager").play_sfx(sfx_name)

@@ -247,6 +247,7 @@ func _attack_horizontal_barrage() -> void:
 			parent.add_child(projectile)
 
 	attack_fired.emit()
+	_play_sfx("boss_attack")
 
 
 func _attack_vertical_sweep() -> void:
@@ -303,6 +304,7 @@ func _fire_single_projectile() -> void:
 		parent.add_child(projectile)
 
 	attack_fired.emit()
+	_play_sfx("boss_attack")
 
 
 func _on_sweep_complete() -> void:
@@ -401,6 +403,7 @@ func take_hit(damage: int) -> void:
 
 	# Reduce health
 	health -= damage
+	_play_sfx("boss_damage")
 
 	# Play hit flash if still alive
 	if health > 0:
@@ -650,3 +653,9 @@ func configure(config: Dictionary) -> void:
 	# Set explosion scale
 	if config.has("explosion_scale"):
 		explosion_scale = config.explosion_scale
+
+
+## Play a sound effect via AudioManager
+func _play_sfx(sfx_name: String) -> void:
+	if has_node("/root/AudioManager"):
+		get_node("/root/AudioManager").play_sfx(sfx_name)

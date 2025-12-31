@@ -54,7 +54,7 @@ follow. `S`
 14. [ ] Additional Bosses — Design unique boss encounters for each additional
     level with distinct attack patterns and mechanics. `L`
 
-15. [ ] Audio Integration — Add background music tracks, sound effects for
+15. [x] Audio Integration — Add background music tracks, sound effects for
     actions (shooting, collecting, damage), and boss battle music. `M`
 
 16. [ ] Polish and Juice — Add screen shake, particle effects, animations, and

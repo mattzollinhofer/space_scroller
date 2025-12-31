@@ -30,7 +30,7 @@ follow. `S`
 8. [x] Score System — Implement scoring for defeating enemies and completing
    levels, with persistent high score storage and display. `S`
 
-9. [ ] Game UI — Build main menu, pause menu, game over screen, and HUD showing
+9. [x] Game UI — Build main menu, pause menu, game over screen, and HUD showing
    score, lives, and level progress. `M`
 
 10. [ ] Sidekick Helper — Add a good alien sidekick that can be unlocked as a

@@ -2,6 +2,7 @@ extends Node2D
 ## Spawns and manages enemy entities.
 ## Handles continuous spawning from the right edge and tracks active enemies.
 ## Supports wave-based spawning controlled by LevelManager.
+## Supports filler spawning between waves (every 4-6 seconds).
 
 ## Stationary enemy scene to spawn
 @export var stationary_enemy_scene: PackedScene
@@ -33,6 +34,12 @@ extends Node2D
 ## Number of initial enemies to spawn at game start
 @export var initial_count: int = 3
 
+## Filler spawn rate minimum (seconds)
+@export var filler_spawn_rate_min: float = 4.0
+
+## Filler spawn rate maximum (seconds)
+@export var filler_spawn_rate_max: float = 6.0
+
 ## Playable Y range (between asteroid belt boundaries, accounting for enemy size)
 const PLAYABLE_Y_MIN: float = 140.0  # 80 + 60 margin
 const PLAYABLE_Y_MAX: float = 1396.0  # 1456 - 60 margin
@@ -56,6 +63,13 @@ var _game_over: bool = false
 ## Continuous spawning enabled (can be disabled for wave-based levels)
 var _continuous_spawning: bool = true
 
+## Filler spawning enabled (spawns random enemies between waves)
+var _filler_spawning: bool = false
+
+## Filler spawn timer (separate from continuous spawn timer)
+var _filler_timer: float = 0.0
+var _next_filler_time: float = 0.0
+
 ## Kill tracking for pickup spawning
 var _kill_count: int = 0
 var _next_pickup_threshold: int = 5
@@ -69,6 +83,7 @@ func _ready() -> void:
 
 	# Set initial spawn time
 	_next_spawn_time = _rng.randf_range(spawn_rate_min, spawn_rate_max)
+	_next_filler_time = _rng.randf_range(filler_spawn_rate_min, filler_spawn_rate_max)
 
 	# Connect to player died signal to stop spawning
 	_connect_to_player()
@@ -78,15 +93,26 @@ func _ready() -> void:
 
 
 func _process(delta: float) -> void:
-	if _game_over or not _continuous_spawning:
+	if _game_over:
 		return
 
-	_spawn_timer += delta
+	# Handle continuous spawning (old system)
+	if _continuous_spawning:
+		_spawn_timer += delta
 
-	if _spawn_timer >= _next_spawn_time:
-		_spawn_random_enemy()
-		_spawn_timer = 0.0
-		_next_spawn_time = _rng.randf_range(spawn_rate_min, spawn_rate_max)
+		if _spawn_timer >= _next_spawn_time:
+			_spawn_random_enemy()
+			_spawn_timer = 0.0
+			_next_spawn_time = _rng.randf_range(spawn_rate_min, spawn_rate_max)
+
+	# Handle filler spawning (new system - independent of continuous spawning)
+	if _filler_spawning:
+		_filler_timer += delta
+
+		if _filler_timer >= _next_filler_time:
+			_spawn_filler_enemy()
+			_filler_timer = 0.0
+			_next_filler_time = _rng.randf_range(filler_spawn_rate_min, filler_spawn_rate_max)
 
 
 func _connect_to_player() -> void:
@@ -107,6 +133,20 @@ func set_continuous_spawning(enabled: bool) -> void:
 		# Reset timer when re-enabling
 		_spawn_timer = 0.0
 		_next_spawn_time = _rng.randf_range(spawn_rate_min, spawn_rate_max)
+
+
+## Enable or disable filler enemy spawning (between waves)
+func set_filler_spawning(enabled: bool) -> void:
+	_filler_spawning = enabled
+	if enabled:
+		# Reset timer when re-enabling
+		_filler_timer = 0.0
+		_next_filler_time = _rng.randf_range(filler_spawn_rate_min, filler_spawn_rate_max)
+
+
+## Check if filler spawning is enabled
+func is_filler_spawning() -> bool:
+	return _filler_spawning
 
 
 ## Spawn a wave of enemies based on configuration
@@ -134,6 +174,21 @@ func _spawn_random_enemy() -> void:
 		_spawn_patrol_enemy()
 	else:
 		_spawn_stationary_enemy()
+
+
+## Spawn a filler enemy with weighted random selection
+## 60% stationary, 30% shooting, 10% charger
+func _spawn_filler_enemy() -> void:
+	var roll = _rng.randf()
+	if roll < 0.6:
+		# 60% chance: stationary
+		_spawn_stationary_enemy()
+	elif roll < 0.9:
+		# 30% chance: shooting (0.6 to 0.9)
+		_spawn_shooting_enemy()
+	else:
+		# 10% chance: charger (0.9 to 1.0)
+		_spawn_charger_enemy()
 
 
 func _spawn_stationary_enemy() -> void:
@@ -240,6 +295,8 @@ func reset() -> void:
 	_game_over = false
 	_spawn_timer = 0.0
 	_next_spawn_time = _rng.randf_range(spawn_rate_min, spawn_rate_max)
+	_filler_timer = 0.0
+	_next_filler_time = _rng.randf_range(filler_spawn_rate_min, filler_spawn_rate_max)
 	_kill_count = 0
 	_next_pickup_threshold = 5
 

@@ -1,0 +1,6 @@
+[gd_scene load_steps=2 format=3 uid="uid://dfiller_weight_test"]
+
+[ext_resource type="Script" path="res://tests/test_filler_weighted_spawn.gd" id="1_test"]
+
+[node name="TestFillerWeightedSpawn" type="Node2D"]
+script = ExtResource("1_test")

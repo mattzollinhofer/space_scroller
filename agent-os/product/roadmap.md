@@ -68,6 +68,32 @@ follow. `S`
     music and sound effects. Use AI generation tools (Suno, ElevenLabs) with
     prompts documented in `agent-os/product/audio-generation-prompts.md`. `S`
 
+19. [ ]  Add new level, level 4. This will mostly use the same approach as all previous
+    levels. A few notes:
+    a. theme is pepperoni pizza
+    b. there is a new boss: pepperoni pizza boss
+       i. the boss has a custom attack sprite
+       ii. the boss has a special attack sequence: 1) enter 2) three pronged
+pepperoni attack 3) complete circle movement around the "arena" 4) repeat attack
+    c. there are custom images/sprites to be used
+    d. there is a new enemy called garlic man. he has a custom sprite and
+"pizza-attack" sprite. he moves with the zig-zag pattern, but a little faster
+than normal. he has 3 health.
+
+20. [x]  Add a new level, level 5. This will mostly use the same approach as all previous
+    levels. A few notes:
+    a. theme is ghost
+    b. there is a new boss: ghost monster boss
+        i. the boss has a custom attack sprite
+        ii.the boss has a custom attack sequence: 1) enter. 2) wall attack (ask
+for description) 3) square move around arena 4) repeat attack
+        iii. there is a special enemy called ghost eye. same zig-zag pattern.
+3 health. moves a bit faster than other enemeies. 5-10 of these special enemies
+per level
+
+21. [ ] Missile Power-Up — Add a collectible power-up that strengthens the
+    player's missiles. When collected, missile damage increases from 1 to 2. `S`
+
 > Notes
 >
 > - Item 0 is the prerequisite setup before any development begins

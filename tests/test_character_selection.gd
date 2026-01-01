@@ -111,12 +111,12 @@ func _ready() -> void:
 	var texture_path = sprite.texture.resource_path
 	print("Player sprite texture: %s" % texture_path)
 
-	# Verify it's the space dragon texture
-	if "space-dragon" not in texture_path and "space_dragon" not in texture_path:
-		_fail("Expected space dragon sprite, got: %s" % texture_path)
+	# Verify it's the star dragon texture
+	if "star-dragon" not in texture_path and "star_dragon" not in texture_path:
+		_fail("Expected star dragon sprite, got: %s" % texture_path)
 		return
 
-	print("Player correctly loaded space_dragon sprite")
+	print("Player correctly loaded star_dragon sprite")
 
 	# Test Stage 5: Reset to blue_blaster and verify
 	print("Stage 5: Testing reset to default...")

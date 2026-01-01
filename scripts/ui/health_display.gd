@@ -29,10 +29,14 @@ func _connect_to_player() -> void:
 	# Find the player in the scene tree
 	var player = get_tree().root.get_node_or_null("Main/Player")
 	if player:
-		if player.has_signal("lives_changed"):
-			player.lives_changed.connect(_update_display)
-		# Get initial lives
-		if player.has_method("get_lives"):
+		# Connect to health_changed signal (health = hearts display)
+		if player.has_signal("health_changed"):
+			player.health_changed.connect(_update_display)
+		# Get initial health
+		if player.has_method("get_health"):
+			_update_display(player.get_health())
+		elif player.has_method("get_lives"):
+			# Fallback for backwards compatibility
 			_update_display(player.get_lives())
 
 

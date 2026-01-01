@@ -79,7 +79,7 @@ func get_character_texture_path(character_id: String) -> String:
 		CHARACTER_BLUE_BLASTER:
 			return "res://assets/sprites/player.png"
 		CHARACTER_SPACE_DRAGON:
-			return "res://assets/sprites/space-dragon-1.png"
+			return "res://assets/sprites/star-dragon-1.png"
 		CHARACTER_COSMIC_CAT:
 			return "res://assets/sprites/cosmic-cat-2.png"
 		_:

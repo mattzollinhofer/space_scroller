@@ -11,11 +11,11 @@ var _current_lives: int = 3
 ## Maximum lives (based on difficulty)
 var _max_lives: int = 3
 
-## Size of each ship icon
-const ICON_SIZE := Vector2(48, 48)
+## Size of each ship icon (larger for visibility)
+const ICON_SIZE := Vector2(80, 80)
 
 ## Spacing between icons
-const ICON_SPACING := 8
+const ICON_SPACING := 12
 
 
 func _ready() -> void:

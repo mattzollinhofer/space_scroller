@@ -1,16 +1,19 @@
 extends CharacterBody2D
 ## Player spacecraft with 4-directional movement using keyboard or virtual joystick.
 ## Movement is snappy with minimal inertia. X-axis clamped to viewport, Y-axis uses collision boundaries.
-## Includes lives system with damage handling, invincibility, and shooting.
+## Includes health and lives system: health = damage before losing a life, lives = respawns before game over.
 ## Loads character sprite from GameState selection.
 
 ## Movement speed in pixels per second
 @export var move_speed: float = 600.0
 
-## Starting number of lives
+## Starting/max health (hearts) - how much damage before losing a life
+@export var max_health: int = 3
+
+## Starting number of lives (set from difficulty)
 @export var starting_lives: int = 3
 
-## Invincibility duration after taking damage (seconds)
+## Invincibility duration after losing a life (seconds)
 @export var invincibility_duration: float = 1.5
 
 ## Flashing interval during invincibility (seconds)
@@ -27,7 +30,9 @@ extends CharacterBody2D
 
 ## Signals
 signal damage_taken()
+signal health_changed(new_health: int)
 signal lives_changed(new_lives: int)
+signal life_lost()
 signal died()
 signal projectile_fired()
 
@@ -40,7 +45,10 @@ var fire_button: Node = null
 ## Half the size of the player sprite for viewport clamping
 var _half_size: Vector2 = Vector2(32, 32)
 
-## Current lives
+## Current health (hearts)
+var _health: int = 3
+
+## Current lives (respawns remaining)
 var _lives: int = 3
 
 ## Invincibility state
@@ -62,7 +70,8 @@ func _ready() -> void:
 	if game_state:
 		starting_lives = game_state.get_starting_lives()
 
-	# Initialize lives
+	# Initialize health and lives
+	_health = max_health
 	_lives = starting_lives
 
 	# Load character sprite based on GameState selection
@@ -220,22 +229,32 @@ func take_damage() -> void:
 	if _is_invincible:
 		return
 
-	# Reduce lives
-	_lives -= 1
-	lives_changed.emit(_lives)
+	# Reduce health
+	_health -= 1
+	health_changed.emit(_health)
 	damage_taken.emit()
 
-	# Check for death
-	if _lives <= 0:
-		died.emit()
+	# Check if health depleted (lose a life)
+	if _health <= 0:
+		_lives -= 1
+		lives_changed.emit(_lives)
+		life_lost.emit()
+
+		# Check for game over (no lives left)
+		if _lives <= 0:
+			died.emit()
+			_play_sfx("player_death")
+			return
+
+		# Still have lives - respawn with full health
+		_health = max_health
+		health_changed.emit(_health)
 		_play_sfx("player_death")
+		_start_invincibility()
 		return
 
-	# Play damage sound (not death)
+	# Took damage but still have health - brief feedback
 	_play_sfx("player_damage")
-
-	# Start invincibility
-	_start_invincibility()
 
 
 func _start_invincibility() -> void:
@@ -260,9 +279,23 @@ func _set_player_visibility(is_visible: bool) -> void:
 		sprite.visible = is_visible
 
 
+## Get current health count
+func get_health() -> int:
+	return _health
+
+
 ## Get current lives count
 func get_lives() -> int:
 	return _lives
+
+
+## Gain health (used by pickups). Returns true if health was gained.
+func gain_health() -> bool:
+	if _health >= max_health:
+		return false
+	_health += 1
+	health_changed.emit(_health)
+	return true
 
 
 ## Gain a life (used by pickups). Returns true if life was gained.
@@ -274,7 +307,13 @@ func gain_life() -> bool:
 	return true
 
 
-## Reset lives to starting value (used for checkpoint respawn)
+## Reset health to max (used when respawning)
+func reset_health() -> void:
+	_health = max_health
+	health_changed.emit(_health)
+
+
+## Reset lives to starting value (used for new game)
 func reset_lives() -> void:
 	# Refresh starting_lives from GameState in case difficulty changed
 	var game_state = get_node_or_null("/root/GameState")
@@ -282,9 +321,11 @@ func reset_lives() -> void:
 		starting_lives = game_state.get_starting_lives()
 
 	_lives = starting_lives
+	_health = max_health
 	_is_invincible = false
 	_end_invincibility()
 	lives_changed.emit(_lives)
+	health_changed.emit(_health)
 
 
 ## Check if player is currently invincible

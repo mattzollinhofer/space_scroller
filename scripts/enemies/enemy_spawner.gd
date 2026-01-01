@@ -80,6 +80,12 @@ var _next_pickup_threshold: int = 5
 ## Enemy configuration from level (zigzag params, etc.)
 var _enemy_config: Dictionary = {}
 
+## Special enemies configuration (level-specific special enemy spawning rules)
+var _special_enemies_config: Array = []
+
+## Current section index (set by LevelManager for special enemy spawning)
+var _current_section: int = 0
+
 
 func _ready() -> void:
 	_rng = RandomNumberGenerator.new()
@@ -160,6 +166,16 @@ func set_enemy_config(config: Dictionary) -> void:
 	_enemy_config = config
 
 
+## Set special enemies configuration from level metadata
+func set_special_enemies_config(config: Array) -> void:
+	_special_enemies_config = config
+
+
+## Update current section index (called by LevelManager on section change)
+func set_current_section(section_index: int) -> void:
+	_current_section = section_index
+
+
 ## Spawn a wave of enemies based on configuration
 ## wave_config is an array of dictionaries with enemy_type and count
 func spawn_wave(wave_configs: Array) -> void:
@@ -190,8 +206,14 @@ func _spawn_random_enemy() -> void:
 
 
 ## Spawn a filler enemy with weighted random selection
-## 60% stationary, 30% shooting, 10% charger
+## First checks for special enemy spawning based on level config
+## Then falls back to: 60% stationary, 30% shooting, 10% charger
 func _spawn_filler_enemy() -> void:
+	# Check for special enemy spawn first
+	if _try_spawn_special_enemy():
+		return
+
+	# Fall back to normal filler spawning
 	var roll = _rng.randf()
 	if roll < 0.6:
 		# 60% chance: stationary
@@ -202,6 +224,36 @@ func _spawn_filler_enemy() -> void:
 	else:
 		# 10% chance: charger (0.9 to 1.0)
 		_spawn_charger_enemy()
+
+
+## Try to spawn a special enemy based on current section and config
+## Returns true if a special enemy was spawned, false otherwise
+func _try_spawn_special_enemy() -> bool:
+	if _special_enemies_config.is_empty():
+		return false
+
+	# Check each special enemy config
+	for special_config in _special_enemies_config:
+		var enemy_type = special_config.get("enemy_type", "")
+		var spawn_probability = special_config.get("spawn_probability", 0.0)
+		var allowed_sections = special_config.get("allowed_sections", [])
+
+		# Skip if current section is not in allowed sections
+		if not allowed_sections.has(_current_section):
+			continue
+
+		# Roll for spawn probability
+		if _rng.randf() < spawn_probability:
+			# Spawn the special enemy
+			match enemy_type:
+				"garlic":
+					_spawn_garlic_enemy()
+					return true
+				# Future special enemies can be added here
+				_:
+					push_warning("Unknown special enemy type: %s" % enemy_type)
+
+	return false
 
 
 func _spawn_stationary_enemy() -> void:

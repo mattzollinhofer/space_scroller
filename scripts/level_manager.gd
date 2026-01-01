@@ -260,6 +260,11 @@ func _setup_wave_based_spawning() -> void:
 	if _enemy_spawner and _enemy_spawner.has_method("set_enemy_config"):
 		_enemy_spawner.set_enemy_config(_enemy_config)
 
+	# Pass special enemies config to spawner for level-specific special enemies
+	var special_enemies = _level_metadata.get("special_enemies", [])
+	if _enemy_spawner and _enemy_spawner.has_method("set_special_enemies_config"):
+		_enemy_spawner.set_special_enemies_config(special_enemies)
+
 
 func _connect_player_signals() -> void:
 	if _player and _player.has_signal("died"):
@@ -669,6 +674,10 @@ func _on_section_changed(section_index: int) -> void:
 	# Update obstacle spawner density
 	if _obstacle_spawner and _obstacle_spawner.has_method("set_density"):
 		_obstacle_spawner.set_density(density)
+
+	# Update enemy spawner with current section (for special enemy spawning)
+	if _enemy_spawner and _enemy_spawner.has_method("set_current_section"):
+		_enemy_spawner.set_current_section(section_index)
 
 	# Spawn enemy wave for this section
 	if _enemy_spawner and _enemy_spawner.has_method("spawn_wave") and not enemy_waves.is_empty():

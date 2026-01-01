@@ -3,12 +3,12 @@
 importer="wav"
 type="AudioStreamWAV"
 uid="uid://d13tdks3hgml4"
-path="res://.godot/imported/boss_attack.wav-0dea2f70636247e47d7382afce4e49b1.sample"
+path="res://.godot/imported/boss_attack.wav-70152b9e1d512d9cfe69da09f55856bf.sample"
 
 [deps]
 
-source_file="res://assets/audio/sfx/boss_attack.wav"
-dest_files=["res://.godot/imported/boss_attack.wav-0dea2f70636247e47d7382afce4e49b1.sample"]
+source_file="res://assets/audio/sfx/weapons/boss_attack.wav"
+dest_files=["res://.godot/imported/boss_attack.wav-70152b9e1d512d9cfe69da09f55856bf.sample"]
 
 [params]
 

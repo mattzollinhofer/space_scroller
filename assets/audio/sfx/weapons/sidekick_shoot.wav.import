@@ -3,12 +3,12 @@
 importer="wav"
 type="AudioStreamWAV"
 uid="uid://boj3h8fty7e48"
-path="res://.godot/imported/sidekick_shoot.wav-f09c07e4d5e9c03cdda5a9ae9115a313.sample"
+path="res://.godot/imported/sidekick_shoot.wav-6612b717d1998445c9501999fc9d9bad.sample"
 
 [deps]
 
-source_file="res://assets/audio/sfx/sidekick_shoot.wav"
-dest_files=["res://.godot/imported/sidekick_shoot.wav-f09c07e4d5e9c03cdda5a9ae9115a313.sample"]
+source_file="res://assets/audio/sfx/weapons/sidekick_shoot.wav"
+dest_files=["res://.godot/imported/sidekick_shoot.wav-6612b717d1998445c9501999fc9d9bad.sample"]
 
 [params]
 

@@ -24,25 +24,26 @@ func _ready() -> void:
 
 	print("  - AudioManager has play_sfx method: OK")
 
-	# Verify high-priority SFX files exist
-	var high_priority_sfx = [
-		"player_shoot",
-		"enemy_hit",
-		"enemy_destroyed",
-		"player_damage",
-		"player_death"
-	]
+	# Verify high-priority SFX files exist (maps name -> category/name)
+	var high_priority_sfx = {
+		"player_shoot": "weapons/player_shoot",
+		"enemy_hit": "impacts/enemy_hit",
+		"enemy_destroyed": "explosions/enemy_destroyed",
+		"player_damage": "impacts/player_damage",
+		"player_death": "explosions/player_death"
+	}
 
 	for sfx_name in high_priority_sfx:
-		var wav_path = "res://assets/audio/sfx/%s.wav" % sfx_name
-		var ogg_path = "res://assets/audio/sfx/%s.ogg" % sfx_name
+		var sfx_path = high_priority_sfx[sfx_name]
+		var wav_path = "res://assets/audio/sfx/%s.wav" % sfx_path
+		var ogg_path = "res://assets/audio/sfx/%s.ogg" % sfx_path
 
 		if ResourceLoader.exists(wav_path):
-			print("  - SFX exists: %s.wav" % sfx_name)
+			print("  - SFX exists: %s.wav" % sfx_path)
 		elif ResourceLoader.exists(ogg_path):
-			print("  - SFX exists: %s.ogg" % sfx_name)
+			print("  - SFX exists: %s.ogg" % sfx_path)
 		else:
-			_fail("SFX file not found: %s (checked .wav and .ogg)" % sfx_name)
+			_fail("SFX file not found: %s (checked .wav and .ogg)" % sfx_path)
 			return
 
 	# Verify player.gd has SFX calls

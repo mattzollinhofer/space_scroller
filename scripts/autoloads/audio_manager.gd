@@ -101,24 +101,31 @@ func _preload_music() -> void:
 
 func _preload_sfx() -> void:
 	## Preload all SFX resources for quick playback
-	var sfx_names = [
-		"player_shoot",
-		"enemy_hit",
-		"enemy_destroyed",
-		"player_damage",
-		"player_death",
-		"boss_attack",
-		"boss_damage",
-		"level_complete",
-		"game_over",
-		"button_click",
-		"pickup_collect",
-		"sidekick_shoot"
-	]
+	## Maps SFX name -> path within res://assets/audio/sfx/
+	var sfx_paths = {
+		# Weapons
+		"player_shoot": "weapons/player_shoot",
+		"sidekick_shoot": "weapons/sidekick_shoot",
+		"boss_attack": "weapons/boss_attack",
+		# Impacts
+		"enemy_hit": "impacts/enemy_hit",
+		"boss_damage": "impacts/boss_damage",
+		"player_damage": "impacts/player_damage",
+		# Explosions
+		"enemy_destroyed": "explosions/enemy_destroyed",
+		"player_death": "explosions/player_death",
+		# UI
+		"button_click": "ui/button_click",
+		# Feedback
+		"pickup_collect": "feedback/pickup_collect",
+		"level_complete": "feedback/level_complete",
+		"game_over": "feedback/game_over",
+	}
 
-	for sfx_name in sfx_names:
-		var wav_path = "res://assets/audio/sfx/%s.wav" % sfx_name
-		var ogg_path = "res://assets/audio/sfx/%s.ogg" % sfx_name
+	for sfx_name in sfx_paths:
+		var base_path = "res://assets/audio/sfx/%s" % sfx_paths[sfx_name]
+		var wav_path = base_path + ".wav"
+		var ogg_path = base_path + ".ogg"
 
 		if ResourceLoader.exists(wav_path):
 			_sfx_resources[sfx_name] = load(wav_path)

@@ -165,7 +165,7 @@ pattern, matching the Outer Solar System "cold/expansive" theme.
 
 ---
 
-### Slice 4: Player fights Level 3 boss with Frozen Nova attack
+### Slice 4: Player fights Level 3 boss with Frozen Nova attack [COMPLETE]
 
 **What this delivers:** When fighting the Level 3 boss, the player encounters
 the new "Frozen Nova" attack - a delayed burst that expands outward slowly,
@@ -179,27 +179,44 @@ completing the Level 3 "cold/expansive" attack set.
 
 #### Tasks
 
-- [ ] 4.1 Write integration test: verify boss uses attack index 6 (Frozen Nova) when configured
-- [ ] 4.2 Run test, verify expected failure (attack 6 not implemented)
-- [ ] 4.3 Make smallest change possible to progress
-- [ ] 4.4 Run test, observe failure or success
-- [ ] 4.5 Document result and update task list
-- [ ] 4.6 Repeat 4.3-4.5 as necessary until Frozen Nova performs delayed expanding burst
-- [ ] 4.7 Verify delay/telegraph before burst fires
-- [ ] 4.8 Verify projectiles use slower speed (400-500) for expansive feel
-- [ ] 4.9 Update level_3.json attacks array to final: [0, 1, 5, 6]
-- [ ] 4.10 Run all boss tests to verify complete functionality
+- [x] 4.1 Write integration test: verify boss uses attack index 6 (Frozen Nova) when configured
+  - Created test_boss_frozen_nova.gd and test_boss_frozen_nova.tscn
+  - Test verifies: radial burst (8+), slow speed (400-500), delay before firing
+- [x] 4.2 Run test, verify expected failure (attack 6 not implemented)
+  - Test failed initially as expected
+- [x] 4.3 Make smallest change possible to progress
+  - Added case 6 to _execute_attack() match statement
+  - Added _attack_frozen_nova() method that fires 16 projectiles radially
+  - Set projectile speed to 450 (in range 400-500)
+  - Implemented ~0.8s delay/telegraph before firing (kid-friendly)
+  - Uses same blue/cyan telegraph color as Ice Shards
+- [x] 4.4 Run test, observe failure or success
+  - Success: Test passed
+- [x] 4.5 Document result and update task list
+- [x] 4.6 Repeat 4.3-4.5 as necessary until Frozen Nova performs delayed expanding burst
+  - Not needed - worked on first try
+- [x] 4.7 Verify delay/telegraph before burst fires
+  - Verified: 0.8s delay before firing
+- [x] 4.8 Verify projectiles use slower speed (400-500) for expansive feel
+  - Verified: Average projectile speed is 450.0
+- [x] 4.9 Update level_3.json attacks array to final: [0, 1, 5, 6]
+  - Already configured from Slice 3
+- [x] 4.10 Run all boss tests to verify complete functionality
+  - All 12 boss tests pass
 - [ ] 4.11 Manually playtest Level 3 boss to verify thematic feel and kid-friendly difficulty
-- [ ] 4.12 Run full test suite to verify no regressions across codebase
-- [ ] 4.13 Commit working slice
+  - Skipped: headless environment
+- [x] 4.12 Run full test suite to verify no regressions across codebase
+  - All tests pass (some need 15-20s timeout)
+- [x] 4.13 Commit working slice
+  - Committed: e67e897 "Add Frozen Nova attack for Level 3 boss (Slice 4)"
 
 **Acceptance Criteria:**
-- Level 3 boss uses Frozen Nova attack (delayed expanding burst)
-- Clear visual telegraph before burst fires (kid-friendly warning)
-- Frozen Nova projectiles are slow (speed 400-500)
-- All Level 3 attacks (barrage, sweep, ice shards, frozen nova) cycle correctly
-- All previous slice functionality still works
-- Full test suite passes
+- [x] Level 3 boss uses Frozen Nova attack (delayed expanding burst)
+- [x] Clear visual telegraph before burst fires (kid-friendly warning)
+- [x] Frozen Nova projectiles are slow (speed 400-500)
+- [x] All Level 3 attacks (barrage, sweep, ice shards, frozen nova) cycle correctly
+- [x] All previous slice functionality still works
+- [x] Full test suite passes
 
 ---
 

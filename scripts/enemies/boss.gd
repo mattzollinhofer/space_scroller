@@ -907,16 +907,17 @@ func _attack_square_movement() -> void:
 
 	_square_active = true
 
-	# Define 4 corner positions for rectangular path using CIRCLE_RADIUS for distance
-	# Starting from battle position, move: up-left, down-left, down-right, up-right, back to start
-	var half_width = CIRCLE_RADIUS * 0.8  # Horizontal distance from center
+	# Define 4 corner positions for rectangular path
+	# Boss moves all the way to the left side of screen (toward player) and back
+	var left_x = 200.0  # Near left edge of screen (player side)
+	var right_x = _battle_position.x + 100.0  # Slightly past battle position on right
 	var half_height = 400.0  # Vertical distance from center
 
-	# Calculate corners relative to battle position
-	var top_left = Vector2(_battle_position.x - half_width, _battle_position.y - half_height)
-	var bottom_left = Vector2(_battle_position.x - half_width, _battle_position.y + half_height)
-	var bottom_right = Vector2(_battle_position.x + half_width * 0.3, _battle_position.y + half_height)
-	var top_right = Vector2(_battle_position.x + half_width * 0.3, _battle_position.y - half_height)
+	# Calculate corners - go all the way across the screen
+	var top_left = Vector2(left_x, _battle_position.y - half_height)
+	var bottom_left = Vector2(left_x, _battle_position.y + half_height)
+	var bottom_right = Vector2(right_x, _battle_position.y + half_height)
+	var top_right = Vector2(right_x, _battle_position.y - half_height)
 
 	# Clamp Y positions to screen bounds
 	top_left.y = clampf(top_left.y, Y_MIN + 100, Y_MAX - 100)

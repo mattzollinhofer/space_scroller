@@ -45,7 +45,7 @@ var _battle_position: Vector2 = Vector2.ZERO
 enum AttackState { IDLE, WIND_UP, ATTACKING, COOLDOWN }
 var _attack_state: AttackState = AttackState.IDLE
 
-## Current attack pattern index (0 = barrage, 1 = sweep, 2 = charge, 3 = solar flare, 4 = heat wave, 5 = ice shards)
+## Current attack pattern index (0 = barrage, 1 = sweep, 2 = charge, 3 = solar flare, 4 = heat wave, 5 = ice shards, 6 = frozen nova)
 var _current_pattern: int = 0
 
 ## Attack cooldown timer
@@ -100,7 +100,7 @@ var _charge_target_x: float = 0.0
 ## Shake node for screen shake effect
 var _shake_node: Node2D = null
 
-## Which attack patterns are enabled (0=barrage, 1=sweep, 2=charge, 3=solar_flare, 4=heat_wave, 5=ice_shards)
+## Which attack patterns are enabled (0=barrage, 1=sweep, 2=charge, 3=solar_flare, 4=heat_wave, 5=ice_shards, 6=frozen_nova)
 var _enabled_attacks: Array[int] = [0, 1, 2]
 
 ## Number of attack patterns enabled
@@ -284,6 +284,8 @@ func _execute_attack() -> void:
 			_attack_heat_wave()
 		5:
 			_attack_ice_shards()
+		6:
+			_attack_frozen_nova()
 
 
 func _attack_horizontal_barrage() -> void:
@@ -565,6 +567,47 @@ func _attack_ice_shards() -> void:
 			projectile.direction = direction
 
 		# Ice Shards uses slower projectiles (450 vs default 750)
+		projectile.speed = 450.0
+
+		# Add to parent (main scene)
+		var parent = get_parent()
+		if parent:
+			parent.add_child(projectile)
+
+	attack_fired.emit()
+	_play_sfx("boss_attack")
+
+
+func _attack_frozen_nova() -> void:
+	## Frozen Nova: Delayed radial burst of slow projectiles in all directions (360 degrees)
+	## Outer Solar System "cold/expansive" theme attack - slow expanding nova
+	## The delay comes from the wind-up telegraph; this fires an expanding radial burst
+	if not boss_projectile_scene:
+		push_warning("Boss projectile scene not assigned")
+		return
+
+	# Fire 16 projectiles in a radial burst (360 degrees / 16 = 22.5 degrees apart)
+	# More projectiles than Solar Flare for "expansive" feel
+	var projectile_count = 16
+	var angle_step = TAU / projectile_count  # TAU = 2*PI = full circle
+
+	for i in range(projectile_count):
+		var projectile = boss_projectile_scene.instantiate()
+
+		# Position at boss center
+		projectile.position = position
+
+		# Calculate direction for this projectile (evenly spaced around circle)
+		var angle = angle_step * i
+		var direction = Vector2(1, 0).rotated(angle)
+
+		# Set direction on projectile
+		if projectile.has_method("set_direction"):
+			projectile.set_direction(direction)
+		else:
+			projectile.direction = direction
+
+		# Frozen Nova uses slower projectiles (450 vs default 750) for "expansive" feel
 		projectile.speed = 450.0
 
 		# Add to parent (main scene)
@@ -865,7 +908,7 @@ func configure(config: Dictionary) -> void:
 	if config.has("wind_up_duration"):
 		wind_up_duration = config.wind_up_duration
 
-	# Set enabled attacks (array of attack indices: 0=barrage, 1=sweep, 2=charge, 3=solar_flare, 4=heat_wave, 5=ice_shards)
+	# Set enabled attacks (array of attack indices: 0=barrage, 1=sweep, 2=charge, 3=solar_flare, 4=heat_wave, 5=ice_shards, 6=frozen_nova)
 	if config.has("attacks"):
 		_enabled_attacks.clear()
 		for attack in config.attacks:

@@ -94,7 +94,7 @@ func get_character_display_name(character_id: String) -> String:
 		CHARACTER_SPACE_DRAGON:
 			return "Star Dragon"
 		CHARACTER_COSMIC_CAT:
-			return "Cosmic Cat"
+			return "Celestial Cat"
 		_:
 			return "Unknown"
 

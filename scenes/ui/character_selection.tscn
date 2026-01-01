@@ -83,7 +83,7 @@ icon = ExtResource("4_cosmic_cat")
 icon_alignment = 1
 vertical_icon_alignment = 0
 expand_icon = true
-text = "Cosmic Cat"
+text = "Celestial Cat"
 
 [node name="Spacer2" type="Control" parent="CenterContainer/VBoxContainer"]
 custom_minimum_size = Vector2(0, 40)

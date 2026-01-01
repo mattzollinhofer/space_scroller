@@ -1,7 +1,7 @@
 [gd_scene load_steps=4 format=3 uid="uid://sidekick"]
 
 [ext_resource type="Script" path="res://scripts/pickups/sidekick.gd" id="1_script"]
-[ext_resource type="Texture2D" path="res://assets/sprites/friend-ufo-1.png" id="2_sprite"]
+[ext_resource type="Texture2D" path="res://assets/sprites/cosmic-cat-2.png" id="2_sprite"]
 
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_sidekick"]
 size = Vector2(80, 50)

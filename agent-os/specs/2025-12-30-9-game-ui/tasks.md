@@ -151,7 +151,7 @@ Each slice delivers incremental user value and is tested end-to-end.
 
 **Acceptance Criteria:**
 - [x] Character Selection button on main menu works
-- [x] 3 characters displayed in selection screen (Blue Blaster, Star Dragon, Cosmic Cat)
+- [x] 3 characters displayed in selection screen (Blue Blaster, Star Dragon, Celestial Cat)
 - [x] Current selection visually highlighted
 - [x] Selection persists while navigating back to main menu
 - [x] Starting game loads player with selected character sprite
@@ -395,7 +395,7 @@ After all slices are complete:
 5. **pause_button.tscn / pause_button.gd** - In-game pause button trigger
 6. **score_display.tscn / score_display.gd** - HUD score counter
 7. **transition_manager.gd** - Autoload for smooth screen transitions
-8. **2 new character sprites** - Star Dragon and Cosmic Cat (placeholder acceptable)
+8. **2 new character sprites** - Star Dragon and Celestial Cat (placeholder acceptable)
 9. **game_over_screen.tscn modifications** - Score display, high scores placeholder, Main Menu button
 10. **progress_bar.tscn modifications** - Level indicator label
 11. **main.tscn modifications** - Add PauseMenu, PauseButton, ScoreDisplay

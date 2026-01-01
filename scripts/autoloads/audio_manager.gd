@@ -12,6 +12,9 @@ const AUDIO_SETTINGS_PATH := "user://audio_settings.cfg"
 ## Crossfade duration in seconds
 const CROSSFADE_DURATION := 1.0
 
+## Music volume (dB) - lowered to balance with SFX
+const MUSIC_VOLUME_DB := -3.0
+
 ## Music resources
 var _gameplay_music: AudioStream = null
 var _boss_music: Dictionary = {}  # level_number -> AudioStream
@@ -70,21 +73,27 @@ func _ready() -> void:
 
 func _preload_music() -> void:
 	## Preload all music resources for quick playback
-	# Try OGG first, fall back to WAV for gameplay music
+	# Try MP3 first, then OGG, fall back to WAV for gameplay music
+	var mp3_path = "res://assets/audio/music/gameplay.mp3"
 	var ogg_path = "res://assets/audio/music/gameplay.ogg"
 	var wav_path = "res://assets/audio/music/gameplay.wav"
 
-	if ResourceLoader.exists(ogg_path):
+	if ResourceLoader.exists(mp3_path):
+		_gameplay_music = load(mp3_path)
+	elif ResourceLoader.exists(ogg_path):
 		_gameplay_music = load(ogg_path)
 	elif ResourceLoader.exists(wav_path):
 		_gameplay_music = load(wav_path)
 
 	# Preload boss music tracks (one per level)
 	for level in [1, 2, 3]:
+		var boss_mp3 = "res://assets/audio/music/boss_%d.mp3" % level
 		var boss_ogg = "res://assets/audio/music/boss_%d.ogg" % level
 		var boss_wav = "res://assets/audio/music/boss_%d.wav" % level
 
-		if ResourceLoader.exists(boss_ogg):
+		if ResourceLoader.exists(boss_mp3):
+			_boss_music[level] = load(boss_mp3)
+		elif ResourceLoader.exists(boss_ogg):
 			_boss_music[level] = load(boss_ogg)
 		elif ResourceLoader.exists(boss_wav):
 			_boss_music[level] = load(boss_wav)
@@ -143,7 +152,7 @@ func play_sfx(sfx_name: String) -> void:
 func play_music() -> void:
 	if _gameplay_music and _active_music_player:
 		_active_music_player.stream = _gameplay_music
-		_active_music_player.volume_db = 0.0
+		_active_music_player.volume_db = MUSIC_VOLUME_DB
 		_active_music_player.play()
 		_is_boss_music_playing = false
 
@@ -200,7 +209,7 @@ func crossfade_to_boss_music(level_number: int) -> void:
 	_crossfade_tween.tween_property(current_player, "volume_db", -80.0, CROSSFADE_DURATION)
 
 	# Fade in next player
-	_crossfade_tween.tween_property(next_player, "volume_db", 0.0, CROSSFADE_DURATION)
+	_crossfade_tween.tween_property(next_player, "volume_db", MUSIC_VOLUME_DB, CROSSFADE_DURATION)
 
 	# Update state
 	_active_music_player = next_player
@@ -235,7 +244,7 @@ func crossfade_to_gameplay_music() -> void:
 	_crossfade_tween.tween_property(current_player, "volume_db", -80.0, CROSSFADE_DURATION)
 
 	# Fade in next player
-	_crossfade_tween.tween_property(next_player, "volume_db", 0.0, CROSSFADE_DURATION)
+	_crossfade_tween.tween_property(next_player, "volume_db", MUSIC_VOLUME_DB, CROSSFADE_DURATION)
 
 	# Update state
 	_active_music_player = next_player

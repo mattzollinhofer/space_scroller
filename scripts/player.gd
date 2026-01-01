@@ -240,6 +240,11 @@ func take_damage() -> void:
 		lives_changed.emit(_lives)
 		life_lost.emit()
 
+		# Trigger screen effects for losing a life
+		var screen_effects = get_node_or_null("/root/ScreenEffects")
+		if screen_effects:
+			screen_effects.life_lost_effect()
+
 		# Check for game over (no lives left)
 		if _lives <= 0:
 			died.emit()

@@ -21,6 +21,7 @@ ScoreManager="*res://scripts/score_manager.gd"
 GameState="*res://scripts/autoloads/game_state.gd"
 TransitionManager="*res://scripts/autoloads/transition_manager.gd"
 AudioManager="*res://scripts/autoloads/audio_manager.gd"
+ScreenEffects="*res://scripts/autoloads/screen_effects.gd"
 
 [display]
 

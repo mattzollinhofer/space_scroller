@@ -53,3 +53,10 @@ func set_color(color: Color) -> void:
 	var sprite = get_node_or_null("Sprite2D")
 	if sprite:
 		sprite.modulate = color
+
+
+## Set the projectile texture (for boss-specific projectiles)
+func set_texture(texture: Texture2D) -> void:
+	var sprite = get_node_or_null("Sprite2D")
+	if sprite:
+		sprite.texture = texture

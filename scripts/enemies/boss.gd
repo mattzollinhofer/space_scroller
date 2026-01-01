@@ -14,6 +14,9 @@ class_name Boss
 ## Boss projectile scene to spawn
 @export var boss_projectile_scene: PackedScene
 
+## Custom projectile texture (loaded from level config)
+var _projectile_texture: Texture2D = null
+
 ## Maximum health (for UI percentage)
 var _max_health: int = 13
 
@@ -323,6 +326,8 @@ func _attack_horizontal_barrage() -> void:
 		else:
 			projectile.direction = direction
 
+		_apply_projectile_texture(projectile)
+
 		# Add to parent (main scene)
 		var parent = get_parent()
 		if parent:
@@ -381,6 +386,8 @@ func _fire_single_projectile() -> void:
 	else:
 		projectile.direction = direction
 
+	_apply_projectile_texture(projectile)
+
 	var parent = get_parent()
 	if parent:
 		parent.add_child(projectile)
@@ -432,6 +439,12 @@ func _on_charge_complete() -> void:
 	_charge_active = false
 	_attack_state = AttackState.COOLDOWN
 	_attack_timer = attack_cooldown
+
+
+func _apply_projectile_texture(projectile: Node) -> void:
+	## Apply custom projectile texture if configured
+	if _projectile_texture and projectile.has_method("set_texture"):
+		projectile.set_texture(_projectile_texture)
 
 
 func _attack_solar_flare() -> void:
@@ -969,6 +982,14 @@ func configure(config: Dictionary) -> void:
 	# Set explosion scale
 	if config.has("explosion_scale"):
 		explosion_scale = config.explosion_scale
+
+	# Set custom projectile texture
+	if config.has("projectile_sprite"):
+		var texture = load(config.projectile_sprite)
+		if texture:
+			_projectile_texture = texture
+		else:
+			push_warning("Could not load projectile sprite: %s" % config.projectile_sprite)
 
 
 ## Play a sound effect via AudioManager

@@ -56,3 +56,23 @@ func set_texture(texture: Texture2D) -> void:
 	var sprite = get_node_or_null("Sprite2D")
 	if sprite:
 		sprite.texture = texture
+		# Reset modulate to white so custom textures aren't tinted
+		sprite.modulate = Color(1, 1, 1, 1)
+		# Reset rotation for custom sprites (laser-bolt is rotated 180)
+		sprite.rotation = 0
+
+
+## Set the projectile scale
+func set_projectile_scale(scale_factor: float) -> void:
+	var sprite = get_node_or_null("Sprite2D")
+	if sprite:
+		sprite.scale = Vector2(scale_factor, scale_factor)
+	# Also scale the collision shape - make unique first to avoid shared resource issues
+	var collision = get_node_or_null("CollisionShape2D")
+	if collision and collision.shape:
+		collision.shape = collision.shape.duplicate()
+		if collision.shape is CircleShape2D:
+			collision.shape.radius = collision.shape.radius * scale_factor
+		elif collision.shape is RectangleShape2D:
+			# Base size is 32x8, scale from that
+			collision.shape.size = Vector2(32 * scale_factor, 8 * scale_factor)

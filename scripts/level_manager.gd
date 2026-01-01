@@ -265,6 +265,10 @@ func _setup_wave_based_spawning() -> void:
 	if _enemy_spawner and _enemy_spawner.has_method("set_special_enemies_config"):
 		_enemy_spawner.set_special_enemies_config(special_enemies)
 
+	# Enable filler spawning if special enemies are configured (they spawn during filler spawns)
+	if not special_enemies.is_empty() and _enemy_spawner and _enemy_spawner.has_method("set_filler_spawning"):
+		_enemy_spawner.set_filler_spawning(true)
+
 
 func _connect_player_signals() -> void:
 	if _player and _player.has_signal("died"):

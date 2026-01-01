@@ -11,6 +11,12 @@ var direction: Vector2 = Vector2(-1, 0)
 ## Left edge for despawn check
 var _despawn_x: float = -100.0
 
+## Time alive (for spawn protection)
+var _time_alive: float = 0.0
+
+## Spawn protection duration (ignore asteroid collision)
+const SPAWN_PROTECTION: float = 0.2
+
 
 func _ready() -> void:
 	# Connect body_entered signal for player collision (CharacterBody2D)
@@ -20,6 +26,8 @@ func _ready() -> void:
 
 
 func _process(delta: float) -> void:
+	_time_alive += delta
+
 	# Move in the specified direction
 	position += direction * speed * delta
 
@@ -38,7 +46,10 @@ func _on_body_entered(body: Node2D) -> void:
 
 func _on_area_entered(area: Area2D) -> void:
 	# Check if it's an asteroid (in asteroids group)
+	# Skip collision during spawn protection to avoid instant destruction
 	if area.is_in_group("asteroids") and area.has_method("take_hit"):
+		if _time_alive < SPAWN_PROTECTION:
+			return
 		area.take_hit(1)
 		queue_free()
 
@@ -60,3 +71,21 @@ func set_texture(texture: Texture2D) -> void:
 	var sprite = get_node_or_null("Sprite2D")
 	if sprite:
 		sprite.texture = texture
+		# Reset modulate to white so custom textures show correctly
+		sprite.modulate = Color(1, 1, 1, 1)
+
+
+## Set the projectile scale (for larger projectiles like pepperoni)
+func set_projectile_scale(scale_factor: float) -> void:
+	var sprite = get_node_or_null("Sprite2D")
+	if sprite:
+		sprite.scale = Vector2(scale_factor, scale_factor)
+	# Also scale the collision shape - make unique first to avoid shared resource issues
+	var collision = get_node_or_null("CollisionShape2D")
+	if collision and collision.shape:
+		collision.shape = collision.shape.duplicate()
+		if collision.shape is CircleShape2D:
+			collision.shape.radius = collision.shape.radius * scale_factor
+		elif collision.shape is RectangleShape2D:
+			# Base size is 32x8, scale from that
+			collision.shape.size = Vector2(32 * scale_factor, 8 * scale_factor)

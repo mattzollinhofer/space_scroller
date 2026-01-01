@@ -703,11 +703,12 @@ func _attack_pepperoni_spread() -> void:
 		else:
 			projectile.direction = direction
 
-		# Set pizza theme color
-		if projectile.has_method("set_color"):
-			projectile.set_color(COLOR_PIZZA)
-
+		# Apply custom projectile texture from level config
 		_apply_projectile_texture(projectile)
+
+		# Make pepperoni 6x larger for big visible projectiles
+		if projectile.has_method("set_projectile_scale"):
+			projectile.set_projectile_scale(6.0)
 
 		# Add to parent (main scene)
 		var parent = get_parent()
@@ -724,11 +725,11 @@ var _circle_active: bool = false
 ## Whether next circle should be clockwise (alternates each cycle)
 var _circle_clockwise: bool = true
 
-## Circle movement radius
-const CIRCLE_RADIUS: float = 300.0
+## Circle movement radius (large enough to reach player side of arena)
+const CIRCLE_RADIUS: float = 700.0
 
-## Circle movement duration (full circle)
-const CIRCLE_DURATION: float = 2.5
+## Circle movement duration (full circle - longer for larger radius)
+const CIRCLE_DURATION: float = 4.0
 
 
 func _attack_circle_movement() -> void:
@@ -739,8 +740,8 @@ func _attack_circle_movement() -> void:
 
 	_circle_active = true
 
-	# Calculate circle center (slightly left of battle position to keep boss on screen)
-	var circle_center = _battle_position + Vector2(-150, 0)
+	# Calculate circle center (far left to ensure circle reaches player side of arena)
+	var circle_center = _battle_position + Vector2(-700, 0)
 
 	# Number of points to define the circle path
 	var num_points = 8
@@ -1126,11 +1127,12 @@ func configure(config: Dictionary) -> void:
 
 	# Set custom projectile texture
 	if config.has("projectile_sprite"):
-		var texture = load(config.projectile_sprite)
+		var sprite_path = config["projectile_sprite"]
+		var texture = load(sprite_path)
 		if texture:
 			_projectile_texture = texture
 		else:
-			push_warning("Could not load projectile sprite: %s" % config.projectile_sprite)
+			push_warning("Could not load projectile sprite: %s" % sprite_path)
 
 
 ## Play a sound effect via AudioManager

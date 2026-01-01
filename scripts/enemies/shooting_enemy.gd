@@ -12,8 +12,12 @@ var _projectile_scene: PackedScene = null
 ## Timer for firing
 var _fire_timer: float = 0.0
 
+## Viewport width for on-screen check
+var _viewport_width: float = 2048.0
+
 
 func _ready() -> void:
+	_viewport_width = ProjectSettings.get_setting("display/window/size/viewport_width")
 	super._ready()
 	# Shooting enemies have 1 HP
 	health = 1
@@ -34,10 +38,12 @@ func _process(delta: float) -> void:
 	# Update fire timer
 	_fire_timer += delta
 
-	# Fire projectile when timer reaches fire_rate
+	# Fire projectile when timer reaches fire_rate (only if on screen)
 	if _fire_timer >= fire_rate:
 		_fire_timer = 0.0
-		_fire_projectile()
+		# Only fire if enemy is actually on screen
+		if global_position.x < _viewport_width:
+			_fire_projectile()
 
 
 func _fire_projectile() -> void:

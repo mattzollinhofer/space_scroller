@@ -12,17 +12,17 @@
     "boss_sprite": "res://assets/sprites/pepperoni-pizza-boss-1.png",
     "boss_config": {
       "health": 20,
-      "scale": 9,
-      "attacks": [7, 8],
+      "scale": 6,
+      "attacks": [0, 7, 8, 7],
       "attack_cooldown": 1.0,
-      "explosion_scale": 10,
+      "explosion_scale": 8,
       "projectile_sprite": "res://assets/sprites/pepperoni-attack-1.png"
     },
     "special_enemies": [
       {
         "enemy_type": "garlic",
-        "spawn_probability": 0.18,
-        "allowed_sections": [2, 3, 4, 5]
+        "spawn_probability": 0.45,
+        "allowed_sections": [1, 2, 3, 4, 5]
       }
     ]
   },
@@ -43,7 +43,8 @@
       "obstacle_density": "medium",
       "enemy_waves": [
         { "enemy_type": "shooting", "count": 3 },
-        { "enemy_type": "patrol", "count": 2 }
+        { "enemy_type": "patrol", "count": 2 },
+        { "enemy_type": "garlic", "count": 1 }
       ]
     },
     {
@@ -53,7 +54,8 @@
       "obstacle_density": "high",
       "enemy_waves": [
         { "enemy_type": "charger", "count": 3 },
-        { "enemy_type": "shooting", "count": 3 }
+        { "enemy_type": "shooting", "count": 3 },
+        { "enemy_type": "garlic", "count": 1 }
       ]
     },
     {
@@ -62,9 +64,9 @@
       "end_percent": 62,
       "obstacle_density": "high",
       "enemy_waves": [
-        { "enemy_type": "shooting", "count": 4 },
-        { "enemy_type": "patrol", "count": 3 },
-        { "enemy_type": "charger", "count": 2 }
+        { "enemy_type": "shooting", "count": 3 },
+        { "enemy_type": "patrol", "count": 2 },
+        { "enemy_type": "garlic", "count": 2 }
       ]
     },
     {
@@ -74,8 +76,9 @@
       "obstacle_density": "high",
       "enemy_waves": [
         { "enemy_type": "charger", "count": 3 },
-        { "enemy_type": "shooting", "count": 4 },
-        { "enemy_type": "patrol", "count": 3 }
+        { "enemy_type": "shooting", "count": 3 },
+        { "enemy_type": "patrol", "count": 2 },
+        { "enemy_type": "garlic", "count": 1 }
       ]
     },
     {
@@ -84,10 +87,10 @@
       "end_percent": 100,
       "obstacle_density": "high",
       "enemy_waves": [
-        { "enemy_type": "charger", "count": 4 },
-        { "enemy_type": "shooting", "count": 5 },
-        { "enemy_type": "patrol", "count": 3 },
-        { "enemy_type": "stationary", "count": 3 }
+        { "enemy_type": "charger", "count": 3 },
+        { "enemy_type": "shooting", "count": 4 },
+        { "enemy_type": "patrol", "count": 2 },
+        { "enemy_type": "garlic", "count": 1 }
       ]
     }
   ]

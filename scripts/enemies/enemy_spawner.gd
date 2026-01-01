@@ -409,10 +409,32 @@ func _on_enemy_killed(enemy: Node) -> void:
 		_next_pickup_threshold *= 2
 
 
-## Spawn a random pickup (star or sidekick) from a random edge
+## Choose which pickup type to spawn based on player state
+## Returns true for sidekick, false for star (health boost)
+func _choose_pickup_type() -> bool:
+	var player = get_tree().root.get_node_or_null("Main/Player")
+	var has_sidekick = get_tree().get_nodes_in_group("sidekick").size() > 0
+	var health_full = false
+
+	if player and player.has_method("get_health"):
+		health_full = player.get_health() >= player.max_health
+
+	# Smart selection: give what the player can actually use
+	if has_sidekick and not health_full:
+		# Has sidekick but needs health -> give star
+		return false
+	elif health_full and not has_sidekick:
+		# Full health but no sidekick -> give sidekick
+		return true
+	else:
+		# Either can use both or neither -> random 50/50
+		return _rng.randf() < 0.5
+
+
+## Spawn a pickup (star or sidekick) from a random edge
+## Smart selection: avoids giving unusable pickups when possible
 func _spawn_random_pickup() -> void:
-	# Randomly select pickup type (50/50 chance)
-	var spawn_sidekick = _rng.randf() < 0.5
+	var spawn_sidekick = _choose_pickup_type()
 
 	var pickup: Node2D
 	if spawn_sidekick and sidekick_pickup_scene:

@@ -4,7 +4,7 @@
 [ext_resource type="Texture2D" path="res://assets/sprites/pizza-garlic-enemy-1.png" id="2_sprite"]
 
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_enemy"]
-size = Vector2(150, 100)
+size = Vector2(225, 150)
 
 [node name="GarlicEnemy" type="Area2D"]
 collision_layer = 2
@@ -12,7 +12,7 @@ collision_mask = 5
 script = ExtResource("1_enemy")
 
 [node name="Sprite2D" type="Sprite2D" parent="."]
-scale = Vector2(3, 3)
+scale = Vector2(4.5, 4.5)
 texture = ExtResource("2_sprite")
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="."]

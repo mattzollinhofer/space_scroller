@@ -12,10 +12,10 @@
     "boss_sprite": "res://assets/sprites/pepperoni-pizza-boss-1.png",
     "boss_config": {
       "health": 20,
-      "scale": 6,
+      "scale": 1.5,
       "attacks": [0, 7, 8, 7],
       "attack_cooldown": 1.0,
-      "explosion_scale": 8,
+      "explosion_scale": 2.0,
       "projectile_sprite": "res://assets/sprites/pepperoni-attack-1.png"
     },
     "special_enemies": [

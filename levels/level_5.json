@@ -13,10 +13,10 @@
     "boss_sprite": "res://assets/sprites/ghost-boss-1.png",
     "boss_config": {
       "health": 22,
-      "scale": 6,
+      "scale": 1.5,
       "attacks": [9, 10],
       "attack_cooldown": 1.0,
-      "explosion_scale": 8,
+      "explosion_scale": 2.0,
       "projectile_sprite": "res://assets/sprites/ghost-attack-1.png"
     },
     "special_enemies": [

@@ -4,10 +4,10 @@
     "boss_sprite": "res://assets/sprites/boss-1.png",
     "boss_config": {
       "health": 10,
-      "scale": 5,
+      "scale": 1.25,
       "attacks": [0],
       "attack_cooldown": 1.5,
-      "explosion_scale": 7
+      "explosion_scale": 1.75
     }
   },
   "enemy_config": {

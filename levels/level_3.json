@@ -14,10 +14,10 @@
     "obstacle_modulate": [0.7, 0.85, 1.0, 1.0],
     "boss_config": {
       "health": 16,
-      "scale": 9,
+      "scale": 2.25,
       "attacks": [0, 1, 5, 6],
       "attack_cooldown": 1.1,
-      "explosion_scale": 10
+      "explosion_scale": 2.5
     }
   },
   "sections": [

@@ -30,15 +30,29 @@ var _viewport_height: float = 1536.0
 ## Sidekick scene to spawn when collected
 var sidekick_scene: PackedScene = preload("res://scenes/pickups/sidekick.tscn")
 
+## Possible sidekick sprite paths (randomized on spawn)
+const SIDEKICK_SPRITES := [
+	"res://assets/sprites/star-dragon-1.png",
+	"res://assets/sprites/cosmic-cat-2.png",
+	"res://assets/sprites/player.png",
+	"res://assets/sprites/friend-ufo-1.png"
+]
+
+## The randomly chosen sprite path for this pickup
+var _sprite_path: String = ""
+
 ## Signal when collected
 signal collected()
 
 
 func _ready() -> void:
+	randomize()  # Ensure RNG is seeded
 	body_entered.connect(_on_body_entered)
 	_viewport_width = ProjectSettings.get_setting("display/window/size/viewport_width")
 	_viewport_height = ProjectSettings.get_setting("display/window/size/viewport_height")
 	_zigzag_direction = 1.0 if randf() > 0.5 else -1.0
+	# Randomize the sprite for both pickup and future sidekick
+	_randomize_sprite()
 
 
 ## Configure the pickup based on which edge it spawns from
@@ -124,9 +138,9 @@ func _spawn_sidekick(player: Node2D) -> void:
 	sidekick.name = "Sidekick"
 	sidekick.position = player.position + Vector2(-50, -30)  # Start at offset position
 
-	# Pass player reference to sidekick
+	# Pass player reference and sprite path to sidekick
 	if sidekick.has_method("setup"):
-		sidekick.setup(player)
+		sidekick.setup(player, _sprite_path)
 
 	# Add to the same parent as this pickup (Main scene or test scene)
 	get_parent().add_child(sidekick)
@@ -150,6 +164,16 @@ func _play_collect_animation() -> void:
 		tween.chain().tween_callback(queue_free)
 	else:
 		queue_free()
+
+
+## Randomly select and apply one of the sidekick sprites
+func _randomize_sprite() -> void:
+	_sprite_path = SIDEKICK_SPRITES[randi() % SIDEKICK_SPRITES.size()]
+	var sprite = get_node_or_null("Sprite2D")
+	if sprite:
+		var texture = load(_sprite_path)
+		if texture:
+			sprite.texture = texture
 
 
 ## Play a sound effect via AudioManager

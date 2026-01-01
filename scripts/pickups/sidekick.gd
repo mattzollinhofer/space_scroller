@@ -13,6 +13,14 @@ class_name Sidekick
 ## Projectile scene to spawn when shooting
 var projectile_scene: PackedScene = null
 
+## Possible sidekick sprite paths (randomized on spawn)
+const SIDEKICK_SPRITES := [
+	"res://assets/sprites/star-dragon-1.png",
+	"res://assets/sprites/cosmic-cat-2.png",
+	"res://assets/sprites/player.png",
+	"res://assets/sprites/friend-ufo-1.png"
+]
+
 ## Reference to the player being followed
 var _player: Node2D = null
 
@@ -31,8 +39,8 @@ func _ready() -> void:
 	area_entered.connect(_on_area_entered)
 
 
-## Setup the sidekick with player reference
-func setup(player: Node2D) -> void:
+## Setup the sidekick with player reference and sprite
+func setup(player: Node2D, sprite_path: String = "") -> void:
 	_player = player
 	if _player:
 		_target_position = _player.position + follow_offset
@@ -43,6 +51,11 @@ func setup(player: Node2D) -> void:
 		# Connect to player's died signal for cleanup
 		if _player.has_signal("died"):
 			_player.died.connect(_on_player_died)
+	# Apply the sprite from the pickup (or randomize if not provided)
+	if sprite_path != "":
+		_set_sprite(sprite_path)
+	else:
+		_randomize_sprite()
 
 
 func _process(delta: float) -> void:
@@ -150,6 +163,22 @@ func _play_destruction_animation() -> void:
 
 	# Queue free after animation completes
 	tween.chain().tween_callback(queue_free)
+
+
+## Apply a specific sprite texture
+func _set_sprite(sprite_path: String) -> void:
+	var sprite = get_node_or_null("Sprite2D")
+	if not sprite:
+		return
+	var texture = load(sprite_path)
+	if texture:
+		sprite.texture = texture
+
+
+## Randomly select and apply one of the sidekick sprites
+func _randomize_sprite() -> void:
+	var random_path = SIDEKICK_SPRITES[randi() % SIDEKICK_SPRITES.size()]
+	_set_sprite(random_path)
 
 
 ## Play a sound effect via AudioManager

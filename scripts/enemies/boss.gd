@@ -481,6 +481,8 @@ func _attack_solar_flare() -> void:
 		if projectile.has_method("set_color"):
 			projectile.set_color(COLOR_FIRE)
 
+		_apply_projectile_texture(projectile)
+
 		# Add to parent (main scene)
 		var parent = get_parent()
 		if parent:
@@ -547,6 +549,8 @@ func _fire_heat_wave_projectile() -> void:
 	if projectile.has_method("set_color"):
 		projectile.set_color(COLOR_FIRE)
 
+	_apply_projectile_texture(projectile)
+
 	var parent = get_parent()
 	if parent:
 		parent.add_child(projectile)
@@ -599,6 +603,8 @@ func _attack_ice_shards() -> void:
 		if projectile.has_method("set_color"):
 			projectile.set_color(COLOR_ICE)
 
+		_apply_projectile_texture(projectile)
+
 		# Add to parent (main scene)
 		var parent = get_parent()
 		if parent:
@@ -643,6 +649,8 @@ func _attack_frozen_nova() -> void:
 		# Set ice theme color
 		if projectile.has_method("set_color"):
 			projectile.set_color(COLOR_ICE)
+
+		_apply_projectile_texture(projectile)
 
 		# Add to parent (main scene)
 		var parent = get_parent()

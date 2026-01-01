@@ -13,14 +13,6 @@ class_name Sidekick
 ## Projectile scene to spawn when shooting
 var projectile_scene: PackedScene = null
 
-## Possible sidekick sprite paths (randomized on spawn)
-const SIDEKICK_SPRITES := [
-	"res://assets/sprites/star-dragon-1.png",
-	"res://assets/sprites/cosmic-cat-2.png",
-	"res://assets/sprites/player.png",
-	"res://assets/sprites/friend-ufo-1.png"
-]
-
 ## Reference to the player being followed
 var _player: Node2D = null
 
@@ -175,9 +167,10 @@ func _set_sprite(sprite_path: String) -> void:
 		sprite.texture = texture
 
 
-## Randomly select and apply one of the sidekick sprites
+## Randomly select and apply one of the sidekick sprites (uses SidekickPickup's constant)
 func _randomize_sprite() -> void:
-	var random_path = SIDEKICK_SPRITES[randi() % SIDEKICK_SPRITES.size()]
+	var sprites = SidekickPickup.SIDEKICK_SPRITES
+	var random_path = sprites[randi() % sprites.size()]
 	_set_sprite(random_path)
 
 

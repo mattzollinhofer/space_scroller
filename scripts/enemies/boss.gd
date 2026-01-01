@@ -3,6 +3,8 @@ class_name Boss
 ## Boss enemy with entrance animation, health system, and attack patterns.
 ## Spawns when level reaches 100% progress.
 
+const SpriteSizes = preload("res://scripts/sprite_sizes.gd")
+
 ## Health of the boss
 @export var health: int = 13:
 	set(value):
@@ -1045,7 +1047,7 @@ func _play_hit_flash() -> void:
 
 	# Apply white flash and scale up
 	sprite.modulate = Color(3.0, 3.0, 3.0, 1.0)
-	sprite.scale = original_scale * 1.2
+	sprite.scale = original_scale * SpriteSizes.BOSS_HIT_FLASH_MULTIPLIER
 
 	# Restore original state
 	_flash_tween = create_tween()

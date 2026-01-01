@@ -3,6 +3,8 @@ class_name BaseEnemy
 ## Base enemy class with health system, collision detection, and destruction animation.
 ## Moves in zigzag pattern while scrolling left. Damages player on contact.
 
+const SpriteSizes = preload("res://scripts/sprite_sizes.gd")
+
 ## Health of the enemy
 @export var health: int = 1:
 	set(value):
@@ -146,7 +148,7 @@ func _play_hit_flash() -> void:
 
 	# Apply bright white flash and scale up
 	sprite.modulate = Color(3.0, 3.0, 3.0, 1.0)
-	sprite.scale = original_scale * 1.3
+	sprite.scale = original_scale * SpriteSizes.HIT_FLASH_MULTIPLIER
 
 	# Create tween to restore original state
 	_flash_tween = create_tween()
@@ -186,7 +188,7 @@ func _play_destruction_animation() -> void:
 	var explosion_texture = load("res://assets/sprites/explosion.png")
 	var explosion = Sprite2D.new()
 	explosion.texture = explosion_texture
-	explosion.scale = Vector2(0.5, 0.5)
+	explosion.scale = SpriteSizes.EXPLOSION_ENEMY
 	add_child(explosion)
 
 	# Animate explosion: scale up and fade out

@@ -1,0 +1,6 @@
+[gd_scene load_steps=2 format=3 uid="uid://ctest_ghost_eye_enemy"]
+
+[ext_resource type="Script" path="res://tests/test_ghost_eye_enemy.gd" id="1_test"]
+
+[node name="TestGhostEyeEnemy" type="Node2D"]
+script = ExtResource("1_test")

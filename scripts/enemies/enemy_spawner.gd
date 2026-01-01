@@ -19,6 +19,9 @@ extends Node2D
 ## Garlic enemy scene to spawn (Level 4 special enemy)
 @export var garlic_enemy_scene: PackedScene
 
+## Ghost Eye enemy scene to spawn (Level 5 special enemy)
+@export var ghost_eye_enemy_scene: PackedScene
+
 ## Star pickup scene to spawn when kill threshold is reached
 @export var star_pickup_scene: PackedScene
 
@@ -193,6 +196,8 @@ func spawn_wave(wave_configs: Array) -> void:
 					_spawn_charger_enemy()
 				"garlic":
 					_spawn_garlic_enemy()
+				"ghost_eye":
+					_spawn_ghost_eye_enemy()
 				_:
 					_spawn_stationary_enemy()
 
@@ -249,7 +254,9 @@ func _try_spawn_special_enemy() -> bool:
 				"garlic":
 					_spawn_garlic_enemy()
 					return true
-				# Future special enemies can be added here
+				"ghost_eye":
+					_spawn_ghost_eye_enemy()
+					return true
 				_:
 					push_warning("Unknown special enemy type: %s" % enemy_type)
 
@@ -298,6 +305,15 @@ func _spawn_garlic_enemy() -> void:
 		return
 
 	var enemy = garlic_enemy_scene.instantiate()
+	_setup_enemy(enemy)
+
+
+func _spawn_ghost_eye_enemy() -> void:
+	if not ghost_eye_enemy_scene:
+		push_warning("No ghost eye enemy scene assigned to EnemySpawner")
+		return
+
+	var enemy = ghost_eye_enemy_scene.instantiate()
 	_setup_enemy(enemy)
 
 

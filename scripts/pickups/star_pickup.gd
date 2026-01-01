@@ -1,6 +1,6 @@
 extends Area2D
 class_name StarPickup
-## Star pickup that grants an extra life when collected.
+## Star pickup that restores one health (heart) when collected.
 ## Spawns from a random edge and zigzags across the screen.
 
 ## Movement speed
@@ -93,14 +93,14 @@ func _is_off_screen() -> bool:
 
 
 func _on_body_entered(body: Node2D) -> void:
-	if body.has_method("gain_life"):
-		if body.gain_life():
+	if body.has_method("gain_health"):
+		if body.gain_health():
 			collected.emit()
 			_play_sfx("pickup_collect")
 			_award_bonus_points()
 			_spawn_floating_heart()
 			_play_collect_animation()
-		# If player is at max health, star just passes through
+		# If player is at max health, star passes through
 
 
 func _award_bonus_points() -> void:

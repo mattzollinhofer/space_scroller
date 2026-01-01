@@ -1,6 +1,6 @@
 extends Node2D
-## Integration test: Player collects star_pickup and gains extra life
-## Verifies that collecting a StarPickup awards 500 bonus points and grants life.
+## Integration test: Player collects star_pickup and gains health
+## Verifies that collecting a StarPickup awards 500 bonus points and restores health.
 
 var _test_passed: bool = false
 var _test_failed: bool = false
@@ -15,7 +15,7 @@ var _score_before_collection: int = 0
 
 
 func _ready() -> void:
-	print("=== Test: Player Collects Star Pickup and Gains Life ===")
+	print("=== Test: Player Collects Star Pickup and Gains Health ===")
 
 	# Load and setup main scene to get all components
 	var main_scene = load("res://scenes/main.tscn")
@@ -53,18 +53,15 @@ func _run_star_pickup_test() -> void:
 	if has_node("/root/ScoreManager"):
 		get_node("/root/ScoreManager").reset_score()
 
-	# Reduce player lives so gain_life() will succeed
-	# Player starts at max lives, so we need to take damage first
-	if _player.has_method("take_damage"):
-		_player.take_damage()
-		# Wait for damage processing
-		await get_tree().process_frame
-		await get_tree().process_frame
+	# Reduce player health so gain_health() will succeed
+	# Directly set health below max for clean testing
+	_player._health = 1
+	await get_tree().process_frame
 
-	# Get initial score and player lives
+	# Get initial score and player health
 	var initial_score = _get_current_score()
-	var lives_before = _player.get_lives() if _player.has_method("get_lives") else -1
-	print("Initial score: %d, Player lives: %d" % [initial_score, lives_before])
+	var health_before = _player.get_health() if _player.has_method("get_health") else -1
+	print("Initial score: %d, Player health: %d" % [initial_score, health_before])
 	_score_before_collection = initial_score
 
 	# Move player to a known position, away from any obstacles
@@ -110,15 +107,15 @@ func _run_star_pickup_test() -> void:
 		_fail("Expected score %d after collecting Star Pickup, got %d" % [expected_score, new_score])
 		return
 
-	# Check that player gained a life
-	var lives_after = _player.get_lives() if _player.has_method("get_lives") else -1
-	print("Lives after collection: %d" % lives_after)
+	# Check that player gained health
+	var health_after = _player.get_health() if _player.has_method("get_health") else -1
+	print("Health after collection: %d" % health_after)
 
-	if lives_after != lives_before + 1:
-		_fail("Expected player to gain a life (from %d to %d), but lives are now %d" % [lives_before, lives_before + 1, lives_after])
+	if health_after != health_before + 1:
+		_fail("Expected player to gain health (from %d to %d), but health is now %d" % [health_before, health_before + 1, health_after])
 		return
 
-	print("Star Pickup collection awarded 500 bonus points and extra life correctly!")
+	print("Star Pickup collection awarded 500 bonus points and restored health correctly!")
 	_pass()
 
 
@@ -151,7 +148,7 @@ func _process(delta: float) -> void:
 func _pass() -> void:
 	_test_passed = true
 	print("=== TEST PASSED ===")
-	print("Star pickup collection works correctly - awards 500 points and extra life.")
+	print("Star pickup collection works correctly - awards 500 points and restores health.")
 	await get_tree().create_timer(1.0).timeout
 	get_tree().quit(0)
 

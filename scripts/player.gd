@@ -258,8 +258,9 @@ func take_damage() -> void:
 		_start_invincibility()
 		return
 
-	# Took damage but still have health - brief feedback
+	# Took damage but still have health - brief invincibility
 	_play_sfx("player_damage")
+	_start_invincibility()
 
 
 func _start_invincibility() -> void:

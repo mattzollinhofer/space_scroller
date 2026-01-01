@@ -139,6 +139,10 @@ signal attack_fired()
 func _ready() -> void:
 	_max_health = health
 
+	# Disable collision until entrance completes (boss is invincible during entrance)
+	monitoring = false
+	monitorable = false
+
 	# Connect collision signals
 	body_entered.connect(_on_body_entered)
 	area_entered.connect(_on_area_entered)
@@ -679,6 +683,11 @@ func _start_entrance_animation() -> void:
 
 func _on_entrance_complete() -> void:
 	_entrance_complete = true
+
+	# Enable collision now that boss is active and vulnerable
+	set_deferred("monitoring", true)
+	set_deferred("monitorable", true)
+
 	boss_entered.emit()
 
 	# Start attack cycle after entrance

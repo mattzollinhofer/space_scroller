@@ -48,7 +48,7 @@ var _battle_position: Vector2 = Vector2.ZERO
 enum AttackState { IDLE, WIND_UP, ATTACKING, COOLDOWN }
 var _attack_state: AttackState = AttackState.IDLE
 
-## Current attack pattern index (0 = barrage, 1 = sweep, 2 = charge, 3 = solar flare, 4 = heat wave, 5 = ice shards, 6 = frozen nova)
+## Current attack pattern index (0 = barrage, 1 = sweep, 2 = charge, 3 = solar flare, 4 = heat wave, 5 = ice shards, 6 = frozen nova, 7 = pepperoni spread, 8 = circle movement)
 var _current_pattern: int = 0
 
 ## Attack cooldown timer
@@ -74,6 +74,7 @@ const Y_MAX: float = 1396.0
 const COLOR_DEFAULT: Color = Color(1, 0.3, 0.3, 1)  # Red (barrage, sweep)
 const COLOR_FIRE: Color = Color(1, 0.6, 0.2, 1)     # Orange (solar flare, heat wave)
 const COLOR_ICE: Color = Color(0.3, 0.8, 1, 1)      # Cyan (ice shards, frozen nova)
+const COLOR_PIZZA: Color = Color(1, 0.4, 0.2, 1)    # Red-orange (pepperoni)
 
 ## Reference to player for charge attack targeting
 var _player: Node2D = null
@@ -250,6 +251,8 @@ func _play_attack_telegraph() -> void:
 		warning_color = Color(2.0, 1.5, 0.5, 1.0)  # Orange-yellow tint
 	elif attack_type == 5 or attack_type == 6:  # Ice Shards or Frozen Nova - blue/cyan tint for "cold" theme
 		warning_color = Color(0.5, 1.0, 2.0, 1.0)  # Blue-cyan tint
+	elif attack_type == 7 or attack_type == 8:  # Pepperoni Spread or Circle Movement - red-orange pizza tint
+		warning_color = Color(2.0, 1.2, 0.6, 1.0)  # Pizza red-orange tint
 	else:  # Barrage or sweep
 		warning_color = Color(1.5, 1.0, 1.0, 1.0)  # Subtle red tint
 
@@ -298,6 +301,10 @@ func _execute_attack() -> void:
 			_attack_ice_shards()
 		6:
 			_attack_frozen_nova()
+		7:
+			_attack_pepperoni_spread()
+		8:
+			_attack_circle_movement()
 
 
 func _attack_horizontal_barrage() -> void:
@@ -663,6 +670,67 @@ func _attack_frozen_nova() -> void:
 
 	attack_fired.emit()
 	_play_sfx("boss_attack")
+
+
+func _attack_pepperoni_spread() -> void:
+	## Pepperoni Spread: Fire 3 pepperoni projectiles in a 45-degree spread pattern
+	## Pizza-themed attack for Level 4 boss
+	if not boss_projectile_scene:
+		push_warning("Boss projectile scene not assigned")
+		return
+
+	# Fire 3 projectiles in a spread
+	var projectile_count = 3
+
+	# 45-degree total spread (22.5 degrees up and down from center)
+	var spread_angle = deg_to_rad(45.0)
+	var angle_step = spread_angle / (projectile_count - 1) if projectile_count > 1 else 0.0
+	var start_angle = -spread_angle / 2.0
+
+	for i in range(projectile_count):
+		var projectile = boss_projectile_scene.instantiate()
+
+		# Position at boss location (slightly to the left of center)
+		projectile.position = position + Vector2(-100, 0)
+
+		# Calculate direction with spread (centered on straight left)
+		var angle = start_angle + (angle_step * i)
+		var direction = Vector2(-1, 0).rotated(angle)
+
+		# Set direction on projectile
+		if projectile.has_method("set_direction"):
+			projectile.set_direction(direction)
+		else:
+			projectile.direction = direction
+
+		# Set pizza theme color
+		if projectile.has_method("set_color"):
+			projectile.set_color(COLOR_PIZZA)
+
+		_apply_projectile_texture(projectile)
+
+		# Add to parent (main scene)
+		var parent = get_parent()
+		if parent:
+			parent.add_child(projectile)
+
+	attack_fired.emit()
+	_play_sfx("boss_attack")
+
+
+## Whether currently in a circle movement attack
+var _circle_active: bool = false
+
+## Whether next circle should be clockwise (alternates each cycle)
+var _circle_clockwise: bool = true
+
+
+func _attack_circle_movement() -> void:
+	## Circle Movement: Boss moves in a circle around the arena
+	## Alternates between clockwise and counter-clockwise each cycle
+	## Placeholder for Slice 3 - just transitions to cooldown for now
+	_attack_state = AttackState.COOLDOWN
+	_attack_timer = attack_cooldown
 
 
 ## Setup boss at spawn position and start entrance animation

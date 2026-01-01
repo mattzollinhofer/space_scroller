@@ -1,0 +1,6 @@
+[gd_scene load_steps=2 format=3 uid="uid://ctest_level5_select"]
+
+[ext_resource type="Script" path="res://tests/test_level5_select.gd" id="1_test"]
+
+[node name="TestLevel5Select" type="Node2D"]
+script = ExtResource("1_test")

@@ -25,34 +25,34 @@ This implementation follows the established patterns from Level 4 implementation
 
 #### Tasks
 
-- [ ] 1.1 Write integration test for Level 5 selection (test_level5_select.gd)
+- [x] 1.1 Write integration test for Level 5 selection (test_level5_select.gd)
   - Loads level_select.tscn
   - Finds Level5Button by name
   - Verifies button is enabled
-- [ ] 1.2 Run test, verify expected failure (Level 5 button not found)
-- [ ] 1.3 Add Level5Button node to level_select.tscn (following Level4Button pattern)
-- [ ] 1.4 Add @onready var _level5_button reference in level_select.gd
-- [ ] 1.5 Connect Level 5 button signal and update _update_button_states()
-- [ ] 1.6 Run test, verify passes
-- [ ] 1.7 Write integration test for Level 5 loading (test_level5_load.gd)
+- [x] 1.2 Run test, verify expected failure (Level 5 button not found) -> Success
+- [x] 1.3 Add Level5Button node to level_select.tscn (following Level4Button pattern)
+- [x] 1.4 Add @onready var _level5_button reference in level_select.gd
+- [x] 1.5 Connect Level 5 button signal and update _update_button_states()
+- [x] 1.6 Run test, verify passes -> Success
+- [x] 1.7 Write integration test for Level 5 loading (test_level5_load.gd)
   - Verifies level 5 in GameState.LEVEL_PATHS
   - Loads and parses level_5.json
   - Checks total_distance = 24000, 6 sections, ghost-themed names
   - Verifies boss_config exists with attacks [9, 10]
-- [ ] 1.8 Run test, verify expected failure (level 5 not in LEVEL_PATHS)
-- [ ] 1.9 Add level 5 entry to GameState.LEVEL_PATHS: `5: "res://levels/level_5.json"`
-- [ ] 1.10 Run test, verify failure (JSON file doesn't exist)
-- [ ] 1.11 Create level_5.json with ghost theme structure:
+- [x] 1.8 Run test, verify expected failure (level 5 not in LEVEL_PATHS) -> Success
+- [x] 1.9 Add level 5 entry to GameState.LEVEL_PATHS: `5: "res://levels/level_5.json"`
+- [x] 1.10 Run test, verify failure (JSON file doesn't exist) -> Success
+- [x] 1.11 Create level_5.json with ghost theme structure:
   - total_distance: 24000
   - 6 sections with ghost-themed names (Haunted Entry, Phantom Passage, etc.)
   - boss_config with health: 22, scale: 6, attacks: [9, 10], projectile_sprite: ghost-attack-1.png
   - boss_sprite: ghost-boss-1.png in metadata
   - special_enemies config for ghost_eye (added in Slice 2)
   - Background modulate color for spooky atmosphere
-- [ ] 1.12 Run test, verify all level structure checks pass
-- [ ] 1.13 Manually test: Start game, go to level select, click Level 5
+- [x] 1.12 Run test, verify all level structure checks pass -> Success (fixed JSON float handling in test)
+- [x] 1.13 Manually test: Start game, go to level select, click Level 5 -> Skipped (per task instructions)
   - Note: Boss attacks 9 and 10 not implemented yet - boss will default to attack 0
-- [ ] 1.14 Commit slice 1 changes
+- [x] 1.14 Commit slice 1 changes
 
 **Acceptance Criteria:**
 - Level 5 button appears in level select UI

@@ -33,7 +33,8 @@ const LEVEL_PATHS := {
 	1: "res://levels/level_1.json",
 	2: "res://levels/level_2.json",
 	3: "res://levels/level_3.json",
-	4: "res://levels/level_4.json"
+	4: "res://levels/level_4.json",
+	5: "res://levels/level_5.json"
 }
 
 ## Currently selected character for this session

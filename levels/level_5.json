@@ -1,0 +1,98 @@
+{
+  "total_distance": 24000,
+  "enemy_config": {
+    "zigzag_speed_min": 170,
+    "zigzag_speed_max": 230,
+    "zigzag_angle_min": 25,
+    "zigzag_angle_max": 60
+  },
+  "metadata": {
+    "scroll_speed_multiplier": 1.35,
+    "background_theme": "ghost",
+    "background_modulate": [0.6, 0.6, 0.8, 1.0],
+    "boss_sprite": "res://assets/sprites/ghost-boss-1.png",
+    "boss_config": {
+      "health": 22,
+      "scale": 6,
+      "attacks": [9, 10],
+      "attack_cooldown": 1.0,
+      "explosion_scale": 8,
+      "projectile_sprite": "res://assets/sprites/ghost-attack-1.png"
+    },
+    "special_enemies": [
+      {
+        "enemy_type": "ghost_eye",
+        "spawn_probability": 0.45,
+        "allowed_sections": [1, 2, 3, 4, 5]
+      }
+    ]
+  },
+  "sections": [
+    {
+      "name": "Haunted Entry",
+      "start_percent": 0,
+      "end_percent": 12,
+      "obstacle_density": "medium",
+      "enemy_waves": [
+        { "enemy_type": "stationary", "count": 4 }
+      ]
+    },
+    {
+      "name": "Phantom Passage",
+      "start_percent": 12,
+      "end_percent": 28,
+      "obstacle_density": "medium",
+      "enemy_waves": [
+        { "enemy_type": "shooting", "count": 3 },
+        { "enemy_type": "patrol", "count": 2 },
+        { "enemy_type": "ghost_eye", "count": 1 }
+      ]
+    },
+    {
+      "name": "Spectral Shadows",
+      "start_percent": 28,
+      "end_percent": 45,
+      "obstacle_density": "high",
+      "enemy_waves": [
+        { "enemy_type": "charger", "count": 3 },
+        { "enemy_type": "shooting", "count": 3 },
+        { "enemy_type": "ghost_eye", "count": 1 }
+      ]
+    },
+    {
+      "name": "Ghostly Graveyard",
+      "start_percent": 45,
+      "end_percent": 62,
+      "obstacle_density": "high",
+      "enemy_waves": [
+        { "enemy_type": "shooting", "count": 3 },
+        { "enemy_type": "patrol", "count": 2 },
+        { "enemy_type": "ghost_eye", "count": 2 }
+      ]
+    },
+    {
+      "name": "Wraith's Domain",
+      "start_percent": 62,
+      "end_percent": 80,
+      "obstacle_density": "high",
+      "enemy_waves": [
+        { "enemy_type": "charger", "count": 3 },
+        { "enemy_type": "shooting", "count": 3 },
+        { "enemy_type": "patrol", "count": 2 },
+        { "enemy_type": "ghost_eye", "count": 1 }
+      ]
+    },
+    {
+      "name": "Spirit's End",
+      "start_percent": 80,
+      "end_percent": 100,
+      "obstacle_density": "high",
+      "enemy_waves": [
+        { "enemy_type": "charger", "count": 3 },
+        { "enemy_type": "shooting", "count": 4 },
+        { "enemy_type": "patrol", "count": 2 },
+        { "enemy_type": "ghost_eye", "count": 1 }
+      ]
+    }
+  ]
+}

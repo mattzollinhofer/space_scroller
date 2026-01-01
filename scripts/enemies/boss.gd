@@ -67,6 +67,11 @@ var _attack_cycle_active: bool = false
 const Y_MIN: float = 140.0
 const Y_MAX: float = 1396.0
 
+## Projectile colors for themed attacks
+const COLOR_DEFAULT: Color = Color(1, 0.3, 0.3, 1)  # Red (barrage, sweep)
+const COLOR_FIRE: Color = Color(1, 0.6, 0.2, 1)     # Orange (solar flare, heat wave)
+const COLOR_ICE: Color = Color(0.3, 0.8, 1, 1)      # Cyan (ice shards, frozen nova)
+
 ## Reference to player for charge attack targeting
 var _player: Node2D = null
 
@@ -459,6 +464,10 @@ func _attack_solar_flare() -> void:
 		# Solar Flare uses faster projectiles (950 vs default 750)
 		projectile.speed = 950.0
 
+		# Set fire theme color
+		if projectile.has_method("set_color"):
+			projectile.set_color(COLOR_FIRE)
+
 		# Add to parent (main scene)
 		var parent = get_parent()
 		if parent:
@@ -521,6 +530,10 @@ func _fire_heat_wave_projectile() -> void:
 	# Heat Wave uses faster projectiles (950 vs default 750)
 	projectile.speed = 950.0
 
+	# Set fire theme color
+	if projectile.has_method("set_color"):
+		projectile.set_color(COLOR_FIRE)
+
 	var parent = get_parent()
 	if parent:
 		parent.add_child(projectile)
@@ -569,6 +582,10 @@ func _attack_ice_shards() -> void:
 		# Ice Shards uses slower projectiles (450 vs default 750)
 		projectile.speed = 450.0
 
+		# Set ice theme color
+		if projectile.has_method("set_color"):
+			projectile.set_color(COLOR_ICE)
+
 		# Add to parent (main scene)
 		var parent = get_parent()
 		if parent:
@@ -609,6 +626,10 @@ func _attack_frozen_nova() -> void:
 
 		# Frozen Nova uses slower projectiles (450 vs default 750) for "expansive" feel
 		projectile.speed = 450.0
+
+		# Set ice theme color
+		if projectile.has_method("set_color"):
+			projectile.set_color(COLOR_ICE)
 
 		# Add to parent (main scene)
 		var parent = get_parent()

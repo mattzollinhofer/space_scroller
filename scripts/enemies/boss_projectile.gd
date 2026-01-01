@@ -46,3 +46,10 @@ func _on_area_entered(area: Area2D) -> void:
 ## Set the movement direction (for spread patterns)
 func set_direction(dir: Vector2) -> void:
 	direction = dir.normalized()
+
+
+## Set the projectile color (for themed attacks)
+func set_color(color: Color) -> void:
+	var sprite = get_node_or_null("Sprite2D")
+	if sprite:
+		sprite.modulate = color

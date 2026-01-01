@@ -6,6 +6,8 @@ extends Node
 const CHARACTER_BLUE_BLASTER := "blue_blaster"
 const CHARACTER_SPACE_DRAGON := "space_dragon"
 const CHARACTER_COSMIC_CAT := "cosmic_cat"
+const CHARACTER_SPACE_SHEEP := "space_sheep"
+const CHARACTER_COSMIC_HAMSTER := "cosmic_hamster"
 
 ## Difficulty identifiers
 const DIFFICULTY_NORMAL := "normal"
@@ -70,7 +72,7 @@ func get_selected_character() -> String:
 
 ## Set the selected character for this session
 func set_selected_character(character_id: String) -> void:
-	if character_id in [CHARACTER_BLUE_BLASTER, CHARACTER_SPACE_DRAGON, CHARACTER_COSMIC_CAT]:
+	if character_id in [CHARACTER_BLUE_BLASTER, CHARACTER_SPACE_DRAGON, CHARACTER_COSMIC_CAT, CHARACTER_SPACE_SHEEP, CHARACTER_COSMIC_HAMSTER]:
 		_selected_character = character_id
 		character_changed.emit(character_id)
 	else:
@@ -86,6 +88,10 @@ func get_character_texture_path(character_id: String) -> String:
 			return "res://assets/sprites/star-dragon-1.png"
 		CHARACTER_COSMIC_CAT:
 			return "res://assets/sprites/cosmic-cat-2.png"
+		CHARACTER_SPACE_SHEEP:
+			return "res://assets/sprites/space-sheep-1.png"
+		CHARACTER_COSMIC_HAMSTER:
+			return "res://assets/sprites/comsic-hampster-1.png"
 		_:
 			return "res://assets/sprites/player.png"
 
@@ -99,13 +105,17 @@ func get_character_display_name(character_id: String) -> String:
 			return "Star Dragon"
 		CHARACTER_COSMIC_CAT:
 			return "Celestial Cat"
+		CHARACTER_SPACE_SHEEP:
+			return "Space Sheep"
+		CHARACTER_COSMIC_HAMSTER:
+			return "Cosmic Hamster"
 		_:
 			return "Unknown"
 
 
 ## Get all available characters
 func get_all_characters() -> Array[String]:
-	return [CHARACTER_BLUE_BLASTER, CHARACTER_SPACE_DRAGON, CHARACTER_COSMIC_CAT]
+	return [CHARACTER_BLUE_BLASTER, CHARACTER_SPACE_DRAGON, CHARACTER_COSMIC_CAT, CHARACTER_SPACE_SHEEP, CHARACTER_COSMIC_HAMSTER]
 
 
 ## Get the currently selected level number

@@ -49,10 +49,10 @@ func _ready() -> void:
 	var char_select = char_select_scene.instantiate()
 	add_child(char_select)
 
-	# Find character buttons (should be 3)
+	# Find character buttons (should be 5)
 	var character_buttons = _find_character_buttons(char_select)
-	if character_buttons.size() < 3:
-		_fail("Expected 3 character buttons, found %d" % character_buttons.size())
+	if character_buttons.size() < 5:
+		_fail("Expected 5 character buttons, found %d" % character_buttons.size())
 		return
 
 	print("Found %d character buttons" % character_buttons.size())
@@ -159,7 +159,7 @@ func _find_character_buttons_recursive(node: Node, buttons: Array[Button]) -> vo
 		var btn_name = node.name.to_lower()
 		# Exclude back, play, quit, menu type buttons
 		if "back" not in btn_text and "play" not in btn_text and "quit" not in btn_text and "menu" not in btn_text:
-			if "character" in btn_name or "select" in btn_name or "blaster" in btn_text or "dragon" in btn_text or "cat" in btn_text or btn_text == "":
+			if "character" in btn_name or "select" in btn_name or "blaster" in btn_text or "dragon" in btn_text or "cat" in btn_text or "sheep" in btn_text or "hamster" in btn_text or btn_text == "":
 				buttons.append(btn)
 
 	for child in node.get_children():

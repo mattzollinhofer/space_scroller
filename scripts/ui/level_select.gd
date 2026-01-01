@@ -6,6 +6,7 @@ extends Control
 @onready var _level1_button: Button = $CenterContainer/VBoxContainer/LevelGrid/Level1Button
 @onready var _level2_button: Button = $CenterContainer/VBoxContainer/LevelGrid/Level2Button
 @onready var _level3_button: Button = $CenterContainer/VBoxContainer/LevelGrid/Level3Button
+@onready var _level4_button: Button = $CenterContainer/VBoxContainer/LevelGrid/Level4Button
 @onready var _back_button: Button = $CenterContainer/VBoxContainer/BackButton
 
 
@@ -14,6 +15,7 @@ func _ready() -> void:
 	_level1_button.pressed.connect(_on_level_selected.bind(1))
 	_level2_button.pressed.connect(_on_level_selected.bind(2))
 	_level3_button.pressed.connect(_on_level_selected.bind(3))
+	_level4_button.pressed.connect(_on_level_selected.bind(4))
 	_back_button.pressed.connect(_on_back_pressed)
 
 	# Update button states based on unlock status
@@ -31,6 +33,9 @@ func _update_button_states() -> void:
 
 	_level3_button.disabled = false
 	_update_button_appearance(_level3_button, true)
+
+	_level4_button.disabled = false
+	_update_button_appearance(_level4_button, true)
 
 
 ## Check if a level is unlocked via ScoreManager

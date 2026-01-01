@@ -48,7 +48,7 @@ var _battle_position: Vector2 = Vector2.ZERO
 enum AttackState { IDLE, WIND_UP, ATTACKING, COOLDOWN }
 var _attack_state: AttackState = AttackState.IDLE
 
-## Current attack pattern index (0 = barrage, 1 = sweep, 2 = charge, 3 = solar flare, 4 = heat wave, 5 = ice shards, 6 = frozen nova, 7 = pepperoni spread, 8 = circle movement, 9 = wall attack)
+## Current attack pattern index (0 = barrage, 1 = sweep, 2 = charge, 3 = solar flare, 4 = heat wave, 5 = ice shards, 6 = frozen nova, 7 = pepperoni spread, 8 = circle movement, 9 = wall attack, 10 = square movement)
 var _current_pattern: int = 0
 
 ## Attack cooldown timer
@@ -110,7 +110,7 @@ var _charge_target_x: float = 0.0
 ## Shake node for screen shake effect
 var _shake_node: Node2D = null
 
-## Which attack patterns are enabled (0=barrage, 1=sweep, 2=charge, 3=solar_flare, 4=heat_wave, 5=ice_shards, 6=frozen_nova, 7=pepperoni_spread, 8=circle_movement, 9=wall_attack)
+## Which attack patterns are enabled (0=barrage, 1=sweep, 2=charge, 3=solar_flare, 4=heat_wave, 5=ice_shards, 6=frozen_nova, 7=pepperoni_spread, 8=circle_movement, 9=wall_attack, 10=square_movement)
 var _enabled_attacks: Array[int] = [0, 1, 2]
 
 ## Number of attack patterns enabled
@@ -127,6 +127,9 @@ var _heat_wave_projectile_timer: float = 0.0
 
 ## Whether currently in a wall attack
 var _wall_attack_active: bool = false
+
+## Whether currently in a square movement attack
+var _square_active: bool = false
 
 ## Emitted when the boss is defeated
 signal boss_defeated()
@@ -219,8 +222,8 @@ func _process_attack_state(delta: float) -> void:
 				_execute_attack()
 
 		AttackState.ATTACKING:
-			# For sweep, charge, heat wave, circle, and wall attack, wait for tween to complete
-			if _sweep_active or _charge_active or _heat_wave_active or _circle_active or _wall_attack_active:
+			# For sweep, charge, heat wave, circle, wall attack, and square movement, wait for tween to complete
+			if _sweep_active or _charge_active or _heat_wave_active or _circle_active or _wall_attack_active or _square_active:
 				return
 			# Attack execution is instant for barrage, move to cooldown
 			_attack_state = AttackState.COOLDOWN
@@ -257,7 +260,7 @@ func _play_attack_telegraph() -> void:
 		warning_color = Color(0.5, 1.0, 2.0, 1.0)  # Blue-cyan tint
 	elif attack_type == 7 or attack_type == 8:  # Pepperoni Spread or Circle Movement - red-orange pizza tint
 		warning_color = Color(2.0, 1.2, 0.6, 1.0)  # Pizza red-orange tint
-	elif attack_type == 9:  # Wall Attack - ghost purple/blue tint
+	elif attack_type == 9 or attack_type == 10:  # Wall Attack or Square Movement - ghost purple/blue tint
 		warning_color = Color(1.2, 0.8, 2.0, 1.0)  # Ghost purple/blue tint
 	else:  # Barrage or sweep
 		warning_color = Color(1.5, 1.0, 1.0, 1.0)  # Subtle red tint
@@ -313,6 +316,8 @@ func _execute_attack() -> void:
 			_attack_circle_movement()
 		9:
 			_attack_wall()
+		10:
+			_attack_square_movement()
 
 
 func _attack_horizontal_barrage() -> void:
@@ -739,6 +744,9 @@ const CIRCLE_RADIUS: float = 700.0
 ## Circle movement duration (full circle - longer for larger radius)
 const CIRCLE_DURATION: float = 4.0
 
+## Square movement duration (full square path)
+const SQUARE_DURATION: float = 3.0
+
 
 func _attack_circle_movement() -> void:
 	## Circle Movement: Boss moves in a circle around the arena
@@ -891,6 +899,60 @@ func is_wall_attacking() -> bool:
 	return _wall_attack_active
 
 
+func _attack_square_movement() -> void:
+	## Square Movement: Boss moves in a rectangular path around the arena
+	## Ghost-themed movement attack for Level 5 boss - no projectiles fired
+	if _attack_tween and _attack_tween.is_valid():
+		_attack_tween.kill()
+
+	_square_active = true
+
+	# Define 4 corner positions for rectangular path using CIRCLE_RADIUS for distance
+	# Starting from battle position, move: up-left, down-left, down-right, up-right, back to start
+	var half_width = CIRCLE_RADIUS * 0.8  # Horizontal distance from center
+	var half_height = 400.0  # Vertical distance from center
+
+	# Calculate corners relative to battle position
+	var top_left = Vector2(_battle_position.x - half_width, _battle_position.y - half_height)
+	var bottom_left = Vector2(_battle_position.x - half_width, _battle_position.y + half_height)
+	var bottom_right = Vector2(_battle_position.x + half_width * 0.3, _battle_position.y + half_height)
+	var top_right = Vector2(_battle_position.x + half_width * 0.3, _battle_position.y - half_height)
+
+	# Clamp Y positions to screen bounds
+	top_left.y = clampf(top_left.y, Y_MIN + 100, Y_MAX - 100)
+	bottom_left.y = clampf(bottom_left.y, Y_MIN + 100, Y_MAX - 100)
+	bottom_right.y = clampf(bottom_right.y, Y_MIN + 100, Y_MAX - 100)
+	top_right.y = clampf(top_right.y, Y_MIN + 100, Y_MAX - 100)
+
+	# Create the tween
+	_attack_tween = create_tween()
+
+	# Duration for each segment
+	var segment_duration = SQUARE_DURATION / 4.0
+
+	# Move through corners sequentially
+	_attack_tween.tween_property(self, "position", top_left, segment_duration).set_ease(Tween.EASE_IN_OUT).set_trans(Tween.TRANS_SINE)
+	_attack_tween.tween_property(self, "position", bottom_left, segment_duration).set_ease(Tween.EASE_IN_OUT).set_trans(Tween.TRANS_SINE)
+	_attack_tween.tween_property(self, "position", bottom_right, segment_duration).set_ease(Tween.EASE_IN_OUT).set_trans(Tween.TRANS_SINE)
+	_attack_tween.tween_property(self, "position", top_right, segment_duration).set_ease(Tween.EASE_IN_OUT).set_trans(Tween.TRANS_SINE)
+
+	# Return to battle position after completing square
+	_attack_tween.tween_property(self, "position", _battle_position, 0.5).set_ease(Tween.EASE_OUT).set_trans(Tween.TRANS_QUAD)
+
+	_attack_tween.tween_callback(_on_square_complete)
+
+
+func _on_square_complete() -> void:
+	_square_active = false
+	_attack_state = AttackState.COOLDOWN
+	_attack_timer = attack_cooldown
+
+
+## Check if currently in square movement (for testing)
+func is_square_moving() -> bool:
+	return _square_active
+
+
 ## Setup boss at spawn position and start entrance animation
 func setup(spawn_position: Vector2, battle_position: Vector2) -> void:
 	position = spawn_position
@@ -1003,6 +1065,7 @@ func _on_health_depleted() -> void:
 	_heat_wave_active = false
 	_circle_active = false
 	_wall_attack_active = false
+	_square_active = false
 
 	# Kill tweens if active
 	if _flash_tween and _flash_tween.is_valid():
@@ -1112,6 +1175,7 @@ func stop_attack_cycle() -> void:
 	_heat_wave_active = false
 	_circle_active = false
 	_wall_attack_active = false
+	_square_active = false
 
 	# Kill attack tween if active
 	if _attack_tween and _attack_tween.is_valid():
@@ -1145,6 +1209,7 @@ func reset_health() -> void:
 	_heat_wave_active = false
 	_circle_active = false
 	_wall_attack_active = false
+	_square_active = false
 
 	## Kill any active tweens
 	if _flash_tween and _flash_tween.is_valid():
@@ -1204,7 +1269,7 @@ func configure(config: Dictionary) -> void:
 	if config.has("wind_up_duration"):
 		wind_up_duration = config.wind_up_duration
 
-	# Set enabled attacks (array of attack indices: 0=barrage, 1=sweep, 2=charge, 3=solar_flare, 4=heat_wave, 5=ice_shards, 6=frozen_nova, 7=pepperoni_spread, 8=circle_movement, 9=wall_attack)
+	# Set enabled attacks (array of attack indices: 0=barrage, 1=sweep, 2=charge, 3=solar_flare, 4=heat_wave, 5=ice_shards, 6=frozen_nova, 7=pepperoni_spread, 8=circle_movement, 9=wall_attack, 10=square_movement)
 	if config.has("attacks"):
 		_enabled_attacks.clear()
 		for attack in config.attacks:

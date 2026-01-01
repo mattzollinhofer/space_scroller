@@ -16,6 +16,9 @@ extends Node2D
 ## Charger enemy scene to spawn
 @export var charger_enemy_scene: PackedScene
 
+## Garlic enemy scene to spawn (Level 4 special enemy)
+@export var garlic_enemy_scene: PackedScene
+
 ## Star pickup scene to spawn when kill threshold is reached
 @export var star_pickup_scene: PackedScene
 
@@ -172,6 +175,8 @@ func spawn_wave(wave_configs: Array) -> void:
 					_spawn_shooting_enemy()
 				"charger":
 					_spawn_charger_enemy()
+				"garlic":
+					_spawn_garlic_enemy()
 				_:
 					_spawn_stationary_enemy()
 
@@ -232,6 +237,15 @@ func _spawn_charger_enemy() -> void:
 		return
 
 	var enemy = charger_enemy_scene.instantiate()
+	_setup_enemy(enemy)
+
+
+func _spawn_garlic_enemy() -> void:
+	if not garlic_enemy_scene:
+		push_warning("No garlic enemy scene assigned to EnemySpawner")
+		return
+
+	var enemy = garlic_enemy_scene.instantiate()
 	_setup_enemy(enemy)
 
 

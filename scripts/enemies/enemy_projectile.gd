@@ -49,3 +49,10 @@ func _on_area_entered(area: Area2D) -> void:
 ## Set the movement direction (for spread patterns)
 func set_direction(dir: Vector2) -> void:
 	direction = dir.normalized()
+
+
+## Set a custom texture for this projectile
+func set_texture(texture: Texture2D) -> void:
+	var sprite = get_node_or_null("Sprite2D")
+	if sprite:
+		sprite.texture = texture

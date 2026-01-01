@@ -215,8 +215,8 @@ func _process_attack_state(delta: float) -> void:
 				_execute_attack()
 
 		AttackState.ATTACKING:
-			# For sweep, charge, and heat wave, wait for tween to complete
-			if _sweep_active or _charge_active or _heat_wave_active:
+			# For sweep, charge, heat wave, and circle, wait for tween to complete
+			if _sweep_active or _charge_active or _heat_wave_active or _circle_active:
 				return
 			# Attack execution is instant for barrage, move to cooldown
 			_attack_state = AttackState.COOLDOWN
@@ -724,13 +724,66 @@ var _circle_active: bool = false
 ## Whether next circle should be clockwise (alternates each cycle)
 var _circle_clockwise: bool = true
 
+## Circle movement radius
+const CIRCLE_RADIUS: float = 300.0
+
+## Circle movement duration (full circle)
+const CIRCLE_DURATION: float = 2.5
+
 
 func _attack_circle_movement() -> void:
 	## Circle Movement: Boss moves in a circle around the arena
 	## Alternates between clockwise and counter-clockwise each cycle
-	## Placeholder for Slice 3 - just transitions to cooldown for now
+	if _attack_tween and _attack_tween.is_valid():
+		_attack_tween.kill()
+
+	_circle_active = true
+
+	# Calculate circle center (slightly left of battle position to keep boss on screen)
+	var circle_center = _battle_position + Vector2(-150, 0)
+
+	# Number of points to define the circle path
+	var num_points = 8
+	var angle_step = TAU / num_points
+
+	# Determine starting angle based on current position relative to center
+	var start_angle = (position - circle_center).angle()
+
+	# Create the tween
+	_attack_tween = create_tween()
+
+	# Move through each point of the circle
+	for i in range(num_points + 1):  # +1 to complete the circle back to start
+		var point_index = i if _circle_clockwise else (num_points - i)
+		var angle = start_angle + (angle_step * point_index * (1 if _circle_clockwise else -1))
+
+		# Calculate target position on the circle
+		var target = circle_center + Vector2(cos(angle), sin(angle)) * CIRCLE_RADIUS
+
+		# Clamp Y to screen bounds
+		target.y = clampf(target.y, Y_MIN + 100, Y_MAX - 100)
+
+		# Add tween to this position
+		var segment_duration = CIRCLE_DURATION / (num_points + 1)
+		_attack_tween.tween_property(self, "position", target, segment_duration).set_ease(Tween.EASE_IN_OUT).set_trans(Tween.TRANS_SINE)
+
+	# Return to battle position after circle
+	_attack_tween.tween_property(self, "position", _battle_position, 0.5).set_ease(Tween.EASE_OUT).set_trans(Tween.TRANS_QUAD)
+
+	_attack_tween.tween_callback(_on_circle_complete)
+
+
+func _on_circle_complete() -> void:
+	_circle_active = false
+	# Toggle direction for next circle
+	_circle_clockwise = not _circle_clockwise
 	_attack_state = AttackState.COOLDOWN
 	_attack_timer = attack_cooldown
+
+
+## Check if currently in circle movement (for testing)
+func is_circling() -> bool:
+	return _circle_active
 
 
 ## Setup boss at spawn position and start entrance animation
@@ -843,6 +896,7 @@ func _on_health_depleted() -> void:
 	_sweep_active = false
 	_charge_active = false
 	_heat_wave_active = false
+	_circle_active = false
 
 	# Kill tweens if active
 	if _flash_tween and _flash_tween.is_valid():
@@ -950,6 +1004,7 @@ func stop_attack_cycle() -> void:
 	_sweep_active = false
 	_charge_active = false
 	_heat_wave_active = false
+	_circle_active = false
 
 	# Kill attack tween if active
 	if _attack_tween and _attack_tween.is_valid():
@@ -981,6 +1036,7 @@ func reset_health() -> void:
 	_sweep_active = false
 	_charge_active = false
 	_heat_wave_active = false
+	_circle_active = false
 
 	## Kill any active tweens
 	if _flash_tween and _flash_tween.is_valid():

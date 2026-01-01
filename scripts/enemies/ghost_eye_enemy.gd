@@ -35,9 +35,9 @@ func _fire_projectile() -> void:
 	if _ghost_projectile_texture and projectile.has_method("set_texture"):
 		projectile.set_texture(_ghost_projectile_texture)
 
-	# Make ghost projectile slightly larger than default (adjusted for 256px sprites)
+	# Make ghost projectile larger than default (adjusted for 256px sprites, matching garlic)
 	if projectile.has_method("set_projectile_scale"):
-		projectile.set_projectile_scale(0.875)
+		projectile.set_projectile_scale(0.9375)
 
 	# Add to scene tree (use parent to avoid projectile being destroyed with enemy)
 	if get_parent():

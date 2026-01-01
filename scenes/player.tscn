@@ -12,7 +12,7 @@ script = ExtResource("1_player")
 projectile_scene = ExtResource("3_projectile")
 
 [node name="Sprite2D" type="Sprite2D" parent="."]
-scale = Vector2(3, 3)
+scale = Vector2(0.75, 0.75)
 texture = ExtResource("2_sprite")
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="."]

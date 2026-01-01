@@ -57,7 +57,7 @@ func spawn_floating_heart(from_position: Vector2) -> void:
 	# Create a heart sprite - starts HUGE
 	var heart = Sprite2D.new()
 	heart.texture = _heart_texture
-	heart.scale = Vector2(30.0, 30.0)  # Start HUGE
+	heart.scale = Vector2(7.5, 7.5)  # Start HUGE (adjusted for 256px sprites)
 	heart.position = from_position
 	heart.z_index = 100
 
@@ -74,13 +74,13 @@ func spawn_floating_heart(from_position: Vector2) -> void:
 	# Phase 1: Pulse for 0.4 seconds
 	var pulse_tween = heart.create_tween()
 	pulse_tween.set_loops(4)  # Pulse 4 times over 0.4 sec
-	pulse_tween.tween_property(heart, "scale", Vector2(32.0, 32.0), 0.05).set_ease(Tween.EASE_IN_OUT)
-	pulse_tween.tween_property(heart, "scale", Vector2(30.0, 30.0), 0.05).set_ease(Tween.EASE_IN_OUT)
+	pulse_tween.tween_property(heart, "scale", Vector2(8.0, 8.0), 0.05).set_ease(Tween.EASE_IN_OUT)
+	pulse_tween.tween_property(heart, "scale", Vector2(7.5, 7.5), 0.05).set_ease(Tween.EASE_IN_OUT)
 
 	# Phase 2: Fly to corner and shrink (in parallel)
 	var fly_tween = heart.create_tween()
 	fly_tween.set_parallel(true)
 	fly_tween.tween_property(heart, "position", target_pos, 0.6).set_ease(Tween.EASE_IN_OUT).set_trans(Tween.TRANS_QUAD).set_delay(0.4)
-	fly_tween.tween_property(heart, "scale", Vector2(1.0, 1.0), 0.6).set_ease(Tween.EASE_IN_OUT).set_delay(0.4)
+	fly_tween.tween_property(heart, "scale", Vector2(0.25, 0.25), 0.6).set_ease(Tween.EASE_IN_OUT).set_delay(0.4)
 	fly_tween.tween_property(heart, "modulate:a", 0.0, 0.2).set_delay(0.9)
 	fly_tween.chain().tween_callback(heart.queue_free)

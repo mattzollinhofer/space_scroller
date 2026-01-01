@@ -35,9 +35,9 @@ func _fire_projectile() -> void:
 	if _pizza_projectile_texture and projectile.has_method("set_texture"):
 		projectile.set_texture(_pizza_projectile_texture)
 
-	# Make pizza projectile 50% larger than default
+	# Make pizza projectile 50% larger than default (adjusted for 256px sprites)
 	if projectile.has_method("set_projectile_scale"):
-		projectile.set_projectile_scale(3.75)
+		projectile.set_projectile_scale(0.9375)
 
 	# Add to scene tree (use parent to avoid projectile being destroyed with enemy)
 	if get_parent():

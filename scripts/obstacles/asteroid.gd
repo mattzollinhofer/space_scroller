@@ -25,11 +25,11 @@ var _collision_radii: Dictionary = {
 	AsteroidSize.LARGE: 90.0
 }
 
-## Sprite scale for each size
+## Sprite scale for each size (256px sprites, divide by 4 from original 64px scale)
 var _sprite_scales: Dictionary = {
-	AsteroidSize.SMALL: Vector2(2.0, 2.0),
-	AsteroidSize.REGULAR: Vector2(2.5, 2.5),
-	AsteroidSize.LARGE: Vector2(3.5, 3.5)
+	AsteroidSize.SMALL: Vector2(0.5, 0.5),
+	AsteroidSize.REGULAR: Vector2(0.625, 0.625),
+	AsteroidSize.LARGE: Vector2(0.875, 0.875)
 }
 
 ## Sprite node
@@ -108,7 +108,7 @@ func _spawn_impact_explosion() -> void:
 	var explosion_texture = load("res://assets/sprites/explosion.png")
 	var explosion = Sprite2D.new()
 	explosion.texture = explosion_texture
-	explosion.scale = Vector2(1.0, 1.0)
+	explosion.scale = Vector2(0.25, 0.25)
 	explosion.z_index = 10  # Above asteroid
 
 	# Position at asteroid center (projectiles can hit from either side)
@@ -120,6 +120,6 @@ func _spawn_impact_explosion() -> void:
 	# Animate: quick scale up and fade out
 	var tween = explosion.create_tween()
 	tween.set_parallel(true)
-	tween.tween_property(explosion, "scale", Vector2(2.0, 2.0), 0.2).set_ease(Tween.EASE_OUT)
+	tween.tween_property(explosion, "scale", Vector2(0.5, 0.5), 0.2).set_ease(Tween.EASE_OUT)
 	tween.tween_property(explosion, "modulate:a", 0.0, 0.2).set_ease(Tween.EASE_IN)
 	tween.chain().tween_callback(explosion.queue_free)

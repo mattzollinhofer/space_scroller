@@ -186,13 +186,13 @@ func _play_destruction_animation() -> void:
 	var explosion_texture = load("res://assets/sprites/explosion.png")
 	var explosion = Sprite2D.new()
 	explosion.texture = explosion_texture
-	explosion.scale = Vector2(2, 2)
+	explosion.scale = Vector2(0.5, 0.5)
 	add_child(explosion)
 
 	# Animate explosion: scale up and fade out
 	var tween = create_tween()
 	tween.set_parallel(true)
-	tween.tween_property(explosion, "scale", Vector2(4, 4), 0.4).set_ease(Tween.EASE_OUT)
+	tween.tween_property(explosion, "scale", Vector2(1, 1), 0.4).set_ease(Tween.EASE_OUT)
 	tween.tween_property(explosion, "modulate:a", 0.0, 0.4).set_ease(Tween.EASE_IN)
 
 	# Queue free after animation completes

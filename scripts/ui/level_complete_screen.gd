@@ -76,6 +76,10 @@ func _on_next_level_pressed() -> void:
 		var game_state = get_node("/root/GameState")
 		if game_state.has_method("set_selected_level"):
 			game_state.set_selected_level(next_level)
+		# Save player's current lives to carry over to next level
+		var player = get_tree().root.get_node_or_null("Main/Player")
+		if player and player.has_method("get_lives"):
+			game_state.set_current_lives(player.get_lives())
 
 	# Reset score for new level
 	if has_node("/root/ScoreManager"):
@@ -91,6 +95,9 @@ func _on_main_menu_pressed() -> void:
 	# Unpause before transitioning
 	get_tree().paused = false
 	visible = false
+	# Clear carried-over lives when returning to main menu
+	if has_node("/root/GameState"):
+		get_node("/root/GameState").clear_current_lives()
 	# Stop music before returning to menu
 	_stop_gameplay_music()
 	get_tree().change_scene_to_file("res://scenes/ui/main_menu.tscn")

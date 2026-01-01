@@ -42,6 +42,9 @@ var _selected_level: int = DEFAULT_LEVEL
 ## Currently selected difficulty for this session
 var _selected_difficulty: String = DEFAULT_DIFFICULTY
 
+## Current lives carried over between levels (-1 means use starting lives for new game)
+var _current_lives: int = -1
+
 ## Signal emitted when character selection changes
 signal character_changed(character_id: String)
 
@@ -163,3 +166,19 @@ func get_difficulty_display_name(difficulty_id: String) -> String:
 ## Get all available difficulties
 func get_all_difficulties() -> Array[String]:
 	return [DIFFICULTY_NORMAL, DIFFICULTY_HARD]
+
+
+## Get current lives (for persistence between levels)
+## Returns -1 if not set (start of new game)
+func get_current_lives() -> int:
+	return _current_lives
+
+
+## Set current lives (called when completing a level)
+func set_current_lives(lives: int) -> void:
+	_current_lives = lives
+
+
+## Clear current lives (called when starting a fresh game)
+func clear_current_lives() -> void:
+	_current_lives = -1

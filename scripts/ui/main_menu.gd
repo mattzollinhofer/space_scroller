@@ -11,6 +11,9 @@ func _ready() -> void:
 ## Handle Play button pressed - start gameplay with transition
 func _on_play_button_pressed() -> void:
 	_play_sfx("button_click")
+	# Clear carried-over lives when starting a fresh game
+	if has_node("/root/GameState"):
+		get_node("/root/GameState").clear_current_lives()
 	if has_node("/root/TransitionManager"):
 		var transition_manager = get_node("/root/TransitionManager")
 		transition_manager.transition_to_scene("res://scenes/main.tscn")

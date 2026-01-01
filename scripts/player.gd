@@ -69,10 +69,17 @@ func _ready() -> void:
 	var game_state = get_node_or_null("/root/GameState")
 	if game_state:
 		starting_lives = game_state.get_starting_lives()
+		# Check if we have lives carried over from a previous level
+		var carried_lives = game_state.get_current_lives()
+		if carried_lives > 0:
+			_lives = carried_lives
+		else:
+			_lives = starting_lives
+	else:
+		_lives = starting_lives
 
-	# Initialize health and lives
+	# Initialize health
 	_health = max_health
-	_lives = starting_lives
 
 	# Load character sprite based on GameState selection
 	_load_character_sprite()

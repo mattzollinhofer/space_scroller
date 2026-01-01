@@ -91,7 +91,7 @@ No visual assets provided.
 **Character Selection:**
 - 3 playable characters total:
   1. Blue Blaster (Current/Default) - existing blue spacecraft/UFO
-  2. Space Dragon (Green) - dragon-shaped ship with wings and tail fin
+  2. Star Dragon (Green) - dragon-shaped ship with wings and tail fin
   3. Cosmic Cat (Purple) - cat-faced spacecraft with pointy ears and whiskers
 - All characters are cosmetic only (no gameplay differences)
 - All characters unlocked from start

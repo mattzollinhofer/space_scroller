@@ -1,7 +1,7 @@
 [gd_scene load_steps=5 format=3 uid="uid://dq8m4r2xk1pvy"]
 
 [ext_resource type="Script" path="res://scripts/player.gd" id="1_player"]
-[ext_resource type="Texture2D" path="res://assets/sprites/player.png" id="2_sprite"]
+[ext_resource type="Texture2D" path="res://assets/sprites/star-dragon-1.png" id="2_sprite"]
 [ext_resource type="PackedScene" uid="uid://cprojectile_scene" path="res://scenes/projectile.tscn" id="3_projectile"]
 
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_player"]

@@ -272,19 +272,10 @@ func _connect_player_signals() -> void:
 
 
 func _on_player_died() -> void:
-	# Check if boss fight is active - respawn at boss instead of game over
-	if _boss_fight_active and _boss and is_instance_valid(_boss):
-		_respawn_at_boss()
-		return
-
-	# Check if we have a checkpoint (section > 0)
-	if _checkpoint_section > 0:
-		# Respawn at checkpoint
-		respawn_player()
-	else:
-		# No checkpoint, show game over
-		if _game_over_screen and _game_over_screen.has_method("show_game_over"):
-			_game_over_screen.show_game_over()
+	# Player has run out of lives - always show game over
+	# No infinite respawns regardless of boss fight or checkpoint status
+	if _game_over_screen and _game_over_screen.has_method("show_game_over"):
+		_game_over_screen.show_game_over()
 
 
 func _respawn_at_boss() -> void:

@@ -72,7 +72,7 @@ icon = ExtResource("3_space_dragon")
 icon_alignment = 1
 vertical_icon_alignment = 0
 expand_icon = true
-text = "Space Dragon"
+text = "Star Dragon"
 
 [node name="CosmicCatButton" type="Button" parent="CenterContainer/VBoxContainer/CharacterGrid"]
 custom_minimum_size = Vector2(300, 400)
@@ -87,6 +87,39 @@ text = "Cosmic Cat"
 
 [node name="Spacer2" type="Control" parent="CenterContainer/VBoxContainer"]
 custom_minimum_size = Vector2(0, 40)
+layout_mode = 2
+
+[node name="DifficultyLabel" type="Label" parent="CenterContainer/VBoxContainer"]
+layout_mode = 2
+theme_override_colors/font_color = Color(0.8, 0.8, 0.8, 1)
+theme_override_font_sizes/font_size = 48
+text = "Difficulty"
+horizontal_alignment = 1
+
+[node name="DifficultyContainer" type="HBoxContainer" parent="CenterContainer/VBoxContainer"]
+layout_mode = 2
+size_flags_horizontal = 4
+theme_override_constants/separation = 40
+alignment = 1
+
+[node name="NormalButton" type="Button" parent="CenterContainer/VBoxContainer/DifficultyContainer"]
+custom_minimum_size = Vector2(200, 70)
+layout_mode = 2
+theme_override_colors/font_color = Color(1, 0.84, 0, 1)
+theme_override_font_sizes/font_size = 36
+text = "Normal
+3 Lives"
+
+[node name="HardButton" type="Button" parent="CenterContainer/VBoxContainer/DifficultyContainer"]
+custom_minimum_size = Vector2(200, 70)
+layout_mode = 2
+theme_override_colors/font_color = Color(0.7, 0.7, 0.7, 1)
+theme_override_font_sizes/font_size = 36
+text = "Hard
+1 Life"
+
+[node name="Spacer3" type="Control" parent="CenterContainer/VBoxContainer"]
+custom_minimum_size = Vector2(0, 20)
 layout_mode = 2
 
 [node name="ButtonContainer" type="HBoxContainer" parent="CenterContainer/VBoxContainer"]

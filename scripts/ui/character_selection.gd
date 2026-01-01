@@ -1,6 +1,7 @@
 extends Control
 ## Character selection screen allowing player to choose from 3 characters.
 ## Displays character previews with selection highlighting.
+## Also allows difficulty selection (Normal/Hard).
 
 ## References to character buttons (set in _ready)
 @onready var _blue_blaster_button: Button = $CenterContainer/VBoxContainer/CharacterGrid/BlueBlasterButton
@@ -9,8 +10,15 @@ extends Control
 @onready var _back_button: Button = $CenterContainer/VBoxContainer/ButtonContainer/BackButton
 @onready var _ok_button: Button = $CenterContainer/VBoxContainer/ButtonContainer/OKButton
 
+## References to difficulty buttons
+@onready var _normal_button: Button = $CenterContainer/VBoxContainer/DifficultyContainer/NormalButton
+@onready var _hard_button: Button = $CenterContainer/VBoxContainer/DifficultyContainer/HardButton
+
 ## Character button references for highlighting
 var _character_buttons: Dictionary = {}
+
+## Difficulty button references for highlighting
+var _difficulty_buttons: Dictionary = {}
 
 
 func _ready() -> void:
@@ -21,15 +29,28 @@ func _ready() -> void:
 		GameState.CHARACTER_COSMIC_CAT: _cosmic_cat_button
 	}
 
-	# Connect button signals
+	# Map difficulty IDs to their buttons
+	_difficulty_buttons = {
+		GameState.DIFFICULTY_NORMAL: _normal_button,
+		GameState.DIFFICULTY_HARD: _hard_button
+	}
+
+	# Connect character button signals
 	_blue_blaster_button.pressed.connect(_on_character_selected.bind(GameState.CHARACTER_BLUE_BLASTER))
 	_space_dragon_button.pressed.connect(_on_character_selected.bind(GameState.CHARACTER_SPACE_DRAGON))
 	_cosmic_cat_button.pressed.connect(_on_character_selected.bind(GameState.CHARACTER_COSMIC_CAT))
+
+	# Connect difficulty button signals
+	_normal_button.pressed.connect(_on_difficulty_selected.bind(GameState.DIFFICULTY_NORMAL))
+	_hard_button.pressed.connect(_on_difficulty_selected.bind(GameState.DIFFICULTY_HARD))
+
+	# Connect navigation buttons
 	_back_button.pressed.connect(_on_back_pressed)
 	_ok_button.pressed.connect(_on_ok_pressed)
 
-	# Update highlight for currently selected character
+	# Update highlights for currently selected options
 	_update_selection_highlight()
+	_update_difficulty_highlight()
 
 
 ## Handle character button pressed
@@ -71,5 +92,27 @@ func _update_selection_highlight() -> void:
 			button.modulate = Color(1, 1, 1, 1)
 		else:
 			# Dim unselected characters
+			button.add_theme_color_override("font_color", Color(0.7, 0.7, 0.7, 1))  # Gray
+			button.modulate = Color(0.7, 0.7, 0.7, 1)
+
+
+## Handle difficulty button pressed
+func _on_difficulty_selected(difficulty_id: String) -> void:
+	GameState.set_selected_difficulty(difficulty_id)
+	_update_difficulty_highlight()
+
+
+## Update visual highlighting to show selected difficulty
+func _update_difficulty_highlight() -> void:
+	var selected = GameState.get_selected_difficulty()
+
+	for diff_id in _difficulty_buttons:
+		var button: Button = _difficulty_buttons[diff_id]
+		if diff_id == selected:
+			# Highlight selected difficulty - gold
+			button.add_theme_color_override("font_color", Color(1, 0.84, 0, 1))  # Gold
+			button.modulate = Color(1, 1, 1, 1)
+		else:
+			# Dim unselected difficulty
 			button.add_theme_color_override("font_color", Color(0.7, 0.7, 0.7, 1))  # Gray
 			button.modulate = Color(0.7, 0.7, 0.7, 1)

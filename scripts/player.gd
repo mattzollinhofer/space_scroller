@@ -57,6 +57,11 @@ var _was_firing: bool = false
 
 
 func _ready() -> void:
+	# Get starting lives from GameState (based on difficulty)
+	var game_state = get_node_or_null("/root/GameState")
+	if game_state:
+		starting_lives = game_state.get_starting_lives()
+
 	# Initialize lives
 	_lives = starting_lives
 
@@ -271,6 +276,11 @@ func gain_life() -> bool:
 
 ## Reset lives to starting value (used for checkpoint respawn)
 func reset_lives() -> void:
+	# Refresh starting_lives from GameState in case difficulty changed
+	var game_state = get_node_or_null("/root/GameState")
+	if game_state:
+		starting_lives = game_state.get_starting_lives()
+
 	_lives = starting_lives
 	_is_invincible = false
 	_end_invincibility()

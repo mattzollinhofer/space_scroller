@@ -19,6 +19,7 @@
 [ext_resource type="PackedScene" uid="uid://cufo_friend" path="res://scenes/pickups/star_pickup.tscn" id="18_star_pickup"]
 [ext_resource type="PackedScene" uid="uid://sidekick_pickup" path="res://scenes/pickups/sidekick_pickup.tscn" id="19_sidekick_pickup"]
 [ext_resource type="PackedScene" uid="uid://chealth_display" path="res://scenes/ui/health_display.tscn" id="20_health_display"]
+[ext_resource type="PackedScene" uid="uid://clives_display" path="res://scenes/ui/lives_display.tscn" id="27_lives_display"]
 [ext_resource type="PackedScene" uid="uid://clevel_complete_screen" path="res://scenes/ui/level_complete_screen.tscn" id="21_level_complete"]
 [ext_resource type="PackedScene" uid="uid://cscore_display" path="res://scenes/ui/score_display.tscn" id="22_score_display"]
 [ext_resource type="PackedScene" uid="uid://cpause_menu" path="res://scenes/ui/pause_menu.tscn" id="23_pause_menu"]
@@ -111,6 +112,8 @@ level_complete_screen_path = NodePath("../LevelCompleteScreen")
 [node name="ProgressBar" parent="." instance=ExtResource("17_progress_bar")]
 
 [node name="HealthDisplay" parent="." instance=ExtResource("20_health_display")]
+
+[node name="LivesDisplay" parent="." instance=ExtResource("27_lives_display")]
 
 [node name="ScoreDisplay" parent="." instance=ExtResource("22_score_display")]
 

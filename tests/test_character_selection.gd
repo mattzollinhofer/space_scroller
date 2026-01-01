@@ -68,8 +68,8 @@ func _ready() -> void:
 
 	print("Back button found")
 
-	# Test Stage 3: Select a different character (Space Dragon)
-	print("Stage 3: Selecting Space Dragon character...")
+	# Test Stage 3: Select a different character (Star Dragon)
+	print("Stage 3: Selecting Star Dragon character...")
 	game_state.set_selected_character("space_dragon")
 
 	var selected = game_state.get_selected_character()

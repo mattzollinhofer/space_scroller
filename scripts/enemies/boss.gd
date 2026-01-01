@@ -671,13 +671,26 @@ func _on_body_entered(body: Node2D) -> void:
 	# Check if it's the player - deals contact damage during charge
 	if body.has_method("take_damage"):
 		body.take_damage()
+		# Boss also takes damage from player collision (after entrance)
+		if _entrance_complete:
+			take_hit(1)
 
 
-func _on_area_entered(_area: Area2D) -> void:
+func _on_area_entered(area: Area2D) -> void:
 	if _is_destroying:
 		return
+
+	# Check if boss hit an asteroid
+	if area.is_in_group("asteroids"):
+		# Boss takes 1 damage from asteroid collision (after entrance)
+		if _entrance_complete:
+			take_hit(1)
+		# Also damage the asteroid
+		if area.has_method("take_hit"):
+			area.take_hit(1)
+
 	# Projectiles call take_hit on the boss
-	pass
+	# (handled by projectile.gd calling our take_hit method)
 
 
 ## Called when hit by a projectile

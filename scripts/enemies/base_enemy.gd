@@ -98,9 +98,16 @@ func _on_area_entered(area: Area2D) -> void:
 	if _is_destroying:
 		return
 
+	# Check if enemy hit an asteroid
+	if area.is_in_group("asteroids"):
+		# Enemy takes 1 damage from asteroid collision
+		take_hit(1)
+		# Also damage the asteroid
+		if area.has_method("take_hit"):
+			area.take_hit(1)
+
 	# Projectiles call take_hit on the enemy
 	# (handled by projectile.gd calling our take_hit method)
-	pass
 
 
 ## Called when hit by a projectile

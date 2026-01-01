@@ -22,7 +22,7 @@ Build a complete menu system with main menu, character selection, pause menu, en
 **Player can select from 3 cosmetic characters**
 
 - Character Selection screen shows 3 selectable characters in grid layout
-- Characters: Blue Blaster (default), Space Dragon (Green), Cosmic Cat (Purple)
+- Characters: Blue Blaster (default), Star Dragon (Green), Cosmic Cat (Purple)
 - All characters cosmetic only (same gameplay stats)
 - All characters unlocked from start
 - Create GameState autoload to store selected character for current session

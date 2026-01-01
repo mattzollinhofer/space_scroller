@@ -48,7 +48,7 @@ var _battle_position: Vector2 = Vector2.ZERO
 enum AttackState { IDLE, WIND_UP, ATTACKING, COOLDOWN }
 var _attack_state: AttackState = AttackState.IDLE
 
-## Current attack pattern index (0 = barrage, 1 = sweep, 2 = charge, 3 = solar flare, 4 = heat wave, 5 = ice shards, 6 = frozen nova, 7 = pepperoni spread, 8 = circle movement)
+## Current attack pattern index (0 = barrage, 1 = sweep, 2 = charge, 3 = solar flare, 4 = heat wave, 5 = ice shards, 6 = frozen nova, 7 = pepperoni spread, 8 = circle movement, 9 = wall attack)
 var _current_pattern: int = 0
 
 ## Attack cooldown timer
@@ -75,6 +75,7 @@ const COLOR_DEFAULT: Color = Color(1, 0.3, 0.3, 1)  # Red (barrage, sweep)
 const COLOR_FIRE: Color = Color(1, 0.6, 0.2, 1)     # Orange (solar flare, heat wave)
 const COLOR_ICE: Color = Color(0.3, 0.8, 1, 1)      # Cyan (ice shards, frozen nova)
 const COLOR_PIZZA: Color = Color(1, 0.4, 0.2, 1)    # Red-orange (pepperoni)
+const COLOR_GHOST: Color = Color(0.6, 0.4, 1, 1)    # Purple/blue (ghost attacks)
 
 ## Reference to player for charge attack targeting
 var _player: Node2D = null
@@ -103,13 +104,13 @@ var _charge_target_x: float = 0.0
 ## Screen shake duration
 @export var shake_duration: float = 0.5
 
-## Explosion scale multiplier (boss is larger than regular enemies)
-@export var explosion_scale: float = 8.0
+## Explosion scale multiplier (boss is larger than regular enemies, adjusted for 256px sprites)
+@export var explosion_scale: float = 2.0
 
 ## Shake node for screen shake effect
 var _shake_node: Node2D = null
 
-## Which attack patterns are enabled (0=barrage, 1=sweep, 2=charge, 3=solar_flare, 4=heat_wave, 5=ice_shards, 6=frozen_nova)
+## Which attack patterns are enabled (0=barrage, 1=sweep, 2=charge, 3=solar_flare, 4=heat_wave, 5=ice_shards, 6=frozen_nova, 7=pepperoni_spread, 8=circle_movement, 9=wall_attack)
 var _enabled_attacks: Array[int] = [0, 1, 2]
 
 ## Number of attack patterns enabled
@@ -123,6 +124,9 @@ var _heat_wave_projectile_timer: float = 0.0
 
 ## Heat wave projectile fire interval (faster than normal sweep)
 @export var heat_wave_fire_interval: float = 0.15
+
+## Whether currently in a wall attack
+var _wall_attack_active: bool = false
 
 ## Emitted when the boss is defeated
 signal boss_defeated()
@@ -215,8 +219,8 @@ func _process_attack_state(delta: float) -> void:
 				_execute_attack()
 
 		AttackState.ATTACKING:
-			# For sweep, charge, heat wave, and circle, wait for tween to complete
-			if _sweep_active or _charge_active or _heat_wave_active or _circle_active:
+			# For sweep, charge, heat wave, circle, and wall attack, wait for tween to complete
+			if _sweep_active or _charge_active or _heat_wave_active or _circle_active or _wall_attack_active:
 				return
 			# Attack execution is instant for barrage, move to cooldown
 			_attack_state = AttackState.COOLDOWN
@@ -253,6 +257,8 @@ func _play_attack_telegraph() -> void:
 		warning_color = Color(0.5, 1.0, 2.0, 1.0)  # Blue-cyan tint
 	elif attack_type == 7 or attack_type == 8:  # Pepperoni Spread or Circle Movement - red-orange pizza tint
 		warning_color = Color(2.0, 1.2, 0.6, 1.0)  # Pizza red-orange tint
+	elif attack_type == 9:  # Wall Attack - ghost purple/blue tint
+		warning_color = Color(1.2, 0.8, 2.0, 1.0)  # Ghost purple/blue tint
 	else:  # Barrage or sweep
 		warning_color = Color(1.5, 1.0, 1.0, 1.0)  # Subtle red tint
 
@@ -305,6 +311,8 @@ func _execute_attack() -> void:
 			_attack_pepperoni_spread()
 		8:
 			_attack_circle_movement()
+		9:
+			_attack_wall()
 
 
 func _attack_horizontal_barrage() -> void:
@@ -706,9 +714,9 @@ func _attack_pepperoni_spread() -> void:
 		# Apply custom projectile texture from level config
 		_apply_projectile_texture(projectile)
 
-		# Make pepperoni 6x larger for big visible projectiles
+		# Make pepperoni 6x larger for big visible projectiles (adjusted for 256px sprites)
 		if projectile.has_method("set_projectile_scale"):
-			projectile.set_projectile_scale(6.0)
+			projectile.set_projectile_scale(1.5)
 
 		# Add to parent (main scene)
 		var parent = get_parent()
@@ -785,6 +793,102 @@ func _on_circle_complete() -> void:
 ## Check if currently in circle movement (for testing)
 func is_circling() -> bool:
 	return _circle_active
+
+
+func _attack_wall() -> void:
+	## Wall Attack: 6 projectiles fan out vertically then shoot horizontally toward player
+	## Ghost-themed attack for Level 5 boss
+	if not boss_projectile_scene:
+		push_warning("Boss projectile scene not assigned")
+		return
+
+	if _attack_tween and _attack_tween.is_valid():
+		_attack_tween.kill()
+
+	_wall_attack_active = true
+
+	# Create 6 projectiles - 3 fan upward, 3 fan downward
+	var projectile_count = 6
+	var vertical_spread = 300.0  # How far they spread vertically
+	var fan_duration = 0.5  # Time to fan out
+	var projectiles: Array = []
+
+	var parent = get_parent()
+	if not parent:
+		_wall_attack_active = false
+		return
+
+	for i in range(projectile_count):
+		var projectile = boss_projectile_scene.instantiate()
+
+		# All projectiles start at boss position
+		projectile.position = position
+
+		# Calculate vertical offset for final fan position
+		# 3 projectiles go up (indices 0, 1, 2), 3 go down (indices 3, 4, 5)
+		var vertical_offset: float
+		if i < 3:
+			# Upper projectiles: spread upward
+			vertical_offset = -vertical_spread * (1.0 + float(i) * 0.5)  # -300, -450, -600
+		else:
+			# Lower projectiles: spread downward
+			vertical_offset = vertical_spread * (1.0 + float(i - 3) * 0.5)  # 300, 450, 600
+
+		# Initially set direction to zero (will be updated after fanning)
+		if projectile.has_method("set_direction"):
+			projectile.set_direction(Vector2.ZERO)
+		else:
+			projectile.direction = Vector2.ZERO
+
+		# Stop the projectile from moving initially
+		projectile.speed = 0.0
+
+		_apply_projectile_texture(projectile)
+
+		parent.add_child(projectile)
+		projectiles.append({"node": projectile, "target_y": position.y + vertical_offset})
+
+	# Create tween to fan out projectiles vertically, then shoot horizontally
+	_attack_tween = create_tween()
+
+	# Fan out phase: move projectiles vertically
+	for proj_data in projectiles:
+		var proj = proj_data["node"]
+		var target_y = proj_data["target_y"]
+		if is_instance_valid(proj):
+			# Use parallel tweening for simultaneous movement
+			_attack_tween.parallel().tween_property(proj, "position:y", target_y, fan_duration).set_ease(Tween.EASE_OUT).set_trans(Tween.TRANS_QUAD)
+
+	# After fanning, set all projectiles to move horizontally left
+	_attack_tween.tween_callback(func():
+		for proj_data in projectiles:
+			var proj = proj_data["node"]
+			if is_instance_valid(proj):
+				# Set direction to left and restore speed
+				if proj.has_method("set_direction"):
+					proj.set_direction(Vector2(-1, 0))
+				else:
+					proj.direction = Vector2(-1, 0)
+				proj.speed = 750.0  # Default projectile speed
+	)
+
+	# Wait a moment then complete the attack
+	_attack_tween.tween_interval(0.3)
+	_attack_tween.tween_callback(_on_wall_attack_complete)
+
+	attack_fired.emit()
+	_play_sfx("boss_attack")
+
+
+func _on_wall_attack_complete() -> void:
+	_wall_attack_active = false
+	_attack_state = AttackState.COOLDOWN
+	_attack_timer = attack_cooldown
+
+
+## Check if currently in wall attack (for testing)
+func is_wall_attacking() -> bool:
+	return _wall_attack_active
 
 
 ## Setup boss at spawn position and start entrance animation
@@ -898,6 +1002,7 @@ func _on_health_depleted() -> void:
 	_charge_active = false
 	_heat_wave_active = false
 	_circle_active = false
+	_wall_attack_active = false
 
 	# Kill tweens if active
 	if _flash_tween and _flash_tween.is_valid():
@@ -1006,6 +1111,7 @@ func stop_attack_cycle() -> void:
 	_charge_active = false
 	_heat_wave_active = false
 	_circle_active = false
+	_wall_attack_active = false
 
 	# Kill attack tween if active
 	if _attack_tween and _attack_tween.is_valid():
@@ -1038,6 +1144,7 @@ func reset_health() -> void:
 	_charge_active = false
 	_heat_wave_active = false
 	_circle_active = false
+	_wall_attack_active = false
 
 	## Kill any active tweens
 	if _flash_tween and _flash_tween.is_valid():
@@ -1097,7 +1204,7 @@ func configure(config: Dictionary) -> void:
 	if config.has("wind_up_duration"):
 		wind_up_duration = config.wind_up_duration
 
-	# Set enabled attacks (array of attack indices: 0=barrage, 1=sweep, 2=charge, 3=solar_flare, 4=heat_wave, 5=ice_shards, 6=frozen_nova)
+	# Set enabled attacks (array of attack indices: 0=barrage, 1=sweep, 2=charge, 3=solar_flare, 4=heat_wave, 5=ice_shards, 6=frozen_nova, 7=pepperoni_spread, 8=circle_movement, 9=wall_attack)
 	if config.has("attacks"):
 		_enabled_attacks.clear()
 		for attack in config.attacks:

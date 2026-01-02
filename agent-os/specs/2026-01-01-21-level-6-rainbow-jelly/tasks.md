@@ -23,15 +23,15 @@ Each slice delivers incremental user value and is tested end-to-end.
 
 #### Tasks
 
-- [ ] 1.1 Write integration test that verifies Level 6 button appears in level select and is enabled
-- [ ] 1.2 Run test, verify expected failure (no Level 6 button exists)
-- [ ] 1.3 Make smallest change possible to progress
-- [ ] 1.4 Run test, observe failure or success
-- [ ] 1.5 Document result and update task list
-- [ ] 1.6 Repeat 1.3-1.5 as necessary (expected: add Level6Button to level_select.tscn, add @onready reference in level_select.gd, connect signal, update button states, add Level 6 to GameState.LEVEL_PATHS, create basic level_6.json)
-- [ ] 1.7 Refactor if needed (keep tests green)
-- [ ] 1.8 Run level-related tests to verify no regressions
-- [ ] 1.9 Commit working slice
+- [x] 1.1 Write integration test that verifies Level 6 button appears in level select and is enabled
+- [x] 1.2 Run test, verify expected failure (no Level 6 button exists) -> Failed: "Level 6 button not found in level select"
+- [x] 1.3 Add Level6Button node to level_select.tscn -> Failed: "Level 6 button should not be disabled"
+- [x] 1.4 Add @onready reference and signal connection in level_select.gd, enable button in _update_button_states -> Failed: "Level 6 JSON file not found"
+- [x] 1.5 Create level_6.json with pink/magenta background modulate [1.0, 0.7, 0.9, 1.0] and 6 jelly-themed sections -> Success
+- [x] 1.6 Add Level 6 to GameState.LEVEL_PATHS dictionary -> Success
+- [x] 1.7 Refactor if needed (keep tests green) -> No refactoring needed
+- [x] 1.8 Run level-related tests to verify no regressions -> All 15 level tests pass
+- [x] 1.9 Commit working slice
 
 **Acceptance Criteria:**
 - Level 6 button visible in level select screen

@@ -1,0 +1,98 @@
+{
+  "total_distance": 24000,
+  "enemy_config": {
+    "zigzag_speed_min": 180,
+    "zigzag_speed_max": 240,
+    "zigzag_angle_min": 25,
+    "zigzag_angle_max": 60
+  },
+  "metadata": {
+    "scroll_speed_multiplier": 1.40,
+    "background_theme": "jelly",
+    "background_modulate": [1.0, 0.7, 0.9, 1.0],
+    "boss_sprite": "res://assets/sprites/jelly-monster-1.png",
+    "boss_config": {
+      "health": 25,
+      "scale": 1.5,
+      "attacks": [11, 12, 13],
+      "attack_cooldown": 1.0,
+      "explosion_scale": 2.0,
+      "projectile_sprite": "res://assets/sprites/weapon-jelly-1.png"
+    },
+    "special_enemies": [
+      {
+        "enemy_type": "jelly_snail",
+        "spawn_probability": 0.45,
+        "allowed_sections": [1, 2, 3, 4, 5]
+      }
+    ]
+  },
+  "sections": [
+    {
+      "name": "Jelly Entrance",
+      "start_percent": 0,
+      "end_percent": 12,
+      "obstacle_density": "medium",
+      "enemy_waves": [
+        { "enemy_type": "stationary", "count": 4 }
+      ]
+    },
+    {
+      "name": "Rainbow Passage",
+      "start_percent": 12,
+      "end_percent": 28,
+      "obstacle_density": "medium",
+      "enemy_waves": [
+        { "enemy_type": "shooting", "count": 3 },
+        { "enemy_type": "patrol", "count": 2 },
+        { "enemy_type": "jelly_snail", "count": 1 }
+      ]
+    },
+    {
+      "name": "Gelatinous Depths",
+      "start_percent": 28,
+      "end_percent": 45,
+      "obstacle_density": "high",
+      "enemy_waves": [
+        { "enemy_type": "charger", "count": 3 },
+        { "enemy_type": "shooting", "count": 3 },
+        { "enemy_type": "jelly_snail", "count": 2 }
+      ]
+    },
+    {
+      "name": "Slime Gardens",
+      "start_percent": 45,
+      "end_percent": 62,
+      "obstacle_density": "high",
+      "enemy_waves": [
+        { "enemy_type": "shooting", "count": 3 },
+        { "enemy_type": "patrol", "count": 2 },
+        { "enemy_type": "jelly_snail", "count": 2 }
+      ]
+    },
+    {
+      "name": "Wobbling Wastes",
+      "start_percent": 62,
+      "end_percent": 80,
+      "obstacle_density": "high",
+      "enemy_waves": [
+        { "enemy_type": "charger", "count": 3 },
+        { "enemy_type": "shooting", "count": 3 },
+        { "enemy_type": "patrol", "count": 2 },
+        { "enemy_type": "jelly_snail", "count": 2 }
+      ]
+    },
+    {
+      "name": "Jelly Kingdom",
+      "start_percent": 80,
+      "end_percent": 100,
+      "obstacle_density": "high",
+      "enemy_waves": [
+        { "enemy_type": "charger", "count": 3 },
+        { "enemy_type": "shooting", "count": 4 },
+        { "enemy_type": "patrol", "count": 2 },
+        { "enemy_type": "jelly_snail", "count": 2 }
+      ]
+    }
+  ]
+}

@@ -177,15 +177,17 @@ Each slice delivers incremental user value and is tested end-to-end.
 
 #### Tasks
 
-- [ ] 5.1 Write integration test that verifies boss with attack type 13 fires 6 projectiles straight forward
-- [ ] 5.2 Run test, verify expected failure (attack type 13 not recognized)
-- [ ] 5.3 Make smallest change possible to progress
-- [ ] 5.4 Run test, observe failure or success
-- [ ] 5.5 Document result and update task list
-- [ ] 5.6 Repeat 5.3-5.5 as necessary (expected: add case 13 to _execute_attack, implement _attack_rapid_jelly that fires 6 projectiles with direction Vector2(-1, 0))
-- [ ] 5.7 Refactor if needed (keep tests green)
-- [ ] 5.8 Run boss-related tests to verify no regressions
-- [ ] 5.9 Commit working slice
+- [x] 5.1 Write integration test that verifies boss with attack type 13 fires 6 projectiles straight forward -> Created test_boss_rapid_jelly.gd/tscn
+- [x] 5.2 Run test, verify expected failure (attack type 13 not recognized) -> Failed: "Expected exactly 6 projectiles, got: 0"
+- [x] 5.3-5.6 Implemented rapid jelly attack:
+  - Added case 13 to _execute_attack match statement
+  - Implemented _attack_rapid_jelly that fires 6 projectiles with direction Vector2(-1, 0)
+  - All projectiles travel straight left with vertical spacing for visibility
+  - Updated comment about attack pattern indices to include 13=rapid_jelly
+  - Success: All 6 projectiles fire straight left
+- [x] 5.7 Refactor if needed (keep tests green) -> No refactoring needed
+- [x] 5.8 Run boss-related tests to verify no regressions -> 13/15 boss tests pass (same pre-existing failures as Slices 3-4)
+- [x] 5.9 Commit working slice
 
 **Acceptance Criteria:**
 - Boss with attack type 13 configured fires exactly 6 projectiles

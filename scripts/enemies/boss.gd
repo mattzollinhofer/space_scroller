@@ -50,7 +50,7 @@ var _battle_position: Vector2 = Vector2.ZERO
 enum AttackState { IDLE, WIND_UP, ATTACKING, COOLDOWN }
 var _attack_state: AttackState = AttackState.IDLE
 
-## Current attack pattern index (0 = barrage, 1 = sweep, 2 = charge, 3 = solar flare, 4 = heat wave, 5 = ice shards, 6 = frozen nova, 7 = pepperoni spread, 8 = circle movement, 9 = wall attack, 10 = square movement, 11 = up/down shooting, 12 = grow/shrink)
+## Current attack pattern index (0 = barrage, 1 = sweep, 2 = charge, 3 = solar flare, 4 = heat wave, 5 = ice shards, 6 = frozen nova, 7 = pepperoni spread, 8 = circle movement, 9 = wall attack, 10 = square movement, 11 = up/down shooting, 12 = grow/shrink, 13 = rapid jelly)
 var _current_pattern: int = 0
 
 ## Attack cooldown timer
@@ -113,7 +113,7 @@ var _charge_target_x: float = 0.0
 ## Shake node for screen shake effect
 var _shake_node: Node2D = null
 
-## Which attack patterns are enabled (0=barrage, 1=sweep, 2=charge, 3=solar_flare, 4=heat_wave, 5=ice_shards, 6=frozen_nova, 7=pepperoni_spread, 8=circle_movement, 9=wall_attack, 10=square_movement, 11=up_down_shooting, 12=grow_shrink)
+## Which attack patterns are enabled (0=barrage, 1=sweep, 2=charge, 3=solar_flare, 4=heat_wave, 5=ice_shards, 6=frozen_nova, 7=pepperoni_spread, 8=circle_movement, 9=wall_attack, 10=square_movement, 11=up_down_shooting, 12=grow_shrink, 13=rapid_jelly)
 var _enabled_attacks: Array[int] = [0, 1, 2]
 
 ## Number of attack patterns enabled
@@ -349,6 +349,8 @@ func _execute_attack() -> void:
 			_attack_up_down_shooting()
 		12:
 			_attack_grow_shrink()
+		13:
+			_attack_rapid_jelly()
 
 
 func _attack_horizontal_barrage() -> void:
@@ -1128,6 +1130,47 @@ func is_grow_shrinking() -> bool:
 	return _grow_shrink_active
 
 
+func _attack_rapid_jelly() -> void:
+	## Rapid Jelly Attack: Fire 6 projectiles straight forward (left) simultaneously
+	## Jelly-themed burst attack for Level 6 boss - like horizontal barrage but no spread
+	if not boss_projectile_scene:
+		push_warning("Boss projectile scene not assigned")
+		return
+
+	# Fire exactly 6 projectiles
+	var projectile_count = 6
+
+	# Vertical spacing between projectiles (so they're not all on same line)
+	var vertical_spacing = 40.0
+	var start_offset = -vertical_spacing * (projectile_count - 1) / 2.0
+
+	for i in range(projectile_count):
+		var projectile = boss_projectile_scene.instantiate()
+
+		# Position at boss location with vertical offset for each projectile
+		var vertical_offset = start_offset + (vertical_spacing * i)
+		projectile.position = position + Vector2(-100, vertical_offset)
+
+		# All projectiles go straight left (no spread angle)
+		var direction = Vector2(-1, 0)
+
+		# Set direction on projectile
+		if projectile.has_method("set_direction"):
+			projectile.set_direction(direction)
+		else:
+			projectile.direction = direction
+
+		_apply_projectile_texture(projectile)
+
+		# Add to parent (main scene)
+		var parent = get_parent()
+		if parent:
+			parent.add_child(projectile)
+
+	attack_fired.emit()
+	_play_sfx("boss_attack")
+
+
 ## Setup boss at spawn position and start entrance animation
 func setup(spawn_position: Vector2, battle_position: Vector2) -> void:
 	position = spawn_position
@@ -1450,7 +1493,7 @@ func configure(config: Dictionary) -> void:
 	if config.has("wind_up_duration"):
 		wind_up_duration = config.wind_up_duration
 
-	# Set enabled attacks (array of attack indices: 0=barrage, 1=sweep, 2=charge, 3=solar_flare, 4=heat_wave, 5=ice_shards, 6=frozen_nova, 7=pepperoni_spread, 8=circle_movement, 9=wall_attack, 10=square_movement, 11=up_down_shooting, 12=grow_shrink)
+	# Set enabled attacks (array of attack indices: 0=barrage, 1=sweep, 2=charge, 3=solar_flare, 4=heat_wave, 5=ice_shards, 6=frozen_nova, 7=pepperoni_spread, 8=circle_movement, 9=wall_attack, 10=square_movement, 11=up_down_shooting, 12=grow_shrink, 13=rapid_jelly)
 	if config.has("attacks"):
 		_enabled_attacks.clear()
 		for attack in config.attacks:

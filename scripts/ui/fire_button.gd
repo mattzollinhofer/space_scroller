@@ -3,6 +3,15 @@ extends Control
 ## Covers the right side of the screen and detects touch/click to fire.
 ## Player script queries is_pressed() to check if firing should occur.
 
+## Radius of the indicator dot in pixels
+@export var indicator_radius: float = 30.0
+
+## Color of the indicator dot (semi-transparent white)
+@export var indicator_color: Color = Color(0.7, 0.7, 0.7, 0.5)
+
+## Margin from bottom-right corner
+@export var indicator_margin: float = 50.0
+
 ## Whether the fire button is currently being pressed
 var _is_pressed: bool = false
 
@@ -14,6 +23,15 @@ func _ready() -> void:
 	# Set up the control to cover the right half of the screen
 	# This will be configured in the scene file using anchors
 	pass
+
+
+func _draw() -> void:
+	# Draw a small indicator dot in the bottom-right corner
+	var indicator_pos = Vector2(
+		size.x - indicator_margin,
+		size.y - indicator_margin
+	)
+	draw_circle(indicator_pos, indicator_radius, indicator_color)
 
 
 func _input(event: InputEvent) -> void:

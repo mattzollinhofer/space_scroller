@@ -26,11 +26,11 @@ func _ready() -> void:
 
 	# Verify high-priority SFX files exist (maps name -> category/name)
 	var high_priority_sfx = {
-		"player_shoot": "weapons/player_shoot",
-		"enemy_hit": "impacts/enemy_hit",
-		"enemy_destroyed": "explosions/enemy_destroyed",
-		"player_damage": "impacts/player_damage",
-		"player_death": "explosions/player_death"
+		"player_shoot": "weapons/attack-missile-1",
+		"enemy_hit": "explosions/explosion-2",
+		"enemy_destroyed": "explosions/explosion-1",
+		"player_damage": "explosions/explosion-2",
+		"player_death": "explosions/explosion-1"
 	}
 
 	for sfx_name in high_priority_sfx:

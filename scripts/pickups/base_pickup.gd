@@ -37,6 +37,7 @@ func _ready() -> void:
 	_viewport_height = ProjectSettings.get_setting("display/window/size/viewport_height")
 	_zigzag_direction = 1.0 if randf() > 0.5 else -1.0
 	_pickup_ready()
+	_play_sfx("pickup_spawn")
 
 
 ## Called after base _ready() completes. Override in subclasses for additional setup.

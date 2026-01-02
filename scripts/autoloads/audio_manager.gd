@@ -15,6 +15,11 @@ const CROSSFADE_DURATION := 1.0
 ## Music volume (dB) - lowered to balance with SFX
 const MUSIC_VOLUME_DB := -3.0
 
+## Per-SFX volume adjustments (dB) - for balancing individual sounds
+var _sfx_volume_db: Dictionary = {
+	"player_shoot": -12.0,  # 25% volume - fires frequently, shouldn't overwhelm
+}
+
 ## Music resources
 var _gameplay_music: AudioStream = null
 var _boss_music: Dictionary = {}  # level_number -> AudioStream
@@ -104,20 +109,21 @@ func _preload_sfx() -> void:
 	## Maps SFX name -> path within res://assets/audio/sfx/
 	var sfx_paths = {
 		# Weapons
-		"player_shoot": "weapons/player_shoot",
+		"player_shoot": "weapons/attack-missile-1",
 		"sidekick_shoot": "weapons/sidekick_shoot",
-		"boss_attack": "weapons/boss_attack",
+		"boss_attack": "weapons/boss-attack-1",
 		# Impacts
-		"enemy_hit": "impacts/enemy_hit",
+		"enemy_hit": "explosions/explosion-2",
 		"boss_damage": "impacts/boss_damage",
-		"player_damage": "impacts/player_damage",
+		"player_damage": "explosions/explosion-2",
 		# Explosions
-		"enemy_destroyed": "explosions/enemy_destroyed",
-		"player_death": "explosions/player_death",
+		"enemy_destroyed": "explosions/explosion-1",
+		"player_death": "explosions/explosion-1",
 		# UI
 		"button_click": "ui/button_click",
 		# Feedback
-		"pickup_collect": "feedback/pickup_collect",
+		"pickup_collect": "feedback/happy-1",
+		"pickup_spawn": "feedback/surprise-1",
 		"level_complete": "feedback/level_complete",
 		"game_over": "feedback/game_over",
 	}
@@ -142,16 +148,21 @@ func play_sfx(sfx_name: String) -> void:
 	if not sfx_stream:
 		return
 
+	# Get volume adjustment for this sound (default 0 dB)
+	var volume_db: float = _sfx_volume_db.get(sfx_name, 0.0)
+
 	# Find an available player from the pool
 	for player in _sfx_players:
 		if not player.playing:
 			player.stream = sfx_stream
+			player.volume_db = volume_db
 			player.play()
 			return
 
 	# All players busy - use the first one (interrupts oldest sound)
 	if _sfx_players.size() > 0:
 		_sfx_players[0].stream = sfx_stream
+		_sfx_players[0].volume_db = volume_db
 		_sfx_players[0].play()
 
 

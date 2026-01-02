@@ -140,18 +140,21 @@ Each slice delivers incremental user value and is tested end-to-end.
 
 #### Tasks
 
-- [ ] 4.1 Write integration test that verifies boss with attack type 12 scales to 4x then returns to normal
-- [ ] 4.2 Run test, verify expected failure (attack type 12 not recognized)
-- [ ] 4.3 Make smallest change possible to progress
-- [ ] 4.4 Run test, observe failure or success
-- [ ] 4.5 Document result and update task list
-- [ ] 4.6 Repeat 4.3-4.5 as necessary (expected: add _grow_shrink_active flag, add case 12 to _execute_attack, implement _attack_grow_shrink with tween-based scale animation, add _on_grow_shrink_complete callback)
-- [ ] 4.7 Scale collision shape proportionally during growth (for contact damage)
-- [ ] 4.8 Update _on_health_depleted to reset _grow_shrink_active
-- [ ] 4.9 Add is_grow_shrinking() helper for testing
-- [ ] 4.10 Refactor if needed (keep tests green)
-- [ ] 4.11 Run boss-related tests to verify no regressions
-- [ ] 4.12 Commit working slice
+- [x] 4.1 Write integration test that verifies boss with attack type 12 scales to 4x then returns to normal -> Created test_boss_grow_shrink.gd/tscn
+- [x] 4.2 Run test, verify expected failure (attack type 12 not recognized) -> Failed: "Boss did not scale up to 4x. Max scale: 0.375000"
+- [x] 4.3-4.6 Implemented grow/shrink attack:
+  - Added _grow_shrink_active flag and original scale storage variables
+  - Added case 12 to _execute_attack match statement
+  - Implemented _attack_grow_shrink with tween-based scale animation (TRANS_ELASTIC for grow, TRANS_QUAD for shrink)
+  - Added _on_grow_shrink_complete callback
+  - Updated _process_attack_state to wait for _grow_shrink_active to complete
+  - Added GROW_SHRINK_DURATION (2.0s) and GROW_SHRINK_SCALE (4.0x) constants
+- [x] 4.7 Scale collision shape proportionally during growth (for contact damage) -> Collision shape scales with sprite using parallel tween
+- [x] 4.8 Update _on_health_depleted to reset _grow_shrink_active -> Done
+- [x] 4.9 Add is_grow_shrinking() helper for testing -> Done
+- [x] 4.10 Refactor if needed (keep tests green) -> No refactoring needed
+- [x] 4.11 Run boss-related tests to verify no regressions -> 13/15 boss tests pass (same pre-existing failures as Slice 3)
+- [x] 4.12 Commit working slice
 
 **Acceptance Criteria:**
 - Boss with attack type 12 configured scales up to 4x original size

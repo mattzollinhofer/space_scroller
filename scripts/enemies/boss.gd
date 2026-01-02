@@ -50,7 +50,7 @@ var _battle_position: Vector2 = Vector2.ZERO
 enum AttackState { IDLE, WIND_UP, ATTACKING, COOLDOWN }
 var _attack_state: AttackState = AttackState.IDLE
 
-## Current attack pattern index (0 = barrage, 1 = sweep, 2 = charge, 3 = solar flare, 4 = heat wave, 5 = ice shards, 6 = frozen nova, 7 = pepperoni spread, 8 = circle movement, 9 = wall attack, 10 = square movement, 11 = up/down shooting)
+## Current attack pattern index (0 = barrage, 1 = sweep, 2 = charge, 3 = solar flare, 4 = heat wave, 5 = ice shards, 6 = frozen nova, 7 = pepperoni spread, 8 = circle movement, 9 = wall attack, 10 = square movement, 11 = up/down shooting, 12 = grow/shrink)
 var _current_pattern: int = 0
 
 ## Attack cooldown timer
@@ -113,7 +113,7 @@ var _charge_target_x: float = 0.0
 ## Shake node for screen shake effect
 var _shake_node: Node2D = null
 
-## Which attack patterns are enabled (0=barrage, 1=sweep, 2=charge, 3=solar_flare, 4=heat_wave, 5=ice_shards, 6=frozen_nova, 7=pepperoni_spread, 8=circle_movement, 9=wall_attack, 10=square_movement, 11=up_down_shooting)
+## Which attack patterns are enabled (0=barrage, 1=sweep, 2=charge, 3=solar_flare, 4=heat_wave, 5=ice_shards, 6=frozen_nova, 7=pepperoni_spread, 8=circle_movement, 9=wall_attack, 10=square_movement, 11=up_down_shooting, 12=grow_shrink)
 var _enabled_attacks: Array[int] = [0, 1, 2]
 
 ## Number of attack patterns enabled
@@ -142,6 +142,15 @@ var _up_down_shooting_projectile_timer: float = 0.0
 
 ## Up/down shooting projectile fire interval
 @export var up_down_shooting_fire_interval: float = 0.2
+
+## Whether currently in a grow/shrink attack
+var _grow_shrink_active: bool = false
+
+## Original sprite scale before grow/shrink attack (for restoration)
+var _grow_shrink_original_scale: Vector2 = Vector2.ONE
+
+## Original collision shape size before grow/shrink attack (for restoration)
+var _grow_shrink_original_collision_size: Vector2 = Vector2.ZERO
 
 ## Emitted when the boss is defeated
 signal boss_defeated()
@@ -238,8 +247,8 @@ func _process_attack_state(delta: float) -> void:
 				_execute_attack()
 
 		AttackState.ATTACKING:
-			# For sweep, charge, heat wave, circle, wall attack, square movement, and up/down shooting, wait for tween to complete
-			if _sweep_active or _charge_active or _heat_wave_active or _circle_active or _wall_attack_active or _square_active or _up_down_shooting_active:
+			# For sweep, charge, heat wave, circle, wall attack, square movement, up/down shooting, and grow/shrink, wait for tween to complete
+			if _sweep_active or _charge_active or _heat_wave_active or _circle_active or _wall_attack_active or _square_active or _up_down_shooting_active or _grow_shrink_active:
 				return
 			# Attack execution is instant for barrage, move to cooldown
 			_attack_state = AttackState.COOLDOWN
@@ -338,6 +347,8 @@ func _execute_attack() -> void:
 			_attack_square_movement()
 		11:
 			_attack_up_down_shooting()
+		12:
+			_attack_grow_shrink()
 
 
 func _attack_horizontal_barrage() -> void:
@@ -767,6 +778,12 @@ const CIRCLE_DURATION: float = 4.0
 ## Square movement duration (full square path)
 const SQUARE_DURATION: float = 3.0
 
+## Grow/shrink attack duration (grow phase + shrink phase)
+const GROW_SHRINK_DURATION: float = 2.0
+
+## Grow/shrink scale multiplier (how large boss grows)
+const GROW_SHRINK_SCALE: float = 4.0
+
 
 func _attack_circle_movement() -> void:
 	## Circle Movement: Boss moves in a circle around the arena
@@ -1047,6 +1064,70 @@ func is_up_down_shooting() -> bool:
 	return _up_down_shooting_active
 
 
+func _attack_grow_shrink() -> void:
+	## Grow/Shrink: Boss scales up to 4x size then shrinks back to normal
+	## Jelly-themed visual intimidation attack for Level 6 boss - no projectiles fired
+	## Contact damage is increased during enlarged state via scaled collision shape
+	if _attack_tween and _attack_tween.is_valid():
+		_attack_tween.kill()
+
+	_grow_shrink_active = true
+
+	# Get sprite and collision shape
+	var sprite = get_node_or_null("AnimatedSprite2D")
+	var collision = get_node_or_null("CollisionShape2D")
+
+	if not sprite:
+		_grow_shrink_active = false
+		_attack_state = AttackState.COOLDOWN
+		_attack_timer = attack_cooldown
+		return
+
+	# Store original scales for restoration
+	_grow_shrink_original_scale = sprite.scale
+	if collision and collision.shape:
+		_grow_shrink_original_collision_size = collision.shape.size
+
+	# Calculate target scales (4x original)
+	var target_sprite_scale = _grow_shrink_original_scale * GROW_SHRINK_SCALE
+	var target_collision_size = _grow_shrink_original_collision_size * GROW_SHRINK_SCALE
+
+	# Create grow/shrink tween
+	_attack_tween = create_tween()
+
+	# Grow phase: scale up to 4x over half the duration
+	var grow_duration = GROW_SHRINK_DURATION / 2.0
+	_attack_tween.tween_property(sprite, "scale", target_sprite_scale, grow_duration).set_ease(Tween.EASE_OUT).set_trans(Tween.TRANS_ELASTIC)
+
+	# Scale collision shape in parallel during growth
+	if collision and collision.shape:
+		_attack_tween.parallel().tween_property(collision.shape, "size", target_collision_size, grow_duration).set_ease(Tween.EASE_OUT).set_trans(Tween.TRANS_ELASTIC)
+
+	# Brief pause at maximum size
+	_attack_tween.tween_interval(0.3)
+
+	# Shrink phase: scale back to original over half the duration
+	var shrink_duration = GROW_SHRINK_DURATION / 2.0
+	_attack_tween.tween_property(sprite, "scale", _grow_shrink_original_scale, shrink_duration).set_ease(Tween.EASE_IN_OUT).set_trans(Tween.TRANS_QUAD)
+
+	# Scale collision shape back to original in parallel
+	if collision and collision.shape:
+		_attack_tween.parallel().tween_property(collision.shape, "size", _grow_shrink_original_collision_size, shrink_duration).set_ease(Tween.EASE_IN_OUT).set_trans(Tween.TRANS_QUAD)
+
+	_attack_tween.tween_callback(_on_grow_shrink_complete)
+
+
+func _on_grow_shrink_complete() -> void:
+	_grow_shrink_active = false
+	_attack_state = AttackState.COOLDOWN
+	_attack_timer = attack_cooldown
+
+
+## Check if currently in grow/shrink attack (for testing)
+func is_grow_shrinking() -> bool:
+	return _grow_shrink_active
+
+
 ## Setup boss at spawn position and start entrance animation
 func setup(spawn_position: Vector2, battle_position: Vector2) -> void:
 	position = spawn_position
@@ -1161,6 +1242,7 @@ func _on_health_depleted() -> void:
 	_wall_attack_active = false
 	_square_active = false
 	_up_down_shooting_active = false
+	_grow_shrink_active = false
 
 	# Kill tweens if active
 	if _flash_tween and _flash_tween.is_valid():
@@ -1272,6 +1354,7 @@ func stop_attack_cycle() -> void:
 	_wall_attack_active = false
 	_square_active = false
 	_up_down_shooting_active = false
+	_grow_shrink_active = false
 
 	# Kill attack tween if active
 	if _attack_tween and _attack_tween.is_valid():
@@ -1307,6 +1390,7 @@ func reset_health() -> void:
 	_wall_attack_active = false
 	_square_active = false
 	_up_down_shooting_active = false
+	_grow_shrink_active = false
 
 	## Kill any active tweens
 	if _flash_tween and _flash_tween.is_valid():
@@ -1366,7 +1450,7 @@ func configure(config: Dictionary) -> void:
 	if config.has("wind_up_duration"):
 		wind_up_duration = config.wind_up_duration
 
-	# Set enabled attacks (array of attack indices: 0=barrage, 1=sweep, 2=charge, 3=solar_flare, 4=heat_wave, 5=ice_shards, 6=frozen_nova, 7=pepperoni_spread, 8=circle_movement, 9=wall_attack, 10=square_movement, 11=up_down_shooting)
+	# Set enabled attacks (array of attack indices: 0=barrage, 1=sweep, 2=charge, 3=solar_flare, 4=heat_wave, 5=ice_shards, 6=frozen_nova, 7=pepperoni_spread, 8=circle_movement, 9=wall_attack, 10=square_movement, 11=up_down_shooting, 12=grow_shrink)
 	if config.has("attacks"):
 		_enabled_attacks.clear()
 		for attack in config.attacks:

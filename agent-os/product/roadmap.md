@@ -91,7 +91,7 @@ for description) 3) square move around arena 4) repeat attack
 3 health. moves a bit faster than other enemeies. 5-10 of these special enemies
 per level
 
-21. [ ] Add a new level, level 6. This will mostly use the same approach as all
+21. [x] Add a new level, level 6. This will mostly use the same approach as all
     previous levels. A few notes:
     a. theme is rainbow colored jelly
     b. there is a new boss: jelly monster

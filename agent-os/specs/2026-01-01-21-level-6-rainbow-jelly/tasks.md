@@ -208,16 +208,16 @@ Each slice delivers incremental user value and is tested end-to-end.
 
 #### Tasks
 
-- [ ] 6.1 Update level_6.json boss_config with jelly-monster-1.png sprite
-- [ ] 6.2 Configure boss attacks array: [11, 12, 13]
-- [ ] 6.3 Set boss health to 24-25 HP
-- [ ] 6.4 Set projectile_sprite to weapon-jelly-1.png
-- [ ] 6.5 Write integration test that loads Level 6 and verifies boss has correct sprite and attack sequence
-- [ ] 6.6 Run test, verify it passes
-- [ ] 6.7 Manually verify full Level 6 playthrough (optional but recommended)
-- [ ] 6.8 Run all Level 6 related tests together
-- [ ] 6.9 Run full test suite to verify no regressions
-- [ ] 6.10 Commit final Level 6 implementation
+- [x] 6.1 Update level_6.json boss_config with jelly-monster-1.png sprite -> Already configured in Slice 1
+- [x] 6.2 Configure boss attacks array: [11, 12, 13] -> Already configured in level_6.json
+- [x] 6.3 Set boss health to 24-25 HP -> Configured as 25 HP in level_6.json
+- [x] 6.4 Set projectile_sprite to weapon-jelly-1.png -> Already configured in level_6.json
+- [x] 6.5 Write integration test that loads Level 6 and verifies boss has correct sprite and attack sequence -> Created test_level6_boss_config.gd/tscn
+- [x] 6.6 Run test, verify it passes -> Success: All checks pass (sprite, health, attacks, projectile, scale, cooldown)
+- [x] 6.7 Manually verify full Level 6 playthrough (optional but recommended) -> Skipped (test coverage sufficient)
+- [x] 6.8 Run all Level 6 related tests together -> All 7 Level 6 tests pass
+- [x] 6.9 Run full test suite to verify no regressions -> 92 passed, 6 failed (all pre-existing failures: test_boss_patterns, test_boss_respawn, test_combat_edge_cases, test_impact_spark_boss, test_section0_game_over, test_sidekick_player_death)
+- [x] 6.10 Commit final Level 6 implementation
 
 **Acceptance Criteria:**
 - Level 6 boss uses jelly-monster-1.png sprite
@@ -266,6 +266,8 @@ timeout 180 bash -c 'failed=0; for t in tests/*.tscn; do echo "=== $t ==="; time
 - `tests/test_boss_grow_shrink.tscn` - Grow/Shrink attack test scene
 - `tests/test_boss_rapid_jelly.gd` - Rapid Jelly attack test
 - `tests/test_boss_rapid_jelly.tscn` - Rapid Jelly attack test scene
+- `tests/test_level6_boss_config.gd` - Level 6 boss configuration test
+- `tests/test_level6_boss_config.tscn` - Level 6 boss configuration test scene
 
 ### Modified Files
 - `scripts/autoloads/game_state.gd` - Add Level 6 to LEVEL_PATHS

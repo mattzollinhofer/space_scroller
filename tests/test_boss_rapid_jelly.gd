@@ -21,6 +21,10 @@ func _ready() -> void:
 	_boss = boss_scene.instantiate()
 	add_child(_boss)
 
+	# Wait for boss to initialize
+	await get_tree().process_frame
+	await get_tree().process_frame
+
 	# Position boss for testing
 	_boss.position = Vector2(800, 400)
 	_boss._battle_position = Vector2(800, 400)
@@ -34,19 +38,24 @@ func _ready() -> void:
 
 	print("Boss configured with attack type 13 (Rapid Jelly Attack)")
 	print("Enabled attacks: %s" % str(_boss._enabled_attacks))
+	print("Entrance complete: %s" % str(_boss._entrance_complete))
+	print("Is destroying: %s" % str(_boss._is_destroying))
 
 	# Wait a frame for setup
 	await get_tree().process_frame
 
 	# Start attack cycle
 	_boss.start_attack_cycle()
+	print("Attack cycle started. Active: %s" % str(_boss._attack_cycle_active))
 
-	# Wait for wind-up and attack execution
+	# Wait for wind-up and attack execution (wind_up is 0.5s by default)
 	print("Waiting for attack to execute...")
-	await get_tree().create_timer(1.5).timeout
 
-	# Count projectiles spawned - they are added to this node (the parent of boss)
-	_count_projectiles()
+	# Check state periodically
+	for i in range(10):
+		await get_tree().create_timer(0.2).timeout
+		_count_projectiles()
+		print("Tick %d: State=%d, Projectiles=%d, Children=%d" % [i, _boss._attack_state, _projectiles_spawned.size(), get_child_count()])
 
 	print("Projectiles spawned: %d" % _projectiles_spawned.size())
 

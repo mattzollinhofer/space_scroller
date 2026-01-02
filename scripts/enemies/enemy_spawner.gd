@@ -22,6 +22,9 @@ extends Node2D
 ## Ghost Eye enemy scene to spawn (Level 5 special enemy)
 @export var ghost_eye_enemy_scene: PackedScene
 
+## Jelly Snail enemy scene to spawn (Level 6 special enemy)
+@export var jelly_snail_enemy_scene: PackedScene
+
 ## Star pickup scene to spawn when kill threshold is reached
 @export var star_pickup_scene: PackedScene
 
@@ -198,6 +201,8 @@ func spawn_wave(wave_configs: Array) -> void:
 					_spawn_garlic_enemy()
 				"ghost_eye":
 					_spawn_ghost_eye_enemy()
+				"jelly_snail":
+					_spawn_jelly_snail_enemy()
 				_:
 					_spawn_stationary_enemy()
 
@@ -257,6 +262,9 @@ func _try_spawn_special_enemy() -> bool:
 				"ghost_eye":
 					_spawn_ghost_eye_enemy()
 					return true
+				"jelly_snail":
+					_spawn_jelly_snail_enemy()
+					return true
 				_:
 					push_warning("Unknown special enemy type: %s" % enemy_type)
 
@@ -314,6 +322,15 @@ func _spawn_ghost_eye_enemy() -> void:
 		return
 
 	var enemy = ghost_eye_enemy_scene.instantiate()
+	_setup_enemy(enemy)
+
+
+func _spawn_jelly_snail_enemy() -> void:
+	if not jelly_snail_enemy_scene:
+		push_warning("No jelly snail enemy scene assigned to EnemySpawner")
+		return
+
+	var enemy = jelly_snail_enemy_scene.instantiate()
 	_setup_enemy(enemy)
 
 

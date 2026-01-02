@@ -59,23 +59,22 @@ Each slice delivers incremental user value and is tested end-to-end.
 
 #### Tasks
 
-- [ ] 2.1 Write integration test that verifies Jelly Snail enemy has correct properties (5 HP, 6.0s fire rate, 60-80 zigzag speed, jelly-snail-1.png sprite)
-- [ ] 2.2 Run test, verify expected failure (no jelly_snail_enemy.tscn exists)
-- [ ] 2.3 Make smallest change possible to progress
-- [ ] 2.4 Run test, observe failure or success
-- [ ] 2.5 Document result and update task list
-- [ ] 2.6 Repeat 2.3-2.5 as necessary (expected: create jelly_snail_enemy.gd extending ShootingEnemy, create jelly_snail_enemy.tscn, configure properties)
-- [ ] 2.7 Write test that verifies Jelly Snail can be spawned via EnemySpawner
-- [ ] 2.8 Run test, verify expected failure
-- [ ] 2.9 Add jelly_snail_enemy_scene export to EnemySpawner
-- [ ] 2.10 Add "jelly_snail" case to spawn_wave match statement
-- [ ] 2.11 Add "jelly_snail" case to _try_spawn_special_enemy match
-- [ ] 2.12 Add _spawn_jelly_snail_enemy function
-- [ ] 2.13 Run test, verify success
-- [ ] 2.14 Update level_6.json special_enemies config to include jelly_snail spawning
-- [ ] 2.15 Refactor if needed (keep tests green)
-- [ ] 2.16 Run enemy-related tests to verify no regressions
-- [ ] 2.17 Commit working slice
+- [x] 2.1 Write integration test that verifies Jelly Snail enemy has correct properties (5 HP, 6.0s fire rate, 60-80 zigzag speed, jelly-snail-1.png sprite) -> Created test_jelly_snail_enemy.gd/tscn
+- [x] 2.2 Run test, verify expected failure (no jelly_snail_enemy.tscn exists) -> Failed: "Jelly Snail enemy scene does not exist"
+- [x] 2.3 Create jelly_snail_enemy.gd extending ShootingEnemy with correct properties -> Success
+- [x] 2.4 Create jelly_snail_enemy.tscn with jelly-snail-1.png sprite -> Success
+- [x] 2.5 Run test, observe success -> All 5 property checks pass
+- [x] 2.7 Write test that verifies Jelly Snail can be spawned via EnemySpawner -> Created test_jelly_snail_spawner.gd/tscn
+- [x] 2.8 Run test, verify expected failure -> Failed: "EnemySpawner missing jelly_snail_enemy_scene export property"
+- [x] 2.9 Add jelly_snail_enemy_scene export to EnemySpawner -> Success
+- [x] 2.10 Add "jelly_snail" case to spawn_wave match statement -> Success
+- [x] 2.11 Add "jelly_snail" case to _try_spawn_special_enemy match -> Success
+- [x] 2.12 Add _spawn_jelly_snail_enemy function -> Success
+- [x] 2.13 Update main.tscn to reference jelly_snail_enemy_scene -> Success
+- [x] 2.14 Run spawner test, verify success -> All checks pass
+- [x] 2.15 level_6.json already has jelly_snail in special_enemies config (from Slice 1) -> Already configured
+- [x] 2.16 Run enemy-related tests to verify no regressions -> All 11 enemy tests pass
+- [x] 2.17 Commit working slice
 
 **Acceptance Criteria:**
 - Jelly Snail enemy has 5 HP, 6.0s fire rate, 60-80 zigzag speed

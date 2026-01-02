@@ -100,19 +100,24 @@ Each slice delivers incremental user value and is tested end-to-end.
 
 #### Tasks
 
-- [ ] 3.1 Write integration test that verifies boss with attack type 11 moves vertically while spawning projectiles
-- [ ] 3.2 Run test, verify expected failure (attack type 11 not recognized)
-- [ ] 3.3 Make smallest change possible to progress
-- [ ] 3.4 Run test, observe failure or success
-- [ ] 3.5 Document result and update task list
-- [ ] 3.6 Repeat 3.3-3.5 as necessary (expected: add _up_down_shooting_active flag, add case 11 to _execute_attack, implement _attack_up_down_shooting with vertical movement + continuous projectile firing, add _on_up_down_shooting_complete callback)
-- [ ] 3.7 Add COLOR_JELLY constant for pink/jelly telegraph color
-- [ ] 3.8 Update telegraph color logic for attack types 11-13
-- [ ] 3.9 Update _on_health_depleted to reset _up_down_shooting_active
-- [ ] 3.10 Add is_up_down_shooting() helper for testing
-- [ ] 3.11 Refactor if needed (keep tests green)
-- [ ] 3.12 Run boss-related tests to verify no regressions
-- [ ] 3.13 Commit working slice
+- [x] 3.1 Write integration test that verifies boss with attack type 11 moves vertically while spawning projectiles -> Created test_boss_up_down_shooting.gd/tscn
+- [x] 3.2 Run test, verify expected failure (attack type 11 not recognized) -> Failed: "Boss did not move vertically enough. Y travel: 0.000000"
+- [x] 3.3-3.6 Implemented up/down shooting attack:
+  - Added _up_down_shooting_active flag and timer variables
+  - Added case 11 to _execute_attack match statement
+  - Implemented _attack_up_down_shooting with full vertical traverse (Y_MIN to Y_MAX and back)
+  - Implemented _process_up_down_shooting_projectiles for continuous fire during movement
+  - Implemented _fire_up_down_shooting_projectile to spawn projectiles
+  - Added _on_up_down_shooting_complete callback
+  - Updated _process to call _process_up_down_shooting_projectiles when active
+  - Updated _process_attack_state to wait for _up_down_shooting_active to complete
+- [x] 3.7 Add COLOR_JELLY constant for pink/jelly telegraph color -> Added Color(1, 0.5, 0.8, 1)
+- [x] 3.8 Update telegraph color logic for attack types 11-13 -> Added pink/magenta warning Color(2.0, 1.0, 1.6, 1.0)
+- [x] 3.9 Update _on_health_depleted to reset _up_down_shooting_active -> Done
+- [x] 3.10 Add is_up_down_shooting() helper for testing -> Done
+- [x] 3.11 Refactor if needed (keep tests green) -> No refactoring needed
+- [x] 3.12 Run boss-related tests to verify no regressions -> 13/15 boss tests pass (test_boss_respawn and test_boss_patterns were already failing before changes - pre-existing issues)
+- [x] 3.13 Commit working slice
 
 **Acceptance Criteria:**
 - Boss with attack type 11 configured moves vertically across screen

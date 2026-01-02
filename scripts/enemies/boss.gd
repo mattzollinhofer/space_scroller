@@ -50,7 +50,7 @@ var _battle_position: Vector2 = Vector2.ZERO
 enum AttackState { IDLE, WIND_UP, ATTACKING, COOLDOWN }
 var _attack_state: AttackState = AttackState.IDLE
 
-## Current attack pattern index (0 = barrage, 1 = sweep, 2 = charge, 3 = solar flare, 4 = heat wave, 5 = ice shards, 6 = frozen nova, 7 = pepperoni spread, 8 = circle movement, 9 = wall attack, 10 = square movement)
+## Current attack pattern index (0 = barrage, 1 = sweep, 2 = charge, 3 = solar flare, 4 = heat wave, 5 = ice shards, 6 = frozen nova, 7 = pepperoni spread, 8 = circle movement, 9 = wall attack, 10 = square movement, 11 = up/down shooting)
 var _current_pattern: int = 0
 
 ## Attack cooldown timer
@@ -78,6 +78,7 @@ const COLOR_FIRE: Color = Color(1, 0.6, 0.2, 1)     # Orange (solar flare, heat 
 const COLOR_ICE: Color = Color(0.3, 0.8, 1, 1)      # Cyan (ice shards, frozen nova)
 const COLOR_PIZZA: Color = Color(1, 0.4, 0.2, 1)    # Red-orange (pepperoni)
 const COLOR_GHOST: Color = Color(0.6, 0.4, 1, 1)    # Purple/blue (ghost attacks)
+const COLOR_JELLY: Color = Color(1, 0.5, 0.8, 1)    # Pink/magenta (jelly attacks)
 
 ## Reference to player for charge attack targeting
 var _player: Node2D = null
@@ -112,7 +113,7 @@ var _charge_target_x: float = 0.0
 ## Shake node for screen shake effect
 var _shake_node: Node2D = null
 
-## Which attack patterns are enabled (0=barrage, 1=sweep, 2=charge, 3=solar_flare, 4=heat_wave, 5=ice_shards, 6=frozen_nova, 7=pepperoni_spread, 8=circle_movement, 9=wall_attack, 10=square_movement)
+## Which attack patterns are enabled (0=barrage, 1=sweep, 2=charge, 3=solar_flare, 4=heat_wave, 5=ice_shards, 6=frozen_nova, 7=pepperoni_spread, 8=circle_movement, 9=wall_attack, 10=square_movement, 11=up_down_shooting)
 var _enabled_attacks: Array[int] = [0, 1, 2]
 
 ## Number of attack patterns enabled
@@ -132,6 +133,15 @@ var _wall_attack_active: bool = false
 
 ## Whether currently in a square movement attack
 var _square_active: bool = false
+
+## Whether currently in an up/down shooting attack
+var _up_down_shooting_active: bool = false
+
+## Up/down shooting projectile interval timer
+var _up_down_shooting_projectile_timer: float = 0.0
+
+## Up/down shooting projectile fire interval
+@export var up_down_shooting_fire_interval: float = 0.2
 
 ## Emitted when the boss is defeated
 signal boss_defeated()
@@ -201,6 +211,10 @@ func _process(delta: float) -> void:
 	if _heat_wave_active:
 		_process_heat_wave_projectiles(delta)
 
+	# Process up/down shooting attack projectile firing
+	if _up_down_shooting_active:
+		_process_up_down_shooting_projectiles(delta)
+
 	# Process attack state machine
 	_process_attack_state(delta)
 
@@ -224,8 +238,8 @@ func _process_attack_state(delta: float) -> void:
 				_execute_attack()
 
 		AttackState.ATTACKING:
-			# For sweep, charge, heat wave, circle, wall attack, and square movement, wait for tween to complete
-			if _sweep_active or _charge_active or _heat_wave_active or _circle_active or _wall_attack_active or _square_active:
+			# For sweep, charge, heat wave, circle, wall attack, square movement, and up/down shooting, wait for tween to complete
+			if _sweep_active or _charge_active or _heat_wave_active or _circle_active or _wall_attack_active or _square_active or _up_down_shooting_active:
 				return
 			# Attack execution is instant for barrage, move to cooldown
 			_attack_state = AttackState.COOLDOWN
@@ -264,6 +278,8 @@ func _play_attack_telegraph() -> void:
 		warning_color = Color(2.0, 1.2, 0.6, 1.0)  # Pizza red-orange tint
 	elif attack_type == 9 or attack_type == 10:  # Wall Attack or Square Movement - ghost purple/blue tint
 		warning_color = Color(1.2, 0.8, 2.0, 1.0)  # Ghost purple/blue tint
+	elif attack_type >= 11 and attack_type <= 13:  # Jelly attacks (up/down shooting, grow/shrink, rapid jelly) - pink/magenta tint
+		warning_color = Color(2.0, 1.0, 1.6, 1.0)  # Pink/magenta jelly tint
 	else:  # Barrage or sweep
 		warning_color = Color(1.5, 1.0, 1.0, 1.0)  # Subtle red tint
 
@@ -320,6 +336,8 @@ func _execute_attack() -> void:
 			_attack_wall()
 		10:
 			_attack_square_movement()
+		11:
+			_attack_up_down_shooting()
 
 
 func _attack_horizontal_barrage() -> void:
@@ -956,6 +974,79 @@ func is_square_moving() -> bool:
 	return _square_active
 
 
+func _attack_up_down_shooting() -> void:
+	## Up/Down Shooting: Boss moves vertically across full screen while firing projectiles
+	## Jelly-themed attack for Level 6 boss - continuous fire during vertical sweep
+	if _attack_tween and _attack_tween.is_valid():
+		_attack_tween.kill()
+
+	_up_down_shooting_active = true
+	_up_down_shooting_projectile_timer = 0.0  # Fire immediately
+
+	# Determine sweep direction based on current position
+	var sweep_up = position.y > (Y_MIN + Y_MAX) / 2.0
+
+	# Create sweep tween - full vertical traverse
+	_attack_tween = create_tween()
+
+	if sweep_up:
+		# Sweep up to min, then down to max, then back to battle position
+		_attack_tween.tween_property(self, "position:y", Y_MIN, 1.0).set_ease(Tween.EASE_IN_OUT).set_trans(Tween.TRANS_SINE)
+		_attack_tween.tween_property(self, "position:y", Y_MAX, 1.5).set_ease(Tween.EASE_IN_OUT).set_trans(Tween.TRANS_SINE)
+		_attack_tween.tween_property(self, "position:y", _battle_position.y, 0.8).set_ease(Tween.EASE_OUT).set_trans(Tween.TRANS_QUAD)
+	else:
+		# Sweep down to max, then up to min, then back to battle position
+		_attack_tween.tween_property(self, "position:y", Y_MAX, 1.0).set_ease(Tween.EASE_IN_OUT).set_trans(Tween.TRANS_SINE)
+		_attack_tween.tween_property(self, "position:y", Y_MIN, 1.5).set_ease(Tween.EASE_IN_OUT).set_trans(Tween.TRANS_SINE)
+		_attack_tween.tween_property(self, "position:y", _battle_position.y, 0.8).set_ease(Tween.EASE_OUT).set_trans(Tween.TRANS_QUAD)
+
+	_attack_tween.tween_callback(_on_up_down_shooting_complete)
+
+
+func _process_up_down_shooting_projectiles(delta: float) -> void:
+	## Fire projectiles at intervals during up/down shooting attack
+	_up_down_shooting_projectile_timer -= delta
+	if _up_down_shooting_projectile_timer <= 0:
+		_up_down_shooting_projectile_timer = up_down_shooting_fire_interval
+		_fire_up_down_shooting_projectile()
+
+
+func _fire_up_down_shooting_projectile() -> void:
+	## Fire a single jelly projectile to the left
+	if not boss_projectile_scene:
+		return
+
+	var projectile = boss_projectile_scene.instantiate()
+	projectile.position = position + Vector2(-100, 0)
+
+	# Direction straight left
+	var direction = Vector2(-1, 0)
+	if projectile.has_method("set_direction"):
+		projectile.set_direction(direction)
+	else:
+		projectile.direction = direction
+
+	_apply_projectile_texture(projectile)
+
+	var parent = get_parent()
+	if parent:
+		parent.add_child(projectile)
+
+	attack_fired.emit()
+	_play_sfx("boss_attack")
+
+
+func _on_up_down_shooting_complete() -> void:
+	_up_down_shooting_active = false
+	_attack_state = AttackState.COOLDOWN
+	_attack_timer = attack_cooldown
+
+
+## Check if currently in up/down shooting attack (for testing)
+func is_up_down_shooting() -> bool:
+	return _up_down_shooting_active
+
+
 ## Setup boss at spawn position and start entrance animation
 func setup(spawn_position: Vector2, battle_position: Vector2) -> void:
 	position = spawn_position
@@ -1069,6 +1160,7 @@ func _on_health_depleted() -> void:
 	_circle_active = false
 	_wall_attack_active = false
 	_square_active = false
+	_up_down_shooting_active = false
 
 	# Kill tweens if active
 	if _flash_tween and _flash_tween.is_valid():
@@ -1179,6 +1271,7 @@ func stop_attack_cycle() -> void:
 	_circle_active = false
 	_wall_attack_active = false
 	_square_active = false
+	_up_down_shooting_active = false
 
 	# Kill attack tween if active
 	if _attack_tween and _attack_tween.is_valid():
@@ -1213,6 +1306,7 @@ func reset_health() -> void:
 	_circle_active = false
 	_wall_attack_active = false
 	_square_active = false
+	_up_down_shooting_active = false
 
 	## Kill any active tweens
 	if _flash_tween and _flash_tween.is_valid():
@@ -1272,7 +1366,7 @@ func configure(config: Dictionary) -> void:
 	if config.has("wind_up_duration"):
 		wind_up_duration = config.wind_up_duration
 
-	# Set enabled attacks (array of attack indices: 0=barrage, 1=sweep, 2=charge, 3=solar_flare, 4=heat_wave, 5=ice_shards, 6=frozen_nova, 7=pepperoni_spread, 8=circle_movement, 9=wall_attack, 10=square_movement)
+	# Set enabled attacks (array of attack indices: 0=barrage, 1=sweep, 2=charge, 3=solar_flare, 4=heat_wave, 5=ice_shards, 6=frozen_nova, 7=pepperoni_spread, 8=circle_movement, 9=wall_attack, 10=square_movement, 11=up_down_shooting)
 	if config.has("attacks"):
 		_enabled_attacks.clear()
 		for attack in config.attacks:

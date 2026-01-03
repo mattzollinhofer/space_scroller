@@ -1,5 +1,5 @@
 {
-  "total_distance": 24000,
+  "total_distance": 18000,
   "enemy_config": {
     "zigzag_speed_min": 170,
     "zigzag_speed_max": 230,
@@ -15,7 +15,7 @@
       "health": 22,
       "scale": 1.5,
       "attacks": [9, 10],
-      "attack_cooldown": 1.0,
+      "attack_cooldown": 1.1,
       "explosion_scale": 2.0,
       "projectile_sprite": "res://assets/sprites/ghost-attack-1.png"
     },

@@ -1,5 +1,5 @@
 {
-  "total_distance": 16000,
+  "total_distance": 12000,
   "enemy_config": {
     "zigzag_speed_min": 120,
     "zigzag_speed_max": 170,
@@ -14,8 +14,8 @@
     "boss_config": {
       "health": 13,
       "scale": 1.75,
-      "attacks": [0, 3, 4],
-      "attack_cooldown": 1.3,
+      "attacks": [0, 3],
+      "attack_cooldown": 2.0,
       "explosion_scale": 2.0,
       "projectile_sprite": "res://assets/sprites/weapon-shark-1.png"
     }

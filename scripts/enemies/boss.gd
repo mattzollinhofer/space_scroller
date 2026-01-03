@@ -46,6 +46,9 @@ var _shake_tween: Tween = null
 ## Tween for attack telegraph effect
 var _telegraph_tween: Tween = null
 
+## Tween for idle drift movement
+var _drift_tween: Tween = null
+
 ## Battle position (right third of screen)
 var _battle_position: Vector2 = Vector2.ZERO
 
@@ -74,6 +77,9 @@ var _attack_cycle_active: bool = false
 ## Y bounds for vertical sweep (from base_enemy.gd)
 const Y_MIN: float = 140.0
 const Y_MAX: float = 1396.0
+
+## Idle drift range (boss drifts this far from current position during cooldown)
+const IDLE_DRIFT_RANGE: float = 200.0
 
 ## Projectile colors for themed attacks
 const COLOR_DEFAULT: Color = Color(1, 0.3, 0.3, 1)  # Red (barrage, sweep)
@@ -115,6 +121,9 @@ var _charge_target_x: float = 0.0
 
 ## Custom explosion sprite path (optional, uses default if empty)
 var explosion_sprite: String = ""
+
+## Level number (for level-specific sounds)
+var _level_number: int = 0
 
 ## Shake node for screen shake effect
 var _shake_node: Node2D = null
@@ -247,6 +256,7 @@ func _process_attack_state(delta: float) -> void:
 	match _attack_state:
 		AttackState.IDLE:
 			# Start wind-up for next attack
+			_stop_idle_drift()  # Stop any drift before attacking
 			_attack_state = AttackState.WIND_UP
 			_attack_timer = wind_up_duration
 			# Play telegraph effect at start of wind-up
@@ -265,6 +275,7 @@ func _process_attack_state(delta: float) -> void:
 			# Attack execution is instant for barrage, move to cooldown
 			_attack_state = AttackState.COOLDOWN
 			_attack_timer = attack_cooldown
+			_start_idle_drift()  # Drift during cooldown
 
 		AttackState.COOLDOWN:
 			_attack_timer -= delta
@@ -326,6 +337,28 @@ func _stop_attack_telegraph() -> void:
 	var sprite = get_node_or_null("AnimatedSprite2D")
 	if sprite:
 		sprite.modulate = Color(1, 1, 1, 1)
+
+
+func _start_idle_drift() -> void:
+	## Start a slow drift to a new Y position during cooldown
+	## Makes the boss feel more alive and unpredictable
+	if _drift_tween and _drift_tween.is_valid():
+		_drift_tween.kill()
+
+	# Calculate new target Y within drift range, clamped to bounds
+	var drift_offset = randf_range(-IDLE_DRIFT_RANGE, IDLE_DRIFT_RANGE)
+	var target_y = clampf(position.y + drift_offset, Y_MIN + 100, Y_MAX - 100)
+
+	# Drift slowly to new position
+	_drift_tween = create_tween()
+	_drift_tween.tween_property(self, "position:y", target_y, attack_cooldown * 0.8).set_ease(Tween.EASE_IN_OUT).set_trans(Tween.TRANS_SINE)
+
+
+func _stop_idle_drift() -> void:
+	## Stop any active drift movement
+	if _drift_tween and _drift_tween.is_valid():
+		_drift_tween.kill()
+		_drift_tween = null
 
 
 func _execute_attack() -> void:
@@ -469,6 +502,7 @@ func _on_sweep_complete() -> void:
 	_sweep_active = false
 	_attack_state = AttackState.COOLDOWN
 	_attack_timer = attack_cooldown
+	_start_idle_drift()
 
 
 func _attack_charge() -> void:
@@ -508,6 +542,7 @@ func _on_charge_complete() -> void:
 	_charge_active = false
 	_attack_state = AttackState.COOLDOWN
 	_attack_timer = attack_cooldown
+	_start_idle_drift()
 
 
 func _apply_projectile_texture(projectile: Node) -> void:
@@ -634,6 +669,7 @@ func _on_heat_wave_complete() -> void:
 	_heat_wave_active = false
 	_attack_state = AttackState.COOLDOWN
 	_attack_timer = attack_cooldown
+	_start_idle_drift()
 
 
 func _attack_ice_shards() -> void:
@@ -849,6 +885,7 @@ func _on_circle_complete() -> void:
 	_circle_clockwise = not _circle_clockwise
 	_attack_state = AttackState.COOLDOWN
 	_attack_timer = attack_cooldown
+	_start_idle_drift()
 
 
 ## Check if currently in circle movement (for testing)
@@ -945,6 +982,7 @@ func _on_wall_attack_complete() -> void:
 	_wall_attack_active = false
 	_attack_state = AttackState.COOLDOWN
 	_attack_timer = attack_cooldown
+	_start_idle_drift()
 
 
 ## Check if currently in wall attack (for testing)
@@ -1000,6 +1038,7 @@ func _on_square_complete() -> void:
 	_square_active = false
 	_attack_state = AttackState.COOLDOWN
 	_attack_timer = attack_cooldown
+	_start_idle_drift()
 
 
 ## Check if currently in square movement (for testing)
@@ -1073,6 +1112,7 @@ func _on_up_down_shooting_complete() -> void:
 	_up_down_shooting_active = false
 	_attack_state = AttackState.COOLDOWN
 	_attack_timer = attack_cooldown
+	_start_idle_drift()
 
 
 ## Check if currently in up/down shooting attack (for testing)
@@ -1144,6 +1184,7 @@ func _on_grow_shrink_complete() -> void:
 	_grow_shrink_active = false
 	_attack_state = AttackState.COOLDOWN
 	_attack_timer = attack_cooldown
+	_start_idle_drift()
 
 
 ## Check if currently in grow/shrink attack (for testing)
@@ -1502,6 +1543,10 @@ func is_heat_waving() -> bool:
 
 ## Configure boss from level metadata
 func configure(config: Dictionary) -> void:
+	# Set level number (for level-specific sounds)
+	if config.has("level_number"):
+		_level_number = config.level_number
+
 	# Set health
 	if config.has("health"):
 		health = config.health
@@ -1564,4 +1609,8 @@ func configure(config: Dictionary) -> void:
 ## Play a sound effect via AudioManager
 func _play_sfx(sfx_name: String) -> void:
 	if has_node("/root/AudioManager"):
-		get_node("/root/AudioManager").play_sfx(sfx_name)
+		var actual_sfx = sfx_name
+		# Use level-specific boss attack sound if available (levels 1-3)
+		if sfx_name == "boss_attack" and _level_number >= 1 and _level_number <= 3:
+			actual_sfx = "boss_attack_%d" % _level_number
+		get_node("/root/AudioManager").play_sfx(actual_sfx)

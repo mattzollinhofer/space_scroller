@@ -909,8 +909,8 @@ func _attack_wall() -> void:
 
 	_wall_attack_active = true
 
-	# Create 4 projectiles - 2 fan upward, 2 fan downward
-	var projectile_count = 4
+	# Create 6 projectiles - 3 fan upward, 3 fan downward
+	var projectile_count = 6
 	var vertical_spread = 300.0  # How far they spread vertically
 	var fan_duration = 0.5  # Time to fan out
 	var projectiles: Array = []

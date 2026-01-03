@@ -42,6 +42,12 @@ var _flash_tween: Tween = null
 ## Custom explosion sprite path (optional, set by spawner from level config)
 var explosion_sprite: String = ""
 
+## Burst velocity for death spawn effects (decays over time)
+var _burst_velocity: Vector2 = Vector2.ZERO
+
+## Burst velocity decay rate (how quickly it slows down)
+const BURST_DECAY_RATE: float = 3.0
+
 ## Emitted when the enemy dies
 signal died()
 

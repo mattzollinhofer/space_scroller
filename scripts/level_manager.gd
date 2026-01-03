@@ -651,8 +651,8 @@ func _on_boss_defeated() -> void:
 		else:
 			_boss_health_bar.visible = false
 
-	# Wait a moment then show level complete screen
-	await get_tree().create_timer(1.0).timeout
+	# Wait for boss explosion animation to complete before showing level complete
+	await get_tree().create_timer(2.5).timeout
 	_show_level_complete_screen()
 
 

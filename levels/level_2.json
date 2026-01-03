@@ -17,6 +17,7 @@
       "attacks": [0, 3],
       "attack_cooldown": 4.0,
       "explosion_scale": 2.0,
+      "explosion_sprite": "res://assets/sprites/explosion-red-shark-1.png",
       "projectile_sprite": "res://assets/sprites/weapon-shark-1.png"
     }
   },

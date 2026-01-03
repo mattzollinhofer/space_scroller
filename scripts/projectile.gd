@@ -25,6 +25,9 @@ func _ready() -> void:
 	# Preload impact spark scene
 	_impact_spark_scene = load("res://scenes/impact_spark.tscn")
 
+	# Swap sprite based on selected character
+	_apply_character_projectile_sprite()
+
 
 func _process(delta: float) -> void:
 	# Move right
@@ -43,6 +46,20 @@ func _on_area_entered(area: Area2D) -> void:
 		_spawn_impact_spark()
 		# Destroy projectile on hit
 		queue_free()
+
+
+## Apply character-specific projectile sprite if one exists
+func _apply_character_projectile_sprite() -> void:
+	if not has_node("/root/GameState"):
+		return
+
+	var sprite_path = GameState.get_character_projectile_sprite(GameState.get_selected_character())
+	if sprite_path.is_empty():
+		return
+
+	var sprite_node = get_node_or_null("Sprite2D")
+	if sprite_node and ResourceLoader.exists(sprite_path):
+		sprite_node.texture = load(sprite_path)
 
 
 ## Spawns impact spark particle effect at current position

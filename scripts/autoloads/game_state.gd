@@ -98,6 +98,15 @@ func get_character_texture_path(character_id: String) -> String:
 			return "res://assets/sprites/player.png"
 
 
+## Get the projectile sprite path for a character (empty string = use default)
+func get_character_projectile_sprite(character_id: String) -> String:
+	match character_id:
+		CHARACTER_SPACE_DRAGON:
+			return "res://assets/sprites/weapon-dragon-1.png"
+		_:
+			return ""  # Use default laser-bolt
+
+
 ## Get the display name for a character
 func get_character_display_name(character_id: String) -> String:
 	match character_id:

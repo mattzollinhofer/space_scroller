@@ -125,6 +125,18 @@ var _charge_target_x: float = 0.0
 ## Custom explosion sprite path (optional, uses default if empty)
 var explosion_sprite: String = ""
 
+## Explosion color modulate (default white = no tint)
+var explosion_color: Color = Color.WHITE
+
+## Number of enemies to spawn on death (0 = none)
+var death_spawn_count: int = 0
+
+## Scene path for enemies spawned on death
+var death_spawn_scene: String = ""
+
+## Sprite override for death-spawned enemies (optional)
+var death_spawn_sprite: String = ""
+
 ## Level number (for level-specific sounds)
 var _level_number: int = 0
 
@@ -1427,13 +1439,39 @@ func _play_destruction_animation() -> void:
 	var explosion = Sprite2D.new()
 	explosion.texture = explosion_texture
 	explosion.scale = Vector2(explosion_scale, explosion_scale)
+	explosion.modulate = explosion_color
 	add_child(explosion)
 
-	# Animate explosion: scale up further and fade out
+	# Spawn death gummy bears that fly outward
+	if death_spawn_count > 0 and death_spawn_sprite != "":
+		var spawn_texture = load(death_spawn_sprite)
+		if spawn_texture:
+			for i in range(death_spawn_count):
+				var gummy = Sprite2D.new()
+				gummy.texture = spawn_texture
+				gummy.scale = Vector2(0.5, 0.5)
+				gummy.z_index = 1
+				get_parent().add_child(gummy)
+				gummy.global_position = global_position
+
+				# Random direction outward
+				var angle = randf() * TAU
+				var distance = randf_range(150, 300)
+				var target_pos = global_position + Vector2(cos(angle), sin(angle)) * distance
+
+				# Animate flying outward and fading (longer for dramatic effect)
+				var gummy_tween = gummy.create_tween()
+				gummy_tween.set_parallel(true)
+				gummy_tween.tween_property(gummy, "global_position", target_pos, 1.2).set_ease(Tween.EASE_OUT)
+				gummy_tween.tween_property(gummy, "rotation", randf_range(-PI, PI) * 2, 1.2)
+				gummy_tween.tween_property(gummy, "modulate:a", 0.0, 1.0).set_ease(Tween.EASE_IN).set_delay(0.5)
+				gummy_tween.chain().tween_callback(gummy.queue_free)
+
+	# Animate explosion: scale up further and fade out (longer duration for boss)
 	var tween = create_tween()
 	tween.set_parallel(true)
-	tween.tween_property(explosion, "scale", Vector2(explosion_scale * 1.5, explosion_scale * 1.5), 0.8).set_ease(Tween.EASE_OUT)
-	tween.tween_property(explosion, "modulate:a", 0.0, 0.8).set_ease(Tween.EASE_IN)
+	tween.tween_property(explosion, "scale", Vector2(explosion_scale * 2.0, explosion_scale * 2.0), 1.5).set_ease(Tween.EASE_OUT)
+	tween.tween_property(explosion, "modulate:a", 0.0, 1.5).set_ease(Tween.EASE_IN).set_delay(0.3)
 
 	# Queue free after animation completes
 	tween.chain().tween_callback(queue_free)
@@ -1612,6 +1650,20 @@ func configure(config: Dictionary) -> void:
 	# Set projectile scale (for larger/more visible projectiles)
 	if config.has("projectile_scale"):
 		_projectile_scale = config["projectile_scale"]
+
+	# Set explosion color tint
+	if config.has("explosion_color"):
+		var c = config["explosion_color"]
+		if c is Array and c.size() >= 4:
+			explosion_color = Color(c[0], c[1], c[2], c[3])
+
+	# Set death spawn configuration
+	if config.has("death_spawn_count"):
+		death_spawn_count = int(config["death_spawn_count"])
+	if config.has("death_spawn_scene"):
+		death_spawn_scene = config["death_spawn_scene"]
+	if config.has("death_spawn_sprite"):
+		death_spawn_sprite = config["death_spawn_sprite"]
 
 
 ## Play a sound effect via AudioManager

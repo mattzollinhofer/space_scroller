@@ -8,7 +8,11 @@
       "attacks": [0],
       "attack_cooldown": 5.0,
       "explosion_scale": 1.75,
-      "projectile_sprite": "res://assets/sprites/weapon-gummy-1.png"
+      "explosion_sprite": "res://assets/sprites/explosion-purple-gummy-1.png",
+      "projectile_sprite": "res://assets/sprites/weapon-gummy-1.png",
+      "explosion_color": [0.7, 0.3, 1.0, 1.0],
+      "death_spawn_count": 10,
+      "death_spawn_sprite": "res://assets/sprites/weapon-gummy-1.png"
     }
   },
   "enemy_config": {

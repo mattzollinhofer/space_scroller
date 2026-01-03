@@ -110,6 +110,9 @@ var _charge_target_x: float = 0.0
 ## Explosion scale multiplier (boss is larger than regular enemies, adjusted for 256px sprites)
 @export var explosion_scale: float = 2.0
 
+## Custom explosion sprite path (optional, uses default if empty)
+var explosion_sprite: String = ""
+
 ## Shake node for screen shake effect
 var _shake_node: Node2D = null
 
@@ -1355,8 +1358,9 @@ func _play_destruction_animation() -> void:
 	if sprite:
 		sprite.visible = false
 
-	# Create large boss explosion
-	var explosion_texture = load("res://assets/sprites/explosion.png")
+	# Create large boss explosion (use custom if set, otherwise default)
+	var explosion_path = explosion_sprite if explosion_sprite != "" else "res://assets/sprites/explosion.png"
+	var explosion_texture = load(explosion_path)
 	var explosion = Sprite2D.new()
 	explosion.texture = explosion_texture
 	explosion.scale = Vector2(explosion_scale, explosion_scale)
@@ -1520,6 +1524,10 @@ func configure(config: Dictionary) -> void:
 	# Set explosion scale
 	if config.has("explosion_scale"):
 		explosion_scale = config.explosion_scale
+
+	# Set custom explosion sprite
+	if config.has("explosion_sprite"):
+		explosion_sprite = config["explosion_sprite"]
 
 	# Set custom projectile texture
 	if config.has("projectile_sprite"):

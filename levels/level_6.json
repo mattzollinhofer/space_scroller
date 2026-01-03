@@ -10,6 +10,7 @@
     "scroll_speed_multiplier": 1.40,
     "background_theme": "jelly",
     "background_modulate": [1.0, 0.7, 0.9, 1.0],
+    "explosion_sprite": "res://assets/sprites/rainbow-explosion-1.png",
     "boss_sprite": "res://assets/sprites/jelly-monster-1.png",
     "boss_config": {
       "health": 25,
@@ -17,6 +18,7 @@
       "attacks": [11, 12, 13],
       "attack_cooldown": 1.0,
       "explosion_scale": 2.0,
+      "explosion_sprite": "res://assets/sprites/rainbow-explosion-1.png",
       "projectile_sprite": "res://assets/sprites/weapon-jelly-1.png"
     },
     "special_enemies": [

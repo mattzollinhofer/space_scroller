@@ -269,6 +269,11 @@ func _setup_wave_based_spawning() -> void:
 	if not special_enemies.is_empty() and _enemy_spawner and _enemy_spawner.has_method("set_filler_spawning"):
 		_enemy_spawner.set_filler_spawning(true)
 
+	# Pass custom explosion sprite to spawner if configured
+	var explosion_sprite = _level_metadata.get("explosion_sprite", "")
+	if explosion_sprite != "" and _enemy_spawner and _enemy_spawner.has_method("set_explosion_sprite"):
+		_enemy_spawner.set_explosion_sprite(explosion_sprite)
+
 
 func _connect_player_signals() -> void:
 	if _player and _player.has_signal("died"):

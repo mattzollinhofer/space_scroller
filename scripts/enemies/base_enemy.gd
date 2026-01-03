@@ -39,6 +39,9 @@ var _is_destroying: bool = false
 ## Tween for flash effect (to avoid overlapping tweens)
 var _flash_tween: Tween = null
 
+## Custom explosion sprite path (optional, set by spawner from level config)
+var explosion_sprite: String = ""
+
 ## Emitted when the enemy dies
 signal died()
 
@@ -184,8 +187,9 @@ func _play_destruction_animation() -> void:
 	if sprite:
 		sprite.visible = false
 
-	# Create explosion sprite
-	var explosion_texture = load("res://assets/sprites/explosion.png")
+	# Create explosion sprite (use custom if set, otherwise default)
+	var explosion_path = explosion_sprite if explosion_sprite != "" else "res://assets/sprites/explosion.png"
+	var explosion_texture = load(explosion_path)
 	var explosion = Sprite2D.new()
 	explosion.texture = explosion_texture
 	explosion.scale = SpriteSizes.EXPLOSION_ENEMY

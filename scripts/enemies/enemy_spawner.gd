@@ -89,6 +89,9 @@ var _enemy_config: Dictionary = {}
 ## Special enemies configuration (level-specific special enemy spawning rules)
 var _special_enemies_config: Array = []
 
+## Custom explosion sprite path (set by LevelManager from level config)
+var _explosion_sprite: String = ""
+
 ## Current section index (set by LevelManager for special enemy spawning)
 var _current_section: int = 0
 
@@ -175,6 +178,11 @@ func set_enemy_config(config: Dictionary) -> void:
 ## Set special enemies configuration from level metadata
 func set_special_enemies_config(config: Array) -> void:
 	_special_enemies_config = config
+
+
+## Set custom explosion sprite path (called by LevelManager from level config)
+func set_explosion_sprite(sprite_path: String) -> void:
+	_explosion_sprite = sprite_path
 
 
 ## Update current section index (called by LevelManager on section change)
@@ -342,6 +350,10 @@ func _setup_enemy(enemy: Node2D) -> void:
 
 	# Apply level-specific enemy config (zigzag parameters)
 	_apply_enemy_config(enemy)
+
+	# Apply custom explosion sprite if set
+	if _explosion_sprite != "" and "explosion_sprite" in enemy:
+		enemy.explosion_sprite = _explosion_sprite
 
 	# Add to scene and track
 	add_child(enemy)

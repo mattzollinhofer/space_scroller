@@ -90,8 +90,21 @@ func _preload_music() -> void:
 	elif ResourceLoader.exists(wav_path):
 		_gameplay_music = load(wav_path)
 
-	# Preload boss music tracks (one per level)
-	for level in [1, 2, 3]:
+	# Load default boss music (fallback for levels without specific tracks)
+	var default_boss_music: AudioStream = null
+	var default_mp3 = "res://assets/audio/music/boss_default.mp3"
+	var default_ogg = "res://assets/audio/music/boss_default.ogg"
+	var default_wav = "res://assets/audio/music/boss_default.wav"
+
+	if ResourceLoader.exists(default_mp3):
+		default_boss_music = load(default_mp3)
+	elif ResourceLoader.exists(default_ogg):
+		default_boss_music = load(default_ogg)
+	elif ResourceLoader.exists(default_wav):
+		default_boss_music = load(default_wav)
+
+	# Preload boss music tracks (one per level, fallback to default)
+	for level in range(1, 7):
 		var boss_mp3 = "res://assets/audio/music/boss_%d.mp3" % level
 		var boss_ogg = "res://assets/audio/music/boss_%d.ogg" % level
 		var boss_wav = "res://assets/audio/music/boss_%d.wav" % level
@@ -102,6 +115,8 @@ func _preload_music() -> void:
 			_boss_music[level] = load(boss_ogg)
 		elif ResourceLoader.exists(boss_wav):
 			_boss_music[level] = load(boss_wav)
+		elif default_boss_music:
+			_boss_music[level] = default_boss_music
 
 
 func _preload_sfx() -> void:
@@ -112,6 +127,9 @@ func _preload_sfx() -> void:
 		"player_shoot": "weapons/attack-missile-1",
 		"sidekick_shoot": "weapons/sidekick_shoot",
 		"boss_attack": "weapons/boss-attack-1",
+		"boss_attack_1": "weapons/boss-shooting-sound-1",
+		"boss_attack_2": "weapons/boss-shooting-sound-2",
+		"boss_attack_3": "weapons/boss-shooting-sound-3",
 		# Impacts
 		"enemy_hit": "explosions/explosion-2",
 		"boss_damage": "impacts/boss_damage",

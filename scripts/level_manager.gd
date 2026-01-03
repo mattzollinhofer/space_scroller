@@ -477,7 +477,8 @@ func _spawn_boss() -> void:
 		_apply_boss_modulate(_boss, boss_modulate)
 
 	# Apply boss configuration (attacks, health, scale) from level metadata
-	var boss_config = _level_metadata.get("boss_config", {})
+	var boss_config = _level_metadata.get("boss_config", {}).duplicate()
+	boss_config["level_number"] = _level_number
 	if boss_config and _boss and _boss.has_method("configure"):
 		_boss.configure(boss_config)
 

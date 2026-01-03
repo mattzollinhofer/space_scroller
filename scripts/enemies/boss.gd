@@ -155,6 +155,12 @@ var _grow_shrink_original_scale: Vector2 = Vector2.ONE
 ## Original collision shape size before grow/shrink attack (for restoration)
 var _grow_shrink_original_collision_size: Vector2 = Vector2.ZERO
 
+## Original position before grow/shrink lunge (for retreat)
+var _grow_shrink_original_position: Vector2 = Vector2.ZERO
+
+## Lunge distance for grow/shrink attack
+const GROW_SHRINK_LUNGE_DISTANCE: float = 300.0
+
 ## Emitted when the boss is defeated
 signal boss_defeated()
 
@@ -1070,9 +1076,8 @@ func is_up_down_shooting() -> bool:
 
 
 func _attack_grow_shrink() -> void:
-	## Grow/Shrink: Boss scales up to 4x size then shrinks back to normal
-	## Jelly-themed visual intimidation attack for Level 6 boss - no projectiles fired
-	## Contact damage is increased during enlarged state via scaled collision shape
+	## Grow/Shrink: Boss scales up to 4x size, lunges toward player, then retreats
+	## Jelly-themed attack for Level 6 boss - contact damage via enlarged collision
 	if _attack_tween and _attack_tween.is_valid():
 		_attack_tween.kill()
 
@@ -1088,14 +1093,18 @@ func _attack_grow_shrink() -> void:
 		_attack_timer = attack_cooldown
 		return
 
-	# Store original scales for restoration
+	# Store original scales and position for restoration
 	_grow_shrink_original_scale = sprite.scale
+	_grow_shrink_original_position = position
 	if collision and collision.shape:
 		_grow_shrink_original_collision_size = collision.shape.size
 
 	# Calculate target scales (4x original)
 	var target_sprite_scale = _grow_shrink_original_scale * GROW_SHRINK_SCALE
 	var target_collision_size = _grow_shrink_original_collision_size * GROW_SHRINK_SCALE
+
+	# Calculate lunge position (toward player/left side)
+	var lunge_position = Vector2(_grow_shrink_original_position.x - GROW_SHRINK_LUNGE_DISTANCE, _grow_shrink_original_position.y)
 
 	# Create grow/shrink tween
 	_attack_tween = create_tween()
@@ -1108,12 +1117,16 @@ func _attack_grow_shrink() -> void:
 	if collision and collision.shape:
 		_attack_tween.parallel().tween_property(collision.shape, "size", target_collision_size, grow_duration).set_ease(Tween.EASE_OUT).set_trans(Tween.TRANS_ELASTIC)
 
-	# Brief pause at maximum size
-	_attack_tween.tween_interval(0.3)
+	# Lunge toward player at peak size
+	_attack_tween.tween_property(self, "position", lunge_position, 0.15).set_ease(Tween.EASE_OUT).set_trans(Tween.TRANS_BACK)
 
-	# Shrink phase: scale back to original over half the duration
+	# Brief pause at lunge position
+	_attack_tween.tween_interval(0.2)
+
+	# Retreat back to original position while shrinking
 	var shrink_duration = GROW_SHRINK_DURATION / 2.0
-	_attack_tween.tween_property(sprite, "scale", _grow_shrink_original_scale, shrink_duration).set_ease(Tween.EASE_IN_OUT).set_trans(Tween.TRANS_QUAD)
+	_attack_tween.tween_property(self, "position", _grow_shrink_original_position, shrink_duration).set_ease(Tween.EASE_IN_OUT).set_trans(Tween.TRANS_QUAD)
+	_attack_tween.parallel().tween_property(sprite, "scale", _grow_shrink_original_scale, shrink_duration).set_ease(Tween.EASE_IN_OUT).set_trans(Tween.TRANS_QUAD)
 
 	# Scale collision shape back to original in parallel
 	if collision and collision.shape:

@@ -5,6 +5,9 @@ extends Area2D
 ## Movement speed in pixels per second
 @export var speed: float = 750.0
 
+## Rotation speed in radians per second (0 = no rotation)
+var rotation_speed: float = 0.0
+
 ## Direction of movement (normalized vector)
 var direction: Vector2 = Vector2(-1, 0)
 
@@ -30,6 +33,12 @@ func _process(delta: float) -> void:
 
 	# Move in the specified direction
 	position += direction * speed * delta
+
+	# Rotate sprite if rotation speed is set
+	if rotation_speed != 0.0:
+		var sprite = get_node_or_null("Sprite2D")
+		if sprite:
+			sprite.rotation += rotation_speed * delta
 
 	# Despawn when off left edge
 	if position.x < _despawn_x:
@@ -89,3 +98,8 @@ func set_projectile_scale(scale_factor: float) -> void:
 		elif collision.shape is RectangleShape2D:
 			# Base size is 32x8, scale from that
 			collision.shape.size = Vector2(32 * scale_factor, 8 * scale_factor)
+
+
+## Set the rotation speed in radians per second (for swirl projectiles)
+func set_rotation_speed(speed_radians: float) -> void:
+	rotation_speed = speed_radians

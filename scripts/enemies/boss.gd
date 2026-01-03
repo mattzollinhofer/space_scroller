@@ -19,6 +19,9 @@ const SpriteSizes = preload("res://scripts/sprite_sizes.gd")
 ## Custom projectile texture (loaded from level config)
 var _projectile_texture: Texture2D = null
 
+## Projectile rotation speed in radians per second (for swirl effects)
+var _projectile_rotation_speed: float = 0.0
+
 ## Maximum health (for UI percentage)
 var _max_health: int = 13
 
@@ -508,9 +511,11 @@ func _on_charge_complete() -> void:
 
 
 func _apply_projectile_texture(projectile: Node) -> void:
-	## Apply custom projectile texture if configured
+	## Apply custom projectile texture and rotation speed if configured
 	if _projectile_texture and projectile.has_method("set_texture"):
 		projectile.set_texture(_projectile_texture)
+	if _projectile_rotation_speed != 0.0 and projectile.has_method("set_rotation_speed"):
+		projectile.set_rotation_speed(_projectile_rotation_speed)
 
 
 func _attack_solar_flare() -> void:
@@ -1550,6 +1555,10 @@ func configure(config: Dictionary) -> void:
 			_projectile_texture = texture
 		else:
 			push_warning("Could not load projectile sprite: %s" % sprite_path)
+
+	# Set projectile rotation speed (for swirl effects)
+	if config.has("projectile_rotation_speed"):
+		_projectile_rotation_speed = config["projectile_rotation_speed"]
 
 
 ## Play a sound effect via AudioManager

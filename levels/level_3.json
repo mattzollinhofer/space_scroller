@@ -13,10 +13,10 @@
     "boss_modulate": [0.6, 0.8, 1.0, 1.0],
     "obstacle_modulate": [0.7, 0.85, 1.0, 1.0],
     "boss_config": {
-      "health": 16,
+      "health": 13,
       "scale": 2.25,
-      "attacks": [0, 1, 5, 6],
-      "attack_cooldown": 1.6,
+      "attacks": [0, 5, 6],
+      "attack_cooldown": 1.8,
       "explosion_scale": 2.5,
       "projectile_sprite": "res://assets/sprites/weapon-blue-swirl-1.png",
       "projectile_rotation_speed": 10.0

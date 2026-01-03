@@ -22,6 +22,9 @@ var _projectile_texture: Texture2D = null
 ## Projectile rotation speed in radians per second (for swirl effects)
 var _projectile_rotation_speed: float = 0.0
 
+## Projectile scale multiplier (for larger/more visible projectiles)
+var _projectile_scale: float = 1.0
+
 ## Maximum health (for UI percentage)
 var _max_health: int = 13
 
@@ -546,11 +549,13 @@ func _on_charge_complete() -> void:
 
 
 func _apply_projectile_texture(projectile: Node) -> void:
-	## Apply custom projectile texture and rotation speed if configured
+	## Apply custom projectile texture, rotation speed, and scale if configured
 	if _projectile_texture and projectile.has_method("set_texture"):
 		projectile.set_texture(_projectile_texture)
 	if _projectile_rotation_speed != 0.0 and projectile.has_method("set_rotation_speed"):
 		projectile.set_rotation_speed(_projectile_rotation_speed)
+	if _projectile_scale != 1.0 and projectile.has_method("set_projectile_scale"):
+		projectile.set_projectile_scale(_projectile_scale)
 
 
 func _attack_solar_flare() -> void:
@@ -1603,6 +1608,10 @@ func configure(config: Dictionary) -> void:
 	# Set projectile rotation speed (for swirl effects)
 	if config.has("projectile_rotation_speed"):
 		_projectile_rotation_speed = config["projectile_rotation_speed"]
+
+	# Set projectile scale (for larger/more visible projectiles)
+	if config.has("projectile_scale"):
+		_projectile_scale = config["projectile_scale"]
 
 
 ## Play a sound effect via AudioManager

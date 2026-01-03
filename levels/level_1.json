@@ -1,13 +1,14 @@
 {
   "total_distance": 13500,
   "metadata": {
-    "boss_sprite": "res://assets/sprites/boss-1.png",
+    "boss_sprite": "res://assets/sprites/boss-gumy-bear-1.png",
     "boss_config": {
       "health": 10,
       "scale": 1.25,
       "attacks": [0],
       "attack_cooldown": 1.5,
-      "explosion_scale": 1.75
+      "explosion_scale": 1.75,
+      "projectile_sprite": "res://assets/sprites/weapon-gummy-1.png"
     }
   },
   "enemy_config": {

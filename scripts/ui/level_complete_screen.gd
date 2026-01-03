@@ -24,7 +24,7 @@ extends CanvasLayer
 var current_level: int = 1
 
 ## Maximum level number
-const MAX_LEVEL: int = 3
+const MAX_LEVEL: int = 6
 
 
 func _ready() -> void:

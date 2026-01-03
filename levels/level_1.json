@@ -6,7 +6,7 @@
       "health": 10,
       "scale": 1.25,
       "attacks": [0],
-      "attack_cooldown": 2.5,
+      "attack_cooldown": 5.0,
       "explosion_scale": 1.75,
       "projectile_sprite": "res://assets/sprites/weapon-gummy-1.png"
     }

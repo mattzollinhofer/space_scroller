@@ -404,8 +404,8 @@ func _attack_horizontal_barrage() -> void:
 		push_warning("Boss projectile scene not assigned")
 		return
 
-	# Randomize projectile count between 5-7
-	var projectile_count = randi_range(5, 7)
+	# Randomize projectile count between 3-4
+	var projectile_count = randi_range(3, 4)
 
 	# Calculate spread angles
 	var spread_angle = deg_to_rad(30.0)  # Total spread of 30 degrees
@@ -560,8 +560,8 @@ func _attack_solar_flare() -> void:
 		push_warning("Boss projectile scene not assigned")
 		return
 
-	# Fire 12 projectiles in a radial burst (360 degrees / 12 = 30 degrees apart)
-	var projectile_count = 12
+	# Fire 8 projectiles in a radial burst (360 degrees / 8 = 45 degrees apart)
+	var projectile_count = 8
 	var angle_step = TAU / projectile_count  # TAU = 2*PI = full circle
 
 	for i in range(projectile_count):
@@ -679,8 +679,8 @@ func _attack_ice_shards() -> void:
 		push_warning("Boss projectile scene not assigned")
 		return
 
-	# Fire 15 projectiles in a wide spread (more than barrage's 5-7 for "numerous" feel)
-	var projectile_count = 15
+	# Fire 8 projectiles in a wide spread
+	var projectile_count = 8
 
 	# Wide spread angle: 120 degrees total (60 degrees up and 60 degrees down from straight left)
 	var spread_angle = deg_to_rad(120.0)
@@ -729,9 +729,8 @@ func _attack_frozen_nova() -> void:
 		push_warning("Boss projectile scene not assigned")
 		return
 
-	# Fire 16 projectiles in a radial burst (360 degrees / 16 = 22.5 degrees apart)
-	# More projectiles than Solar Flare for "expansive" feel
-	var projectile_count = 16
+	# Fire 8 projectiles in a radial burst (360 degrees / 8 = 45 degrees apart)
+	var projectile_count = 8
 	var angle_step = TAU / projectile_count  # TAU = 2*PI = full circle
 
 	for i in range(projectile_count):
@@ -905,8 +904,8 @@ func _attack_wall() -> void:
 
 	_wall_attack_active = true
 
-	# Create 6 projectiles - 3 fan upward, 3 fan downward
-	var projectile_count = 6
+	# Create 4 projectiles - 2 fan upward, 2 fan downward
+	var projectile_count = 4
 	var vertical_spread = 300.0  # How far they spread vertically
 	var fan_duration = 0.5  # Time to fan out
 	var projectiles: Array = []
@@ -1199,8 +1198,8 @@ func _attack_rapid_jelly() -> void:
 		push_warning("Boss projectile scene not assigned")
 		return
 
-	# Fire exactly 6 projectiles
-	var projectile_count = 6
+	# Fire exactly 4 projectiles
+	var projectile_count = 4
 
 	# Vertical spacing between projectiles (so they're not all on same line)
 	var vertical_spacing = 40.0

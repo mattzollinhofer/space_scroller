@@ -16,7 +16,7 @@
       "health": 25,
       "scale": 1.5,
       "attacks": [11, 12, 13],
-      "attack_cooldown": 1.0,
+      "attack_cooldown": 2.0,
       "explosion_scale": 2.0,
       "explosion_sprite": "res://assets/sprites/rainbow-explosion-1.png",
       "projectile_sprite": "res://assets/sprites/weapon-jelly-1.png"

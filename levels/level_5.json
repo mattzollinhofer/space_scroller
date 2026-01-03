@@ -15,7 +15,7 @@
       "health": 22,
       "scale": 1.5,
       "attacks": [9, 10],
-      "attack_cooldown": 1.1,
+      "attack_cooldown": 2.2,
       "explosion_scale": 2.0,
       "projectile_sprite": "res://assets/sprites/ghost-attack-1.png"
     },

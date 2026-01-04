@@ -16,7 +16,9 @@
       "attacks": [0, 7, 8, 7],
       "attack_cooldown": 2.6,
       "explosion_scale": 2.0,
-      "projectile_sprite": "res://assets/sprites/pepperoni-attack-1.png"
+      "projectile_sprite": "res://assets/sprites/pepperoni-attack-1.png",
+      "death_spawn_count": 10,
+      "death_spawn_sprite": "res://assets/sprites/pepperoni-attack-1.png"
     },
     "special_enemies": [
       {

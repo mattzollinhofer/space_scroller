@@ -18,7 +18,9 @@
       "attack_cooldown": 2.2,
       "explosion_scale": 2.0,
       "projectile_sprite": "res://assets/sprites/ghost-attack-1.png",
-      "projectile_scale": 2.0
+      "projectile_scale": 2.0,
+      "death_spawn_count": 10,
+      "death_spawn_sprite": "res://assets/sprites/ghost-attack-1.png"
     },
     "special_enemies": [
       {

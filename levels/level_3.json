@@ -19,7 +19,9 @@
       "attack_cooldown": 3.5,
       "explosion_scale": 2.5,
       "projectile_sprite": "res://assets/sprites/weapon-blue-swirl-1.png",
-      "projectile_rotation_speed": 10.0
+      "projectile_rotation_speed": 10.0,
+      "death_spawn_count": 10,
+      "death_spawn_sprite": "res://assets/sprites/weapon-blue-swirl-1.png"
     }
   },
   "sections": [

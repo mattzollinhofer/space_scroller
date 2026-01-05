@@ -1,6 +1,7 @@
 {
   "total_distance": 10000,
   "metadata": {
+    "explosion_sprite": "res://assets/sprites/explosion-purple-gummy-1.png",
     "boss_sprite": "res://assets/sprites/boss-gumy-bear-1.png",
     "boss_config": {
       "health": 10,

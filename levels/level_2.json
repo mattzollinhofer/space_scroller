@@ -9,6 +9,7 @@
   "metadata": {
     "scroll_speed_multiplier": 1.12,
     "background_theme": "inner_solar",
+    "explosion_sprite": "res://assets/sprites/explosion-red-shark-1.png",
     "boss_sprite": "res://assets/sprites/boss-shark-1.png",
     "obstacle_modulate": [0.85, 0.55, 0.4, 1.0],
     "boss_config": {

@@ -10,6 +10,7 @@
     "scroll_speed_multiplier": 1.35,
     "background_theme": "ghost",
     "background_modulate": [0.6, 0.6, 0.8, 1.0],
+    "explosion_sprite": "res://assets/sprites/explosion-ghost-1.png",
     "boss_sprite": "res://assets/sprites/ghost-boss-1.png",
     "boss_config": {
       "health": 22,
@@ -17,6 +18,7 @@
       "attacks": [9, 10],
       "attack_cooldown": 2.2,
       "explosion_scale": 2.0,
+      "explosion_sprite": "res://assets/sprites/explosion-ghost-1.png",
       "projectile_sprite": "res://assets/sprites/ghost-attack-1.png",
       "projectile_scale": 2.0,
       "death_spawn_count": 10,

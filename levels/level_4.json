@@ -9,6 +9,7 @@
   "metadata": {
     "scroll_speed_multiplier": 1.3,
     "background_theme": "pizza",
+    "explosion_sprite": "res://assets/sprites/explosion-pizza-1.png",
     "boss_sprite": "res://assets/sprites/pepperoni-pizza-boss-1.png",
     "boss_config": {
       "health": 20,
@@ -16,6 +17,7 @@
       "attacks": [0, 7, 8, 7],
       "attack_cooldown": 2.6,
       "explosion_scale": 2.0,
+      "explosion_sprite": "res://assets/sprites/explosion-pizza-1.png",
       "projectile_sprite": "res://assets/sprites/pepperoni-attack-1.png",
       "death_spawn_count": 10,
       "death_spawn_sprite": "res://assets/sprites/pepperoni-attack-1.png"

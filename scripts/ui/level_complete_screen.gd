@@ -80,6 +80,8 @@ func _on_next_level_pressed() -> void:
 		var player = get_tree().root.get_node_or_null("Main/Player")
 		if player and player.has_method("get_lives"):
 			game_state.set_current_lives(player.get_lives())
+		# Save sidekick state to carry over to next level
+		_save_sidekick_state(game_state)
 
 	# Reset score for new level
 	if has_node("/root/ScoreManager"):
@@ -90,14 +92,29 @@ func _on_next_level_pressed() -> void:
 	get_tree().change_scene_to_file("res://scenes/main.tscn")
 
 
+## Save sidekick state to GameState for next level
+func _save_sidekick_state(game_state: Node) -> void:
+	var sidekicks = get_tree().get_nodes_in_group("sidekick")
+	if sidekicks.size() > 0:
+		var sidekick = sidekicks[0]
+		var sprite_path = ""
+		if sidekick.has_method("get_sprite_path"):
+			sprite_path = sidekick.get_sprite_path()
+		game_state.set_sidekick_state(true, sprite_path)
+	else:
+		game_state.set_sidekick_state(false)
+
+
 ## Handle main menu button press
 func _on_main_menu_pressed() -> void:
 	# Unpause before transitioning
 	get_tree().paused = false
 	visible = false
-	# Clear carried-over lives when returning to main menu
+	# Clear carried-over state when returning to main menu
 	if has_node("/root/GameState"):
-		get_node("/root/GameState").clear_current_lives()
+		var game_state = get_node("/root/GameState")
+		game_state.clear_current_lives()
+		game_state.clear_sidekick_state()
 	# Stop music before returning to menu
 	_stop_gameplay_music()
 	get_tree().change_scene_to_file("res://scenes/ui/main_menu.tscn")

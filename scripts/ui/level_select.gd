@@ -78,8 +78,9 @@ func _on_level_selected(level_number: int) -> void:
 		var game_state = get_node("/root/GameState")
 		if game_state.has_method("set_selected_level"):
 			game_state.set_selected_level(level_number)
-		# Clear carried-over lives when starting from level select
+		# Clear carried-over state when starting from level select
 		game_state.clear_current_lives()
+		game_state.clear_sidekick_state()
 
 	# Transition to main game scene
 	if has_node("/root/TransitionManager"):

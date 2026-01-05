@@ -22,6 +22,9 @@ var _target_position: Vector2 = Vector2.ZERO
 ## Whether the sidekick is currently being destroyed (prevents double-processing)
 var _is_destroying: bool = false
 
+## Current sprite path (for persistence between levels)
+var _current_sprite_path: String = ""
+
 
 func _ready() -> void:
 	add_to_group("sidekick")
@@ -93,6 +96,14 @@ func _on_player_died() -> void:
 	_destroy()
 
 
+## Map buddy sprites to their projectile sprites
+const BUDDY_PROJECTILES := {
+	"res://assets/sprites/friend-ufo-1.png": "res://assets/sprites/sidekick-attack-1.png",
+	"res://assets/sprites/star-dragon-1.png": "res://assets/sprites/weapon-dragon-1.png",
+	"res://assets/sprites/cosmic-cat-2.png": "res://assets/sprites/weapon-celestial-cat-1.png",
+	"res://assets/sprites/player.png": ""  # Empty = use default laser
+}
+
 ## Spawn a projectile from the sidekick's position
 func shoot() -> void:
 	if _is_destroying:
@@ -109,6 +120,13 @@ func shoot() -> void:
 
 	# Add to Main scene so it persists independently
 	get_parent().add_child(projectile)
+
+	# Apply buddy-specific projectile sprite
+	var projectile_sprite = BUDDY_PROJECTILES.get(_current_sprite_path, "")
+	if projectile_sprite != "":
+		var sprite_node = projectile.get_node_or_null("Sprite2D")
+		if sprite_node and ResourceLoader.exists(projectile_sprite):
+			sprite_node.texture = load(projectile_sprite)
 
 	# Play sidekick shoot sound (different from player)
 	_play_sfx("sidekick_shoot")
@@ -165,6 +183,12 @@ func _set_sprite(sprite_path: String) -> void:
 	var texture = load(sprite_path)
 	if texture:
 		sprite.texture = texture
+		_current_sprite_path = sprite_path
+
+
+## Get the current sprite path (for persistence between levels)
+func get_sprite_path() -> String:
+	return _current_sprite_path
 
 
 ## Randomly select and apply one of the sidekick sprites (uses SidekickPickup's constant)

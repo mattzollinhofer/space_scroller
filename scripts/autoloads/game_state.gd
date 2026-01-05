@@ -50,6 +50,12 @@ var _selected_difficulty: String = DEFAULT_DIFFICULTY
 ## Current lives carried over between levels (-1 means use starting lives for new game)
 var _current_lives: int = -1
 
+## Whether player had a sidekick when completing the level
+var _has_sidekick: bool = false
+
+## Sprite path of the sidekick (to preserve appearance)
+var _sidekick_sprite: String = ""
+
 ## Signal emitted when character selection changes
 signal character_changed(character_id: String)
 
@@ -103,6 +109,12 @@ func get_character_projectile_sprite(character_id: String) -> String:
 	match character_id:
 		CHARACTER_SPACE_DRAGON:
 			return "res://assets/sprites/weapon-dragon-1.png"
+		CHARACTER_COSMIC_CAT:
+			return "res://assets/sprites/weapon-celestial-cat-1.png"
+		CHARACTER_SPACE_SHEEP:
+			return "res://assets/sprites/weapon-space-sheep-grass-1.png"
+		CHARACTER_COSMIC_HAMSTER:
+			return "res://assets/sprites/weapon-hamster-food-1.png"
 		_:
 			return ""  # Use default laser-bolt
 
@@ -204,3 +216,26 @@ func set_current_lives(lives: int) -> void:
 ## Clear current lives (called when starting a fresh game)
 func clear_current_lives() -> void:
 	_current_lives = -1
+
+
+## Set sidekick state (called when completing a level)
+func set_sidekick_state(has_sidekick: bool, sprite_path: String = "") -> void:
+	_has_sidekick = has_sidekick
+	_sidekick_sprite = sprite_path
+	print("Saving sidekick state - has_sidekick: %s, sprite: %s" % [has_sidekick, sprite_path])
+
+
+## Check if player had a sidekick
+func has_sidekick() -> bool:
+	return _has_sidekick
+
+
+## Get the sidekick sprite path
+func get_sidekick_sprite() -> String:
+	return _sidekick_sprite
+
+
+## Clear sidekick state (called when starting a fresh game or player dies)
+func clear_sidekick_state() -> void:
+	_has_sidekick = false
+	_sidekick_sprite = ""

@@ -119,6 +119,8 @@ func _ready() -> void:
 	_check_section_change()
 	# Start gameplay background music
 	_start_gameplay_music()
+	# Spawn sidekick if player had one from previous level
+	_restore_sidekick_from_game_state()
 
 
 ## Start gameplay background music via AudioManager
@@ -127,6 +129,46 @@ func _start_gameplay_music() -> void:
 		var audio_manager = get_node("/root/AudioManager")
 		if audio_manager.has_method("play_music"):
 			audio_manager.play_music()
+
+
+## Restore sidekick from GameState if player had one from previous level
+func _restore_sidekick_from_game_state() -> void:
+	if not has_node("/root/GameState"):
+		return
+
+	var game_state = get_node("/root/GameState")
+	if not game_state.has_method("has_sidekick") or not game_state.has_sidekick():
+		print("Restoring sidekick - has_sidekick: false")
+		return
+
+	print("Restoring sidekick - has_sidekick: true")
+
+	# Load sidekick scene
+	var sidekick_scene = load("res://scenes/pickups/sidekick.tscn")
+	if not sidekick_scene:
+		push_warning("Could not load sidekick scene for restoration")
+		return
+
+	# Spawn sidekick
+	var sidekick = sidekick_scene.instantiate()
+	sidekick.name = "Sidekick"
+
+	# Get sprite path from game state
+	var sprite_path = ""
+	if game_state.has_method("get_sidekick_sprite"):
+		sprite_path = game_state.get_sidekick_sprite()
+
+	# Setup sidekick with player reference and sprite
+	if _player and sidekick.has_method("setup"):
+		sidekick.setup(_player, sprite_path)
+
+	# Add to main scene
+	var main = get_parent()
+	if main:
+		main.add_child(sidekick)
+
+	# Clear sidekick state so it doesn't persist if player loses it
+	game_state.clear_sidekick_state()
 
 
 ## Get the selected level from GameState autoload

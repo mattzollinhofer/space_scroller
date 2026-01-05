@@ -42,9 +42,11 @@ func hide_game_over() -> void:
 func _on_main_menu_button_pressed() -> void:
 	# Unpause the game tree before changing scene
 	get_tree().paused = false
-	# Clear carried-over lives when returning to main menu
+	# Clear carried-over state when returning to main menu
 	if has_node("/root/GameState"):
-		get_node("/root/GameState").clear_current_lives()
+		var game_state = get_node("/root/GameState")
+		game_state.clear_current_lives()
+		game_state.clear_sidekick_state()
 	# Stop music before returning to menu
 	_stop_gameplay_music()
 	# Navigate to main menu with transition

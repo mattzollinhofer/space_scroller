@@ -1,4 +1,4 @@
-[gd_scene load_steps=7 format=3 uid="uid://character_selection_scene"]
+[gd_scene load_steps=8 format=3 uid="uid://character_selection_scene"]
 
 [ext_resource type="Script" path="res://scripts/ui/character_selection.gd" id="1_char_select"]
 [ext_resource type="Texture2D" path="res://assets/sprites/player.png" id="2_blue_blaster"]
@@ -6,6 +6,7 @@
 [ext_resource type="Texture2D" path="res://assets/sprites/cosmic-cat-2.png" id="4_cosmic_cat"]
 [ext_resource type="Texture2D" path="res://assets/sprites/space-sheep-1.png" id="5_space_sheep"]
 [ext_resource type="Texture2D" path="res://assets/sprites/comsic-hampster-1.png" id="6_cosmic_hamster"]
+[ext_resource type="Texture2D" path="res://assets/sprites/astro-maple-1.png" id="7_astro_maple"]
 
 [node name="CharacterSelection" type="Control"]
 layout_mode = 3
@@ -108,6 +109,17 @@ icon_alignment = 1
 vertical_icon_alignment = 0
 expand_icon = true
 text = "Cosmic Hamster"
+
+[node name="AstroMapleButton" type="Button" parent="CenterContainer/VBoxContainer/CharacterGrid"]
+custom_minimum_size = Vector2(300, 400)
+layout_mode = 2
+theme_override_colors/font_color = Color(0.7, 0.7, 0.7, 1)
+theme_override_font_sizes/font_size = 36
+icon = ExtResource("7_astro_maple")
+icon_alignment = 1
+vertical_icon_alignment = 0
+expand_icon = true
+text = "Astro Maple"
 
 [node name="Spacer2" type="Control" parent="CenterContainer/VBoxContainer"]
 custom_minimum_size = Vector2(0, 40)

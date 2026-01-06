@@ -9,6 +9,7 @@ const CHARACTER_COSMIC_CAT := "cosmic_cat"
 const CHARACTER_SPACE_SHEEP := "space_sheep"
 const CHARACTER_COSMIC_HAMSTER := "cosmic_hamster"
 const CHARACTER_ASTRO_MAPLE := "astro_maple"
+const CHARACTER_GARFIELD := "garfield"
 
 ## Difficulty identifiers
 const DIFFICULTY_NORMAL := "normal"
@@ -81,7 +82,7 @@ func get_selected_character() -> String:
 
 ## Set the selected character for this session
 func set_selected_character(character_id: String) -> void:
-	if character_id in [CHARACTER_BLUE_BLASTER, CHARACTER_SPACE_DRAGON, CHARACTER_COSMIC_CAT, CHARACTER_SPACE_SHEEP, CHARACTER_COSMIC_HAMSTER, CHARACTER_ASTRO_MAPLE]:
+	if character_id in [CHARACTER_BLUE_BLASTER, CHARACTER_SPACE_DRAGON, CHARACTER_COSMIC_CAT, CHARACTER_SPACE_SHEEP, CHARACTER_COSMIC_HAMSTER, CHARACTER_ASTRO_MAPLE, CHARACTER_GARFIELD]:
 		_selected_character = character_id
 		character_changed.emit(character_id)
 	else:
@@ -103,6 +104,8 @@ func get_character_texture_path(character_id: String) -> String:
 			return "res://assets/sprites/comsic-hampster-1.png"
 		CHARACTER_ASTRO_MAPLE:
 			return "res://assets/sprites/astro-maple-1.png"
+		CHARACTER_GARFIELD:
+			return "res://assets/sprites/garfield-1.png"
 		_:
 			return "res://assets/sprites/player.png"
 
@@ -118,6 +121,10 @@ func get_character_projectile_sprite(character_id: String) -> String:
 			return "res://assets/sprites/weapon-space-sheep-grass-1.png"
 		CHARACTER_COSMIC_HAMSTER:
 			return "res://assets/sprites/weapon-hamster-food-1.png"
+		CHARACTER_ASTRO_MAPLE:
+			return "res://assets/sprites/astro-maple-attack.png"
+		CHARACTER_GARFIELD:
+			return "res://assets/sprites/lasagna-attack-1.png"
 		_:
 			return ""  # Use default laser-bolt
 
@@ -137,13 +144,15 @@ func get_character_display_name(character_id: String) -> String:
 			return "Cosmic Hamster"
 		CHARACTER_ASTRO_MAPLE:
 			return "Astro Maple"
+		CHARACTER_GARFIELD:
+			return "Garfield"
 		_:
 			return "Unknown"
 
 
 ## Get all available characters
 func get_all_characters() -> Array[String]:
-	return [CHARACTER_BLUE_BLASTER, CHARACTER_SPACE_DRAGON, CHARACTER_COSMIC_CAT, CHARACTER_SPACE_SHEEP, CHARACTER_COSMIC_HAMSTER, CHARACTER_ASTRO_MAPLE]
+	return [CHARACTER_BLUE_BLASTER, CHARACTER_SPACE_DRAGON, CHARACTER_COSMIC_CAT, CHARACTER_SPACE_SHEEP, CHARACTER_COSMIC_HAMSTER, CHARACTER_ASTRO_MAPLE, CHARACTER_GARFIELD]
 
 
 ## Get the currently selected level number

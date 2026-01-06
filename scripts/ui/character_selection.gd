@@ -10,6 +10,7 @@ extends Control
 @onready var _space_sheep_button: Button = $CenterContainer/VBoxContainer/CharacterGrid/SpaceSheepButton
 @onready var _cosmic_hamster_button: Button = $CenterContainer/VBoxContainer/CharacterGrid/CosmicHamsterButton
 @onready var _astro_maple_button: Button = $CenterContainer/VBoxContainer/CharacterGrid/AstroMapleButton
+@onready var _garfield_button: Button = $CenterContainer/VBoxContainer/CharacterGrid/GarfieldButton
 @onready var _back_button: Button = $CenterContainer/VBoxContainer/ButtonContainer/BackButton
 @onready var _ok_button: Button = $CenterContainer/VBoxContainer/ButtonContainer/OKButton
 
@@ -32,7 +33,8 @@ func _ready() -> void:
 		GameState.CHARACTER_COSMIC_CAT: _cosmic_cat_button,
 		GameState.CHARACTER_SPACE_SHEEP: _space_sheep_button,
 		GameState.CHARACTER_COSMIC_HAMSTER: _cosmic_hamster_button,
-		GameState.CHARACTER_ASTRO_MAPLE: _astro_maple_button
+		GameState.CHARACTER_ASTRO_MAPLE: _astro_maple_button,
+		GameState.CHARACTER_GARFIELD: _garfield_button
 	}
 
 	# Map difficulty IDs to their buttons
@@ -48,6 +50,7 @@ func _ready() -> void:
 	_space_sheep_button.pressed.connect(_on_character_selected.bind(GameState.CHARACTER_SPACE_SHEEP))
 	_cosmic_hamster_button.pressed.connect(_on_character_selected.bind(GameState.CHARACTER_COSMIC_HAMSTER))
 	_astro_maple_button.pressed.connect(_on_character_selected.bind(GameState.CHARACTER_ASTRO_MAPLE))
+	_garfield_button.pressed.connect(_on_character_selected.bind(GameState.CHARACTER_GARFIELD))
 
 	# Connect difficulty button signals
 	_normal_button.pressed.connect(_on_difficulty_selected.bind(GameState.DIFFICULTY_NORMAL))

@@ -16,6 +16,7 @@ func _on_play_button_pressed() -> void:
 		var game_state = get_node("/root/GameState")
 		game_state.clear_current_lives()
 		game_state.clear_sidekick_state()
+		game_state.set_selected_level(1)  # Reset to level 1
 	if has_node("/root/TransitionManager"):
 		var transition_manager = get_node("/root/TransitionManager")
 		transition_manager.transition_to_scene("res://scenes/main.tscn")

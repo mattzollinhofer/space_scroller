@@ -1,4 +1,4 @@
-[gd_scene load_steps=9 format=3 uid="uid://character_selection_scene"]
+[gd_scene load_steps=11 format=3 uid="uid://character_selection_scene"]
 
 [ext_resource type="Script" path="res://scripts/ui/character_selection.gd" id="1_char_select"]
 [ext_resource type="Texture2D" path="res://assets/sprites/player.png" id="2_blue_blaster"]
@@ -6,8 +6,10 @@
 [ext_resource type="Texture2D" path="res://assets/sprites/cosmic-cat-2.png" id="4_cosmic_cat"]
 [ext_resource type="Texture2D" path="res://assets/sprites/space-sheep-1.png" id="5_space_sheep"]
 [ext_resource type="Texture2D" path="res://assets/sprites/comsic-hampster-1.png" id="6_cosmic_hamster"]
-[ext_resource type="Texture2D" path="res://assets/sprites/astro-maple-1.png" id="7_astro_maple"]
+[ext_resource type="Texture2D" path="res://assets/sprites/astro-maple-2.png" id="7_astro_maple"]
 [ext_resource type="Texture2D" path="res://assets/sprites/garfield-1.png" id="8_garfield"]
+[ext_resource type="Texture2D" path="res://assets/sprites/declyn-dragon-1.png" id="9_declyn"]
+[ext_resource type="PackedScene" uid="uid://cmenu_background_scene" path="res://scenes/ui/menu_background.tscn" id="10_menu_bg"]
 
 [node name="CharacterSelection" type="Control"]
 layout_mode = 3
@@ -18,14 +20,16 @@ grow_horizontal = 2
 grow_vertical = 2
 script = ExtResource("1_char_select")
 
-[node name="Background" type="ColorRect" parent="."]
+[node name="BackgroundColor" type="ColorRect" parent="."]
 layout_mode = 1
 anchors_preset = 15
 anchor_right = 1.0
 anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
-color = Color(0.05, 0.02, 0.15, 1)
+color = Color(0.03, 0.01, 0.1, 1)
+
+[node name="MenuBackground" parent="." instance=ExtResource("10_menu_bg")]
 
 [node name="CenterContainer" type="CenterContainer" parent="."]
 layout_mode = 1
@@ -48,16 +52,18 @@ horizontal_alignment = 1
 vertical_alignment = 1
 
 [node name="Spacer" type="Control" parent="CenterContainer/VBoxContainer"]
-custom_minimum_size = Vector2(0, 40)
+custom_minimum_size = Vector2(0, 20)
 layout_mode = 2
 
-[node name="CharacterGrid" type="HBoxContainer" parent="CenterContainer/VBoxContainer"]
+[node name="CharacterGrid" type="GridContainer" parent="CenterContainer/VBoxContainer"]
 layout_mode = 2
-theme_override_constants/separation = 30
-alignment = 1
+size_flags_horizontal = 4
+theme_override_constants/h_separation = 20
+theme_override_constants/v_separation = 20
+columns = 4
 
 [node name="BlueBlasterButton" type="Button" parent="CenterContainer/VBoxContainer/CharacterGrid"]
-custom_minimum_size = Vector2(220, 320)
+custom_minimum_size = Vector2(200, 240)
 layout_mode = 2
 theme_override_colors/font_color = Color(1, 0.84, 0, 1)
 theme_override_font_sizes/font_size = 28
@@ -68,7 +74,7 @@ expand_icon = true
 text = "Blue Blaster"
 
 [node name="SpaceDragonButton" type="Button" parent="CenterContainer/VBoxContainer/CharacterGrid"]
-custom_minimum_size = Vector2(220, 320)
+custom_minimum_size = Vector2(200, 240)
 layout_mode = 2
 theme_override_colors/font_color = Color(0.7, 0.7, 0.7, 1)
 theme_override_font_sizes/font_size = 28
@@ -79,7 +85,7 @@ expand_icon = true
 text = "Star Dragon"
 
 [node name="CosmicCatButton" type="Button" parent="CenterContainer/VBoxContainer/CharacterGrid"]
-custom_minimum_size = Vector2(220, 320)
+custom_minimum_size = Vector2(200, 240)
 layout_mode = 2
 theme_override_colors/font_color = Color(0.7, 0.7, 0.7, 1)
 theme_override_font_sizes/font_size = 28
@@ -90,7 +96,7 @@ expand_icon = true
 text = "Celestial Cat"
 
 [node name="SpaceSheepButton" type="Button" parent="CenterContainer/VBoxContainer/CharacterGrid"]
-custom_minimum_size = Vector2(220, 320)
+custom_minimum_size = Vector2(200, 240)
 layout_mode = 2
 theme_override_colors/font_color = Color(0.7, 0.7, 0.7, 1)
 theme_override_font_sizes/font_size = 28
@@ -101,7 +107,7 @@ expand_icon = true
 text = "Space Sheep"
 
 [node name="CosmicHamsterButton" type="Button" parent="CenterContainer/VBoxContainer/CharacterGrid"]
-custom_minimum_size = Vector2(220, 320)
+custom_minimum_size = Vector2(200, 240)
 layout_mode = 2
 theme_override_colors/font_color = Color(0.7, 0.7, 0.7, 1)
 theme_override_font_sizes/font_size = 28
@@ -112,7 +118,7 @@ expand_icon = true
 text = "Cosmic Hamster"
 
 [node name="AstroMapleButton" type="Button" parent="CenterContainer/VBoxContainer/CharacterGrid"]
-custom_minimum_size = Vector2(220, 320)
+custom_minimum_size = Vector2(200, 240)
 layout_mode = 2
 theme_override_colors/font_color = Color(0.7, 0.7, 0.7, 1)
 theme_override_font_sizes/font_size = 28
@@ -123,7 +129,7 @@ expand_icon = true
 text = "Astro Maple"
 
 [node name="GarfieldButton" type="Button" parent="CenterContainer/VBoxContainer/CharacterGrid"]
-custom_minimum_size = Vector2(220, 320)
+custom_minimum_size = Vector2(200, 240)
 layout_mode = 2
 theme_override_colors/font_color = Color(0.7, 0.7, 0.7, 1)
 theme_override_font_sizes/font_size = 28
@@ -133,8 +139,19 @@ vertical_icon_alignment = 0
 expand_icon = true
 text = "Garfield"
 
+[node name="DeclynButton" type="Button" parent="CenterContainer/VBoxContainer/CharacterGrid"]
+custom_minimum_size = Vector2(200, 240)
+layout_mode = 2
+theme_override_colors/font_color = Color(0.7, 0.7, 0.7, 1)
+theme_override_font_sizes/font_size = 28
+icon = ExtResource("9_declyn")
+icon_alignment = 1
+vertical_icon_alignment = 0
+expand_icon = true
+text = "Ice Dragon"
+
 [node name="Spacer2" type="Control" parent="CenterContainer/VBoxContainer"]
-custom_minimum_size = Vector2(0, 40)
+custom_minimum_size = Vector2(0, 15)
 layout_mode = 2
 
 [node name="DifficultyLabel" type="Label" parent="CenterContainer/VBoxContainer"]

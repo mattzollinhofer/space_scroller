@@ -1,4 +1,4 @@
-[gd_scene load_steps=31 format=3 uid="uid://d0n8g3kv2kq7y"]
+[gd_scene load_steps=32 format=3 uid="uid://d0n8g3kv2kq7y"]
 
 [ext_resource type="Script" path="res://scripts/scroll_controller.gd" id="1_scroll"]
 [ext_resource type="Script" path="res://scripts/background/star_field.gd" id="2_starfield"]
@@ -29,6 +29,7 @@
 [ext_resource type="PackedScene" uid="uid://cgarlic_enemy_scene" path="res://scenes/enemies/garlic_enemy.tscn" id="27_garlic_enemy"]
 [ext_resource type="PackedScene" uid="uid://cghost_eye_enemy_scene" path="res://scenes/enemies/ghost_eye_enemy.tscn" id="28_ghost_eye_enemy"]
 [ext_resource type="PackedScene" uid="uid://cjelly_snail_enemy_scene" path="res://scenes/enemies/jelly_snail_enemy.tscn" id="29_jelly_snail_enemy"]
+[ext_resource type="PackedScene" uid="uid://ccrab_enemy_scene" path="res://scenes/enemies/crab_enemy.tscn" id="30_crab_enemy"]
 
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_top"]
 size = Vector2(2048, 80)
@@ -95,6 +96,7 @@ charger_enemy_scene = ExtResource("26_charger_enemy")
 garlic_enemy_scene = ExtResource("27_garlic_enemy")
 ghost_eye_enemy_scene = ExtResource("28_ghost_eye_enemy")
 jelly_snail_enemy_scene = ExtResource("29_jelly_snail_enemy")
+crab_enemy_scene = ExtResource("30_crab_enemy")
 star_pickup_scene = ExtResource("18_star_pickup")
 sidekick_pickup_scene = ExtResource("19_sidekick_pickup")
 spawn_rate_min = 3.0

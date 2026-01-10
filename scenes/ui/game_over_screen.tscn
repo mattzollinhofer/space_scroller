@@ -1,6 +1,7 @@
-[gd_scene load_steps=2 format=3 uid="uid://game_over_screen"]
+[gd_scene load_steps=3 format=3 uid="uid://game_over_screen"]
 
 [ext_resource type="Script" path="res://scripts/game_over_screen.gd" id="1_gameover"]
+[ext_resource type="PackedScene" uid="uid://initials_entry" path="res://scenes/ui/initials_entry.tscn" id="2_initials"]
 
 [node name="GameOverScreen" type="CanvasLayer"]
 layer = 10
@@ -49,6 +50,10 @@ theme_override_font_sizes/font_size = 56
 text = "NEW HIGH SCORE!"
 horizontal_alignment = 1
 vertical_alignment = 1
+
+[node name="InitialsEntry" parent="CenterContainer/VBoxContainer" instance=ExtResource("2_initials")]
+visible = false
+layout_mode = 2
 
 [node name="Spacer" type="Control" parent="CenterContainer/VBoxContainer"]
 custom_minimum_size = Vector2(0, 40)

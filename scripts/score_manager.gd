@@ -17,7 +17,7 @@ signal level_unlocked(level_number: int)
 ## Current score for the active game session
 var _current_score: int = 0
 
-## High scores list (array of dictionaries with "score" and "date" keys)
+## High scores list (array of dictionaries with "score", "date", and "initials" keys)
 var _high_scores: Array = []
 
 ## Unlocked levels (array of level numbers, Level 1 always unlocked)
@@ -111,7 +111,8 @@ func qualifies_for_top_10() -> bool:
 
 
 ## Save current score to high scores if it qualifies
-func save_high_score() -> void:
+## initials: 3-letter player initials (defaults to "AAA")
+func save_high_score(initials: String = "AAA") -> void:
 	if _current_score <= 0:
 		return
 
@@ -120,10 +121,11 @@ func save_high_score() -> void:
 
 	var is_new_top_score: bool = is_new_high_score()
 
-	# Create new entry
+	# Create new entry with initials
 	var entry: Dictionary = {
 		"score": _current_score,
-		"date": Time.get_datetime_string_from_system(true)
+		"date": Time.get_datetime_string_from_system(true),
+		"initials": initials
 	}
 
 	# Add to list
@@ -195,6 +197,7 @@ func _save_to_file() -> void:
 		var entry = _high_scores[i]
 		config.set_value("high_scores", "score_%d" % i, entry["score"])
 		config.set_value("high_scores", "date_%d" % i, entry["date"])
+		config.set_value("high_scores", "initials_%d" % i, entry.get("initials", "AAA"))
 
 	config.set_value("high_scores", "count", _high_scores.size())
 
@@ -226,10 +229,12 @@ func load_high_scores() -> void:
 	for i in range(count):
 		var score: int = config.get_value("high_scores", "score_%d" % i, 0)
 		var date: String = config.get_value("high_scores", "date_%d" % i, "")
+		var initials: String = config.get_value("high_scores", "initials_%d" % i, "AAA")
 		if score > 0:
 			_high_scores.append({
 				"score": score,
-				"date": date
+				"date": date,
+				"initials": initials
 			})
 
 	# Ensure sorted after loading

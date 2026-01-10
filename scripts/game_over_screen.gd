@@ -2,6 +2,7 @@ extends CanvasLayer
 ## Game over screen that displays when the player loses all lives.
 ## Pauses the game tree when shown.
 ## Shows current score, high score, and "NEW HIGH SCORE!" indicator.
+## Shows initials entry UI when score qualifies for top 10.
 ## Provides Main Menu button to return to the main menu.
 
 
@@ -14,22 +15,102 @@ extends CanvasLayer
 ## Reference to new high score indicator
 @onready var _new_high_score_label: Label = $CenterContainer/VBoxContainer/NewHighScoreLabel
 
+## Reference to initials entry component
+@onready var _initials_entry: Control = $CenterContainer/VBoxContainer/InitialsEntry
+
+## Reference to main menu button
+@onready var _main_menu_button: Button = $CenterContainer/VBoxContainer/MainMenuButton
+
+## Whether we're waiting for initials entry
+var _awaiting_initials: bool = false
+
+## Stored initials for display
+var _player_initials: String = "AAA"
+
 
 func _ready() -> void:
 	# Start hidden
 	visible = false
 	# Set process mode to continue running when game is paused
 	process_mode = Node.PROCESS_MODE_ALWAYS
+	# Connect initials confirmed signal
+	if _initials_entry and _initials_entry.has_signal("initials_confirmed"):
+		_initials_entry.initials_confirmed.connect(_on_initials_confirmed)
 
 
 ## Show the game over screen and pause the game
 func show_game_over() -> void:
 	_update_score_display()
-	_update_high_score_display()
+
+	# Check if score qualifies for top 10
+	var qualifies: bool = false
+	if has_node("/root/ScoreManager"):
+		var score_manager = get_node("/root/ScoreManager")
+		if score_manager.has_method("qualifies_for_top_10"):
+			qualifies = score_manager.qualifies_for_top_10()
+
+	if qualifies:
+		# Show initials entry, hide button until confirmed
+		_awaiting_initials = true
+		if _initials_entry:
+			_initials_entry.visible = true
+			_initials_entry.show_entry()
+		if _main_menu_button:
+			_main_menu_button.visible = false
+		# Show new high score indicator if it's the top score
+		_show_new_high_score_indicator()
+		# Show existing high score while waiting for initials
+		_update_existing_high_score_display()
+	else:
+		# No initials needed, just update display normally
+		_awaiting_initials = false
+		if _initials_entry:
+			_initials_entry.visible = false
+		if _main_menu_button:
+			_main_menu_button.visible = true
+		_update_high_score_display()
+
 	visible = true
 	_play_sfx("game_over")
 	# Pause the game tree
 	get_tree().paused = true
+
+
+## Called when player confirms their initials
+func _on_initials_confirmed(initials: String) -> void:
+	_player_initials = initials
+	_awaiting_initials = false
+
+	# Save the score with initials
+	if has_node("/root/ScoreManager"):
+		var score_manager = get_node("/root/ScoreManager")
+		if score_manager.has_method("save_high_score"):
+			score_manager.save_high_score(initials)
+
+	# Update high score display with initials
+	_update_high_score_display_with_initials()
+
+	# Hide initials entry, show button
+	if _initials_entry:
+		_initials_entry.visible = false
+	if _main_menu_button:
+		_main_menu_button.visible = true
+
+	_play_sfx("button_click")
+
+
+## Show the new high score indicator if applicable
+func _show_new_high_score_indicator() -> void:
+	if not has_node("/root/ScoreManager"):
+		return
+
+	var score_manager = get_node("/root/ScoreManager")
+	var is_new: bool = false
+	if score_manager.has_method("is_new_high_score"):
+		is_new = score_manager.is_new_high_score()
+
+	if _new_high_score_label:
+		_new_high_score_label.visible = is_new
 
 
 ## Hide the game over screen (for restart functionality, if implemented later)
@@ -80,7 +161,20 @@ func _update_score_display() -> void:
 	_score_label.text = "SCORE: %s" % _format_number(score)
 
 
-## Update the high score label and new high score indicator
+## Update the high score label to show existing high score (before initials entry)
+func _update_existing_high_score_display() -> void:
+	if not has_node("/root/ScoreManager"):
+		return
+
+	var score_manager = get_node("/root/ScoreManager")
+
+	# Show the existing high score (without saving current score yet)
+	if _high_score_label and score_manager.has_method("get_high_score"):
+		var high_score: int = score_manager.get_high_score()
+		_high_score_label.text = "HIGH SCORE: %s" % _format_number(high_score)
+
+
+## Update the high score label and new high score indicator (for non-qualifying scores)
 func _update_high_score_display() -> void:
 	if not has_node("/root/ScoreManager"):
 		return
@@ -104,6 +198,19 @@ func _update_high_score_display() -> void:
 	# Show/hide new high score indicator
 	if _new_high_score_label:
 		_new_high_score_label.visible = is_new
+
+
+## Update the high score label with initials included
+func _update_high_score_display_with_initials() -> void:
+	if not has_node("/root/ScoreManager"):
+		return
+
+	var score_manager = get_node("/root/ScoreManager")
+
+	# Update high score label with initials
+	if _high_score_label and score_manager.has_method("get_high_score"):
+		var high_score: int = score_manager.get_high_score()
+		_high_score_label.text = "HIGH SCORE: %s - %s" % [_player_initials, _format_number(high_score)]
 
 
 ## Format number with comma-separated thousands

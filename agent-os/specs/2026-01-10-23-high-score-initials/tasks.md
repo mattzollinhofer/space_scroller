@@ -30,27 +30,39 @@ This feature adds classic arcade-style 3-letter initials entry to the high score
 
 #### Tasks
 
-- [ ] 1.1 Write integration test: player enters initials "MJK" on game over, verify saved to file
-- [ ] 1.2 Run test, verify expected failure
-- [ ] 1.3 Make smallest change possible to progress
-- [ ] 1.4 Run test, observe failure or success
-- [ ] 1.5 Document result and update task list
-- [ ] 1.6 Repeat 1.3-1.5 as necessary (expected iterations: ScoreManager initials storage, InitialsEntry UI component, game_over_screen integration)
-- [ ] 1.7 Refactor if needed (keep tests green)
-- [ ] 1.8 Run score-related tests to verify no regressions: `for t in tests/test_score*.tscn tests/test_high_score*.tscn; do timeout 10 godot --headless --path . "$t" || exit 1; done`
-- [ ] 1.9 Commit working slice
+- [x] 1.1 Write integration test: player enters initials "MJK" on game over, verify saved to file
+- [x] 1.2 Run test, verify expected failure [save_high_score() expects 0 arguments]
+- [x] 1.3 Add initials parameter to ScoreManager.save_high_score() -> test passes for persistence
+- [x] 1.4 Write UI component test for InitialsEntry keyboard navigation
+- [x] 1.5 Run test, verify expected failure [initials_entry.tscn not found]
+- [x] 1.6 Create InitialsEntry component (scripts/ui/initials_entry.gd, scenes/ui/initials_entry.tscn) -> UI test passes
+- [x] 1.7 Write full game over integration test with initials entry
+- [x] 1.8 Run test, verify expected failure [InitialsEntry not in game_over_screen]
+- [x] 1.9 Add InitialsEntry to game_over_screen.tscn and wire up in game_over_screen.gd -> test passes
+- [x] 1.10 Run score-related tests, found regression in test_high_score_game_over.tscn
+- [x] 1.11 Update test_high_score_game_over.gd to handle new initials flow -> regression fixed
+- [x] 1.12 Run all score tests again, found regression in test_high_score_not_new.tscn
+- [x] 1.13 Add _update_existing_high_score_display() to show existing high score during initials entry -> all tests pass
+- [x] 1.14 Run score-related tests to verify no regressions: all 14 tests pass
+- [x] 1.15 Commit working slice
+
+**Red-Green Iterations:**
+1. [save_high_score expects 0 args] -> Added initials parameter with "AAA" default, added initials to entry dict, _save_to_file, load_high_scores - Success
+2. [initials_entry.tscn not found] -> Created InitialsEntry component with keyboard navigation - Success
+3. [InitialsEntry not in game_over_screen] -> Added InitialsEntry to scene and integrated in script - Success
+4. [Regression: high score shows 0 during initials entry] -> Added _update_existing_high_score_display() - Success
 
 **Acceptance Criteria:**
-- When score qualifies for top 10, initials entry UI appears on game over screen
-- Three letter slots display, defaulting to "AAA"
-- Keyboard up/down cycles current letter A-Z (wrapping)
-- Keyboard left/right moves between slots
-- Visual highlighting shows active slot (gold color)
-- Enter/Space confirms and saves score with initials
-- High score label updates to show "HIGH SCORE: MJK - 12,500" format
-- Initials persist to `user://high_scores.cfg` with `initials_%d` keys
-- Loading high scores reads initials (defaults "AAA" for legacy entries)
-- Button click SFX plays on letter changes and confirmation
+- [x] When score qualifies for top 10, initials entry UI appears on game over screen
+- [x] Three letter slots display, defaulting to "AAA"
+- [x] Keyboard up/down cycles current letter A-Z (wrapping)
+- [x] Keyboard left/right moves between slots
+- [x] Visual highlighting shows active slot (gold color)
+- [x] Enter/Space confirms and saves score with initials
+- [x] High score label updates to show "HIGH SCORE: MJK - 12,500" format
+- [x] Initials persist to `user://high_scores.cfg` with `initials_%d` keys
+- [x] Loading high scores reads initials (defaults "AAA" for legacy entries)
+- [x] Button click SFX plays on letter changes and confirmation
 
 ---
 

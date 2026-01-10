@@ -114,23 +114,29 @@ This feature adds classic arcade-style 3-letter initials entry to the high score
 
 #### Tasks
 
-- [ ] 3.1 Write integration test: initials entry on level complete saves score with initials
-- [ ] 3.2 Run test, verify expected failure
-- [ ] 3.3 Make smallest change possible to progress
-- [ ] 3.4 Run test, observe failure or success
-- [ ] 3.5 Document result and update task list
-- [ ] 3.6 Repeat 3.3-3.5 as necessary (expected: add InitialsEntry to level_complete_screen, wire up flow)
-- [ ] 3.7 Refactor if needed (keep tests green)
-- [ ] 3.8 Run score-related and level-related tests to verify no regressions
-- [ ] 3.9 Commit working slice
+- [x] 3.1 Write integration test: initials entry on level complete saves score with initials
+- [x] 3.2 Run test, verify expected failure [InitialsEntry not found in level_complete_screen]
+- [x] 3.3 Add InitialsEntry instance to level_complete_screen.tscn
+- [x] 3.4 Run test, verify failure [InitialsEntry should be visible when score qualifies for top 10]
+- [x] 3.5 Update level_complete_screen.gd with initials flow (qualifies check, show_entry, hide buttons, _on_initials_confirmed)
+- [x] 3.6 Run test, observe success - all initials and button visibility checks pass
+- [x] 3.7 Refactor if needed (keep tests green) - no refactor needed
+- [x] 3.8 Run score-related and level-related tests, found regression in test_high_score_level_complete.tscn
+- [x] 3.9 Update test_high_score_level_complete.gd to handle new initials flow -> regression fixed, 18 tests pass
+- [x] 3.10 Commit working slice
+
+**Red-Green Iterations:**
+1. [InitialsEntry not found in level_complete_screen] -> Added InitialsEntry instance to scene - Success
+2. [InitialsEntry should be visible] -> Updated script with initials flow logic - Success
+3. [Regression: test_high_score_level_complete expected immediate score display] -> Updated test to confirm initials first - Success
 
 **Acceptance Criteria:**
-- When score qualifies for top 10 on level complete, initials entry appears
-- Initials entry appears BEFORE Next Level/Main Menu buttons are shown
-- After confirming initials, buttons appear and game continues normally
-- High score label shows initials in same format as game over screen
-- "NEW HIGH SCORE!" indicator still works correctly
-- If score doesn't qualify for top 10, buttons appear immediately (no initials entry)
+- [x] When score qualifies for top 10 on level complete, initials entry appears
+- [x] Initials entry appears BEFORE Next Level/Main Menu buttons are shown
+- [x] After confirming initials, buttons appear and game continues normally
+- [x] High score label shows initials in same format as game over screen
+- [x] "NEW HIGH SCORE!" indicator still works correctly
+- [x] If score doesn't qualify for top 10, buttons appear immediately (no initials entry)
 
 ---
 

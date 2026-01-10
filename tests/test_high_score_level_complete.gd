@@ -1,6 +1,7 @@
 extends Node2D
 ## Integration test: High score and new high score indicator on Level Complete screen
 ## Tests that the level complete screen shows high score and NEW HIGH SCORE! indicator.
+## Updated to handle initials entry flow when score qualifies for top 10.
 
 var _test_passed: bool = false
 var _test_failed: bool = false
@@ -17,6 +18,9 @@ func _ready() -> void:
 
 	# Clean up any existing high scores file first
 	_cleanup_high_scores_file()
+
+	# Reload ScoreManager to clear cached state
+	get_node("/root/ScoreManager").load_high_scores()
 
 	# Load and setup main scene
 	var main_scene = load("res://scenes/main.tscn")
@@ -48,14 +52,35 @@ func _ready() -> void:
 	score_manager.add_points(10000)
 	print("Set test score to: %d" % score_manager.get_score())
 
-	# Show level complete screen (this saves the high score)
+	# Show level complete screen (this shows initials entry since score qualifies)
 	print("Showing level complete screen...")
 	level_complete_screen.show_level_complete()
 
 	# Wait a frame for display to update
 	await get_tree().process_frame
 
+	# Check if initials entry is shown (it should be since score qualifies for top 10)
+	var initials_entry = level_complete_screen.get_node_or_null("CenterContainer/VBoxContainer/InitialsEntry")
+	if initials_entry and initials_entry.visible:
+		print("Initials entry visible, confirming with default 'AAA'...")
+		# Simulate Enter key to confirm initials
+		_simulate_key_press(KEY_ENTER)
+		await get_tree().process_frame
+		await get_tree().process_frame
+
 	_check_level_complete_screen()
+
+
+func _simulate_key_press(key: int) -> void:
+	var event = InputEventKey.new()
+	event.keycode = key
+	event.pressed = true
+	Input.parse_input_event(event)
+
+	var release = InputEventKey.new()
+	release.keycode = key
+	release.pressed = false
+	Input.parse_input_event(release)
 
 
 func _check_level_complete_screen() -> void:

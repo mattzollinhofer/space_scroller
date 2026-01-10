@@ -154,25 +154,32 @@ This feature adds classic arcade-style 3-letter initials entry to the high score
 
 #### Tasks
 
-- [ ] 4.1 Write integration test: high scores screen displays all 10 entries with initials and scores
-- [ ] 4.2 Run test, verify expected failure
-- [ ] 4.3 Make smallest change possible to progress
-- [ ] 4.4 Run test, observe failure or success
-- [ ] 4.5 Document result and update task list
-- [ ] 4.6 Repeat 4.3-4.5 as necessary (expected: create high_scores_screen.tscn/gd, enable main menu button, wire navigation)
-- [ ] 4.7 Refactor if needed (keep tests green)
-- [ ] 4.8 Run all feature tests (slices 1-4) to verify everything works together
-- [ ] 4.9 Commit working slice
+- [x] 4.1 Write integration test: high scores screen displays all 10 entries with initials and scores
+- [x] 4.2 Run test, verify expected failure [high_scores_screen.tscn does not exist]
+- [x] 4.3 Create high_scores_screen.tscn and high_scores_screen.gd following level_select pattern
+- [x] 4.4 Run test, observe success - all 10 entries display correctly with format "1. AAA - 50,000"
+- [x] 4.5 Write test for main menu button enabled state and navigation target
+- [x] 4.6 Enable High Scores button in main_menu.tscn (remove disabled, set white color)
+- [x] 4.7 Wire up navigation in main_menu.gd to transition to high_scores_screen.tscn
+- [x] 4.8 Write test for empty slot placeholder format
+- [x] 4.9 Run all feature tests (slices 1-4) - all 13 initials/high score tests pass
+- [x] 4.10 Update test_main_menu.gd to expect High Scores button enabled (was placeholder check)
+- [x] 4.11 Commit working slice
+
+**Red-Green Iterations:**
+1. [high_scores_screen.tscn does not exist] -> Created high_scores_screen.tscn/gd with score list - Success
+2. [Main menu button disabled] -> Enabled button, set white color, wired navigation - Success
+3. [test_main_menu expected disabled button] -> Updated test to expect enabled button - Success
 
 **Acceptance Criteria:**
-- "High Scores" button in main menu is enabled (not grayed out)
-- Clicking button navigates to new high_scores_screen.tscn
-- Screen displays gold title "High Scores"
-- Ranked list shows positions 1-10 with format: "1. MJK - 12,500"
-- Uses dark space background consistent with other menu screens (MenuBackground component)
-- White/gold text styling matches existing UI
-- Back button returns to main menu using TransitionManager
-- Empty slots show placeholder (e.g., "1. --- - 0" or similar)
+- [x] "High Scores" button in main menu is enabled (not grayed out)
+- [x] Clicking button navigates to new high_scores_screen.tscn
+- [x] Screen displays gold title "High Scores"
+- [x] Ranked list shows positions 1-10 with format: "1. MJK - 12,500"
+- [x] Uses dark space background consistent with other menu screens (MenuBackground component)
+- [x] White/gold text styling matches existing UI
+- [x] Back button returns to main menu using TransitionManager
+- [x] Empty slots show placeholder (e.g., "1. --- - 0" or similar)
 
 ---
 

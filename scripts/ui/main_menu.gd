@@ -47,11 +47,15 @@ func _on_character_select_button_pressed() -> void:
 		get_tree().call_deferred("change_scene_to_file", "res://scenes/ui/character_selection.tscn")
 
 
-## Handle High Scores button pressed (placeholder)
+## Handle High Scores button pressed - navigate to high scores screen
 func _on_high_scores_button_pressed() -> void:
 	_play_sfx("button_click")
-	# Placeholder - awaiting Score System feature
-	pass
+	if has_node("/root/TransitionManager"):
+		var transition_manager = get_node("/root/TransitionManager")
+		transition_manager.transition_to_scene("res://scenes/ui/high_scores_screen.tscn")
+	else:
+		# Fallback to instant transition
+		get_tree().call_deferred("change_scene_to_file", "res://scenes/ui/high_scores_screen.tscn")
 
 
 ## Play a sound effect via AudioManager

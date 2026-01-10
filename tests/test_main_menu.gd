@@ -43,16 +43,16 @@ func _ready() -> void:
 
 	print("Play button found and visible: %s" % play_button.visible)
 
-	# Check for High Scores button (should be disabled)
+	# Check for High Scores button (should be enabled now that feature is implemented)
 	var high_scores_button = _find_button_by_text(main_menu, "High Scores")
 	if not high_scores_button:
 		high_scores_button = _find_node_by_name(main_menu, "HighScoresButton") as Button
 
 	if high_scores_button:
-		if not high_scores_button.disabled:
-			_fail("High Scores button should be disabled (placeholder)")
+		if high_scores_button.disabled:
+			_fail("High Scores button should be enabled (feature implemented)")
 			return
-		print("High Scores button found and disabled (placeholder)")
+		print("High Scores button found and enabled")
 	else:
 		_fail("High Scores button not found in main menu")
 		return

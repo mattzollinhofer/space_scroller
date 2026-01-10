@@ -2,7 +2,8 @@ extends Control
 ## Arcade-style 3-letter initials entry component.
 ## Used for entering player initials when achieving a high score.
 ## Supports keyboard navigation: up/down to cycle letters, left/right to move slots.
-## Emits initials_confirmed signal when player confirms with Enter/Space.
+## Supports touch input: up/down buttons per slot, OK button to confirm.
+## Emits initials_confirmed signal when player confirms with Enter/Space or OK button.
 
 ## Emitted when player confirms their initials
 signal initials_confirmed(initials: String)
@@ -22,17 +23,75 @@ const COLOR_SELECTED: Color = Color(1, 0.84, 0, 1)
 ## White color for unselected slots
 const COLOR_UNSELECTED: Color = Color(1, 1, 1, 1)
 
-## References to letter labels
+## References to letter labels (updated path for new structure)
 @onready var _letter_labels: Array[Label] = [
-	$HBoxContainer/Slot0/LetterLabel,
-	$HBoxContainer/Slot1/LetterLabel,
-	$HBoxContainer/Slot2/LetterLabel
+	$VBoxContainer/HBoxContainer/Slot0/LetterLabel,
+	$VBoxContainer/HBoxContainer/Slot1/LetterLabel,
+	$VBoxContainer/HBoxContainer/Slot2/LetterLabel
 ]
+
+## References to up buttons
+@onready var _up_buttons: Array[Button] = [
+	$VBoxContainer/HBoxContainer/Slot0/UpButton0,
+	$VBoxContainer/HBoxContainer/Slot1/UpButton1,
+	$VBoxContainer/HBoxContainer/Slot2/UpButton2
+]
+
+## References to down buttons
+@onready var _down_buttons: Array[Button] = [
+	$VBoxContainer/HBoxContainer/Slot0/DownButton0,
+	$VBoxContainer/HBoxContainer/Slot1/DownButton1,
+	$VBoxContainer/HBoxContainer/Slot2/DownButton2
+]
+
+## Reference to OK button
+@onready var _ok_button: Button = $VBoxContainer/OKButton
 
 
 func _ready() -> void:
 	process_mode = Node.PROCESS_MODE_ALWAYS
+	_connect_buttons()
 	_update_display()
+
+
+## Connect touch button signals
+func _connect_buttons() -> void:
+	# Connect up buttons
+	for i in range(3):
+		if _up_buttons[i]:
+			_up_buttons[i].pressed.connect(_on_up_button_pressed.bind(i))
+
+	# Connect down buttons
+	for i in range(3):
+		if _down_buttons[i]:
+			_down_buttons[i].pressed.connect(_on_down_button_pressed.bind(i))
+
+	# Connect OK button
+	if _ok_button:
+		_ok_button.pressed.connect(_on_ok_button_pressed)
+
+
+func _on_up_button_pressed(slot: int) -> void:
+	if not _input_enabled:
+		return
+	_current_slot = slot
+	_cycle_letter_at_slot(slot, 1)
+	_play_sfx("button_click")
+
+
+func _on_down_button_pressed(slot: int) -> void:
+	if not _input_enabled:
+		return
+	_current_slot = slot
+	_cycle_letter_at_slot(slot, -1)
+	_play_sfx("button_click")
+
+
+func _on_ok_button_pressed() -> void:
+	if not _input_enabled:
+		return
+	_play_sfx("button_click")
+	_confirm()
 
 
 func _unhandled_input(event: InputEvent) -> void:
@@ -67,6 +126,12 @@ func _unhandled_input(event: InputEvent) -> void:
 ## Cycle the current slot's letter by the given amount (1 for up, -1 for down)
 func _cycle_letter(direction: int) -> void:
 	_letters[_current_slot] = (_letters[_current_slot] + direction + 26) % 26
+	_update_display()
+
+
+## Cycle a specific slot's letter by the given amount (for touch input)
+func _cycle_letter_at_slot(slot: int, direction: int) -> void:
+	_letters[slot] = (_letters[slot] + direction + 26) % 26
 	_update_display()
 
 

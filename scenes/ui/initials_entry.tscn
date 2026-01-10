@@ -21,12 +21,12 @@ anchor_top = 0.5
 anchor_right = 0.5
 anchor_bottom = 0.5
 offset_left = -200.0
-offset_top = -100.0
+offset_top = -150.0
 offset_right = 200.0
-offset_bottom = 100.0
+offset_bottom = 150.0
 grow_horizontal = 2
 grow_vertical = 2
-theme_override_constants/separation = 20
+theme_override_constants/separation = 15
 
 [node name="TitleLabel" type="Label" parent="VBoxContainer"]
 layout_mode = 2
@@ -36,27 +36,23 @@ text = "ENTER INITIALS"
 horizontal_alignment = 1
 vertical_alignment = 1
 
-[node name="HBoxContainer" type="HBoxContainer" parent="."]
-layout_mode = 1
-anchors_preset = 8
-anchor_left = 0.5
-anchor_top = 0.5
-anchor_right = 0.5
-anchor_bottom = 0.5
-offset_left = -150.0
-offset_top = -20.0
-offset_right = 150.0
-offset_bottom = 80.0
-grow_horizontal = 2
-grow_vertical = 2
-theme_override_constants/separation = 40
+[node name="HBoxContainer" type="HBoxContainer" parent="VBoxContainer"]
+layout_mode = 2
+theme_override_constants/separation = 30
 
-[node name="Slot0" type="VBoxContainer" parent="HBoxContainer"]
+[node name="Slot0" type="VBoxContainer" parent="VBoxContainer/HBoxContainer"]
 layout_mode = 2
 size_flags_horizontal = 3
+theme_override_constants/separation = 5
 alignment = 1
 
-[node name="LetterLabel" type="Label" parent="HBoxContainer/Slot0"]
+[node name="UpButton0" type="Button" parent="VBoxContainer/HBoxContainer/Slot0"]
+custom_minimum_size = Vector2(60, 50)
+layout_mode = 2
+theme_override_font_sizes/font_size = 32
+text = "^"
+
+[node name="LetterLabel" type="Label" parent="VBoxContainer/HBoxContainer/Slot0"]
 layout_mode = 2
 theme_override_colors/font_color = Color(1, 0.84, 0, 1)
 theme_override_font_sizes/font_size = 72
@@ -64,12 +60,25 @@ text = "A"
 horizontal_alignment = 1
 vertical_alignment = 1
 
-[node name="Slot1" type="VBoxContainer" parent="HBoxContainer"]
+[node name="DownButton0" type="Button" parent="VBoxContainer/HBoxContainer/Slot0"]
+custom_minimum_size = Vector2(60, 50)
+layout_mode = 2
+theme_override_font_sizes/font_size = 32
+text = "v"
+
+[node name="Slot1" type="VBoxContainer" parent="VBoxContainer/HBoxContainer"]
 layout_mode = 2
 size_flags_horizontal = 3
+theme_override_constants/separation = 5
 alignment = 1
 
-[node name="LetterLabel" type="Label" parent="HBoxContainer/Slot1"]
+[node name="UpButton1" type="Button" parent="VBoxContainer/HBoxContainer/Slot1"]
+custom_minimum_size = Vector2(60, 50)
+layout_mode = 2
+theme_override_font_sizes/font_size = 32
+text = "^"
+
+[node name="LetterLabel" type="Label" parent="VBoxContainer/HBoxContainer/Slot1"]
 layout_mode = 2
 theme_override_colors/font_color = Color(1, 1, 1, 1)
 theme_override_font_sizes/font_size = 72
@@ -77,12 +86,25 @@ text = "A"
 horizontal_alignment = 1
 vertical_alignment = 1
 
-[node name="Slot2" type="VBoxContainer" parent="HBoxContainer"]
+[node name="DownButton1" type="Button" parent="VBoxContainer/HBoxContainer/Slot1"]
+custom_minimum_size = Vector2(60, 50)
+layout_mode = 2
+theme_override_font_sizes/font_size = 32
+text = "v"
+
+[node name="Slot2" type="VBoxContainer" parent="VBoxContainer/HBoxContainer"]
 layout_mode = 2
 size_flags_horizontal = 3
+theme_override_constants/separation = 5
 alignment = 1
 
-[node name="LetterLabel" type="Label" parent="HBoxContainer/Slot2"]
+[node name="UpButton2" type="Button" parent="VBoxContainer/HBoxContainer/Slot2"]
+custom_minimum_size = Vector2(60, 50)
+layout_mode = 2
+theme_override_font_sizes/font_size = 32
+text = "^"
+
+[node name="LetterLabel" type="Label" parent="VBoxContainer/HBoxContainer/Slot2"]
 layout_mode = 2
 theme_override_colors/font_color = Color(1, 1, 1, 1)
 theme_override_font_sizes/font_size = 72
@@ -90,21 +112,23 @@ text = "A"
 horizontal_alignment = 1
 vertical_alignment = 1
 
-[node name="InstructionLabel" type="Label" parent="."]
-layout_mode = 1
-anchors_preset = 8
-anchor_left = 0.5
-anchor_top = 0.5
-anchor_right = 0.5
-anchor_bottom = 0.5
-offset_left = -200.0
-offset_top = 100.0
-offset_right = 200.0
-offset_bottom = 150.0
-grow_horizontal = 2
-grow_vertical = 2
+[node name="DownButton2" type="Button" parent="VBoxContainer/HBoxContainer/Slot2"]
+custom_minimum_size = Vector2(60, 50)
+layout_mode = 2
+theme_override_font_sizes/font_size = 32
+text = "v"
+
+[node name="OKButton" type="Button" parent="VBoxContainer"]
+custom_minimum_size = Vector2(200, 60)
+layout_mode = 2
+size_flags_horizontal = 4
+theme_override_font_sizes/font_size = 36
+text = "OK"
+
+[node name="InstructionLabel" type="Label" parent="VBoxContainer"]
+layout_mode = 2
 theme_override_colors/font_color = Color(0.7, 0.7, 0.7, 1)
-theme_override_font_sizes/font_size = 24
-text = "UP/DOWN: Change Letter | LEFT/RIGHT: Move | ENTER: Confirm"
+theme_override_font_sizes/font_size = 20
+text = "Tap arrows or use keyboard"
 horizontal_alignment = 1
 vertical_alignment = 1

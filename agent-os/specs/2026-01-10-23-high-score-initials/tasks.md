@@ -78,23 +78,26 @@ This feature adds classic arcade-style 3-letter initials entry to the high score
 
 #### Tasks
 
-- [ ] 2.1 Write integration test: touch-based initials entry saves correctly
-- [ ] 2.2 Run test, verify expected failure
-- [ ] 2.3 Make smallest change possible to progress
-- [ ] 2.4 Run test, observe failure or success
-- [ ] 2.5 Document result and update task list
-- [ ] 2.6 Repeat 2.3-2.5 as necessary (expected: add touch buttons to InitialsEntry component)
-- [ ] 2.7 Refactor if needed (keep tests green)
-- [ ] 2.8 Run score-related tests to verify no regressions
-- [ ] 2.9 Commit working slice
+- [x] 2.1 Write integration test: touch-based initials entry saves correctly
+- [x] 2.2 Run test, verify expected failure [Missing UpButton0 for slot 0]
+- [x] 2.3 Add touch buttons to InitialsEntry scene (UpButton0-2, DownButton0-2, OKButton)
+- [x] 2.4 Update InitialsEntry script to connect button signals and handle touch input
+- [x] 2.5 Run test, observe success - all touch tests pass
+- [x] 2.6 Verify keyboard input still works alongside touch (mixed input test passes)
+- [x] 2.7 Refactor if needed (keep tests green) - no refactor needed
+- [x] 2.8 Run score-related tests to verify no regressions: all 17 tests pass
+- [x] 2.9 Commit working slice
+
+**Red-Green Iterations:**
+1. [Missing UpButton0 for slot 0] -> Added UpButton0-2, DownButton0-2, OKButton to scene, updated script to connect signals - Success
 
 **Acceptance Criteria:**
-- Up/Down arrow buttons appear for each letter slot
-- Tapping up/down cycles the letter in that slot
-- Tapping a slot makes it the active slot
-- OK button confirms and saves initials
-- Touch and keyboard input can be used interchangeably
-- Works on both web (HTML5) and iOS platforms
+- [x] Up/Down arrow buttons appear for each letter slot
+- [x] Tapping up/down cycles the letter in that slot
+- [x] Tapping a slot makes it the active slot
+- [x] OK button confirms and saves initials
+- [x] Touch and keyboard input can be used interchangeably
+- [x] Works on both web (HTML5) and iOS platforms
 
 ---
 

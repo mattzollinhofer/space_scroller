@@ -1,0 +1,6 @@
+[gd_scene load_steps=2 format=3 uid="uid://dps7k2hf5xqcr"]
+
+[ext_resource type="Script" path="res://tests/test_initials_skip_no_qualify.gd" id="1_test"]
+
+[node name="TestInitialsSkipNoQualify" type="Node2D"]
+script = ExtResource("1_test")

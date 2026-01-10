@@ -1,0 +1,6 @@
+[gd_scene load_steps=2 format=3 uid="uid://c8x3j7qr4ymnh"]
+
+[ext_resource type="Script" path="res://tests/test_initials_legacy.gd" id="1_test"]
+
+[node name="TestInitialsLegacy" type="Node2D"]
+script = ExtResource("1_test")

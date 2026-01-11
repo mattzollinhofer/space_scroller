@@ -26,22 +26,22 @@ no retries, no offline queueing.
 
 #### Tasks
 
-- [ ] 1.1 Write integration test that verifies FirebaseService autoload exists and has submit_score method
-- [ ] 1.2 Run test, verify expected failure (FirebaseService not found)
-- [ ] 1.3 Create `scripts/autoloads/firebase_service.gd` extending Node with submit_score stub
-- [ ] 1.4 Register FirebaseService in project.godot autoload section
-- [ ] 1.5 Run test, verify it finds FirebaseService with submit_score method
-- [ ] 1.6 Create `config/firebase_config.json` with placeholder values for project_id and database_url
-- [ ] 1.7 Add `_ready()` to load firebase config from JSON file
-- [ ] 1.8 Implement `submit_score(score: int, initials: String = "AAA")` with HTTPRequest POST
-- [ ] 1.9 Set HTTPRequest timeout to 4 seconds
-- [ ] 1.10 Add silent error handling (return without action on timeout/error)
-- [ ] 1.11 Write test that verifies submit_score can be called without crashing
-- [ ] 1.12 Run test, verify success
-- [ ] 1.13 Integrate FirebaseService.submit_score() into ScoreManager.save_high_score()
-- [ ] 1.14 Write test that verifies ScoreManager.save_high_score() calls FirebaseService
-- [ ] 1.15 Run test, verify success
-- [ ] 1.16 Refactor if needed (keep tests green)
+- [x] 1.1 Write integration test that verifies FirebaseService autoload exists and has submit_score method
+- [x] 1.2 Run test, verify expected failure (FirebaseService not found) -> Success: "FirebaseService autoload not found"
+- [x] 1.3 Create `scripts/autoloads/firebase_service.gd` extending Node with submit_score stub
+- [x] 1.4 Register FirebaseService in project.godot autoload section
+- [x] 1.5 Run test, verify it finds FirebaseService with submit_score method -> Success
+- [x] 1.6 Create `config/firebase_config.json` with placeholder values for project_id and database_url
+- [x] 1.7 Add `_ready()` to load firebase config from JSON file
+- [x] 1.8 Implement `submit_score(score: int, initials: String = "AAA")` with HTTPRequest POST
+- [x] 1.9 Set HTTPRequest timeout to 4 seconds
+- [x] 1.10 Add silent error handling (return without action on timeout/error)
+- [x] 1.11 Write test that verifies submit_score can be called without crashing
+- [x] 1.12 Run test, verify success -> Success
+- [x] 1.13 Integrate FirebaseService.submit_score() into ScoreManager.save_high_score()
+- [x] 1.14 Write test that verifies ScoreManager.save_high_score() calls FirebaseService
+- [x] 1.15 Run test, verify success -> Success
+- [x] 1.16 Refactor if needed (keep tests green) -> No refactoring needed
 - [ ] 1.17 Commit working slice
 
 **Acceptance Criteria:**

@@ -120,6 +120,7 @@ func save_high_score(initials: String = "AAA") -> void:
 		return
 
 	var is_new_top_score: bool = is_new_high_score()
+	var score_to_submit: int = _current_score
 
 	# Create new entry with initials
 	var entry: Dictionary = {
@@ -140,6 +141,10 @@ func save_high_score(initials: String = "AAA") -> void:
 
 	# Save to file
 	_save_to_file()
+
+	# Submit to Firebase (fire-and-forget, silent failure)
+	if has_node("/root/FirebaseService"):
+		get_node("/root/FirebaseService").submit_score(score_to_submit, initials)
 
 	# Emit signal if this is a new top high score
 	if is_new_top_score:

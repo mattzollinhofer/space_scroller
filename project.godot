@@ -22,6 +22,7 @@ GameState="*res://scripts/autoloads/game_state.gd"
 TransitionManager="*res://scripts/autoloads/transition_manager.gd"
 AudioManager="*res://scripts/autoloads/audio_manager.gd"
 ScreenEffects="*res://scripts/autoloads/screen_effects.gd"
+FirebaseService="*res://scripts/autoloads/firebase_service.gd"
 
 [display]
 

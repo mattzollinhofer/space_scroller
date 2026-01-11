@@ -1,0 +1,6 @@
+[gd_scene load_steps=2 format=3 uid="uid://firebase_integration_test"]
+
+[ext_resource type="Script" path="res://tests/test_firebase_integration.gd" id="1_test"]
+
+[node name="TestFirebaseIntegration" type="Node2D"]
+script = ExtResource("1_test")

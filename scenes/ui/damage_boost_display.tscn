@@ -1,0 +1,33 @@
+[gd_scene load_steps=3 format=3 uid="uid://cdamage_boost_display"]
+
+[ext_resource type="Script" path="res://scripts/ui/damage_boost_display.gd" id="1_script"]
+[ext_resource type="Texture2D" path="res://assets/sprites/fireball-1.png" id="2_fireball"]
+
+[node name="DamageBoostDisplay" type="CanvasLayer"]
+layer = 10
+script = ExtResource("1_script")
+
+[node name="Container" type="Control" parent="."]
+anchors_preset = 0
+offset_left = 20.0
+offset_top = 90.0
+offset_right = 200.0
+offset_bottom = 160.0
+
+[node name="Icon" type="TextureRect" parent="Container"]
+offset_left = 0.0
+offset_top = 0.0
+offset_right = 70.0
+offset_bottom = 70.0
+texture = ExtResource("2_fireball")
+expand_mode = 1
+stretch_mode = 5
+
+[node name="Label" type="Label" parent="Container"]
+offset_left = 75.0
+offset_top = 10.0
+offset_right = 175.0
+offset_bottom = 60.0
+theme_override_font_sizes/font_size = 36
+text = "x2"
+vertical_alignment = 1

@@ -35,6 +35,7 @@ signal lives_changed(new_lives: int)
 signal life_lost()
 signal died()
 signal projectile_fired()
+signal damage_boost_changed(new_boost: int)
 
 ## Reference to virtual joystick (auto-detected from scene tree)
 var virtual_joystick: Node = null
@@ -50,6 +51,9 @@ var _health: int = 3
 
 ## Current lives (respawns remaining)
 var _lives: int = 3
+
+## Current damage boost (stacks from missile pickups)
+var _damage_boost: int = 0
 
 ## Invincibility state
 var _is_invincible: bool = false
@@ -300,6 +304,17 @@ func get_health() -> int:
 ## Get current lives count
 func get_lives() -> int:
 	return _lives
+
+
+## Get current damage boost level
+func get_damage_boost() -> int:
+	return _damage_boost
+
+
+## Add damage boost (called by missile pickup)
+func add_damage_boost() -> void:
+	_damage_boost += 1
+	damage_boost_changed.emit(_damage_boost)
 
 
 ## Gain health (used by pickups). Returns true if health was gained.

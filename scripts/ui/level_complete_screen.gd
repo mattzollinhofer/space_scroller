@@ -170,11 +170,7 @@ func _on_next_level_pressed() -> void:
 		# Save sidekick state to carry over to next level
 		_save_sidekick_state(game_state)
 
-	# Reset score for new level
-	if has_node("/root/ScoreManager"):
-		var score_manager = get_node("/root/ScoreManager")
-		if score_manager.has_method("reset_score"):
-			score_manager.reset_score()
+	# Score persists across levels (not reset here)
 
 	get_tree().change_scene_to_file("res://scenes/main.tscn")
 

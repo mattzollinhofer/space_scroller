@@ -17,10 +17,6 @@ func _on_play_button_pressed() -> void:
 		game_state.clear_current_lives()
 		game_state.clear_sidekick_state()
 		game_state.set_selected_level(1)  # Reset to level 1
-	# Reset score when starting a new game
-	if has_node("/root/ScoreManager"):
-		var score_manager = get_node("/root/ScoreManager")
-		score_manager.reset_score()
 	if has_node("/root/TransitionManager"):
 		var transition_manager = get_node("/root/TransitionManager")
 		transition_manager.transition_to_scene("res://scenes/main.tscn")

@@ -204,6 +204,9 @@ func _on_main_menu_pressed() -> void:
 		var game_state = get_node("/root/GameState")
 		game_state.clear_current_lives()
 		game_state.clear_sidekick_state()
+	# Reset score - run has ended (beat final level)
+	if has_node("/root/ScoreManager"):
+		get_node("/root/ScoreManager").reset_score()
 	# Stop music before returning to menu
 	_stop_gameplay_music()
 	get_tree().change_scene_to_file("res://scenes/ui/main_menu.tscn")

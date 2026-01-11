@@ -82,11 +82,6 @@ func _on_level_selected(level_number: int) -> void:
 		game_state.clear_current_lives()
 		game_state.clear_sidekick_state()
 
-	# Reset score when starting a new game
-	if has_node("/root/ScoreManager"):
-		var score_manager = get_node("/root/ScoreManager")
-		score_manager.reset_score()
-
 	# Transition to main game scene
 	if has_node("/root/TransitionManager"):
 		var transition_manager = get_node("/root/TransitionManager")

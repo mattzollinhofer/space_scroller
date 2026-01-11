@@ -59,6 +59,9 @@ var _has_sidekick: bool = false
 ## Sprite path of the sidekick (to preserve appearance)
 var _sidekick_sprite: String = ""
 
+## Current damage boost carried over between levels (0 means no boost)
+var _damage_boost: int = 0
+
 ## Signal emitted when character selection changes
 signal character_changed(character_id: String)
 
@@ -260,3 +263,19 @@ func get_sidekick_sprite() -> String:
 func clear_sidekick_state() -> void:
 	_has_sidekick = false
 	_sidekick_sprite = ""
+
+
+## Get current damage boost (for persistence between levels)
+## Returns 0 if not set (start of new game)
+func get_damage_boost() -> int:
+	return _damage_boost
+
+
+## Set current damage boost (called when completing a level)
+func set_damage_boost(boost: int) -> void:
+	_damage_boost = boost
+
+
+## Clear damage boost (called when starting a fresh game or player loses a life)
+func clear_damage_boost() -> void:
+	_damage_boost = 0

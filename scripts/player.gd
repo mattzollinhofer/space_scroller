@@ -79,6 +79,13 @@ func _ready() -> void:
 			_lives = carried_lives
 		else:
 			_lives = starting_lives
+		# Check if we have damage boost carried over from a previous level
+		if game_state.has_method("get_damage_boost"):
+			var carried_boost = game_state.get_damage_boost()
+			if carried_boost > 0:
+				_damage_boost = carried_boost
+				# Emit signal so UI updates
+				damage_boost_changed.emit(_damage_boost)
 	else:
 		_lives = starting_lives
 

@@ -175,6 +175,8 @@ func _on_next_level_pressed() -> void:
 			game_state.set_current_lives(player.get_lives())
 		# Save sidekick state to carry over to next level
 		_save_sidekick_state(game_state)
+		# Save damage boost to carry over to next level
+		_save_damage_boost_state(game_state)
 
 	# Score persists across levels (not reset here)
 
@@ -194,6 +196,15 @@ func _save_sidekick_state(game_state: Node) -> void:
 		game_state.set_sidekick_state(false)
 
 
+## Save damage boost state to GameState for next level
+func _save_damage_boost_state(game_state: Node) -> void:
+	var player = get_tree().root.get_node_or_null("Main/Player")
+	if player and player.has_method("get_damage_boost"):
+		var boost = player.get_damage_boost()
+		if game_state.has_method("set_damage_boost"):
+			game_state.set_damage_boost(boost)
+
+
 ## Handle main menu button press
 func _on_main_menu_pressed() -> void:
 	# Unpause before transitioning
@@ -204,6 +215,9 @@ func _on_main_menu_pressed() -> void:
 		var game_state = get_node("/root/GameState")
 		game_state.clear_current_lives()
 		game_state.clear_sidekick_state()
+		# Clear damage boost when returning to main menu
+		if game_state.has_method("clear_damage_boost"):
+			game_state.clear_damage_boost()
 	# Reset score - run has ended (beat final level)
 	if has_node("/root/ScoreManager"):
 		get_node("/root/ScoreManager").reset_score()

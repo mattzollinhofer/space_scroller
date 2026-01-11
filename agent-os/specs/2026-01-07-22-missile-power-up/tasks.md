@@ -61,24 +61,27 @@ Each slice delivers incremental user value and is tested end-to-end.
 
 #### Tasks
 
-- [ ] 2.1 Write integration test: boosted projectile deals extra damage
+- [x] 2.1 Write integration test: boosted projectile deals extra damage
   - Spawn player, give 1 damage boost
   - Spawn enemy with 2 health
   - Player fires projectile
   - Verify enemy takes 2 damage (1 base + 1 boost)
-- [ ] 2.2 Run test, verify expected failure
-- [ ] 2.3 Make smallest change to progress (repeat until test passes)
-  - Expected iterations: add `get_damage_boost()` method to player.gd
-  - Modify `shoot()` to set `projectile.damage = 1 + get_damage_boost()`
-- [ ] 2.4 Document each red-green iteration in this task list
-- [ ] 2.5 Run all slice tests (1 and 2) to verify no regressions
-- [ ] 2.6 Refactor if needed (keep tests green)
-- [ ] 2.7 Commit working slice
+- [x] 2.2 Run test, verify expected failure
+  - [Enemy health: 1 remaining after hit] -> Projectile dealt only 1 damage (default) instead of 2 (boosted)
+- [x] 2.3 Make smallest change to progress (repeat until test passes)
+  - [x] Iteration 1: [Projectile damage not boosted] -> Added `projectile.damage = 1 + _damage_boost` in player.gd shoot() method after instantiation
+  - [x] Success - Test passes
+- [x] 2.4 Document each red-green iteration in this task list
+- [x] 2.5 Run all slice tests (1 and 2) to verify no regressions
+  - Both tests pass
+- [x] 2.6 Refactor if needed (keep tests green)
+  - No refactoring needed - single line change is clean
+- [x] 2.7 Commit working slice
 
 **Acceptance Criteria:**
-- Projectile damage = 1 + current damage boost
-- Enemy takes boosted damage from player projectiles
-- Stacking multiple pickups increases damage further (x2, x3, x4...)
+- [x] Projectile damage = 1 + current damage boost
+- [x] Enemy takes boosted damage from player projectiles
+- [x] Stacking multiple pickups increases damage further (x2, x3, x4...)
 
 ---
 
@@ -228,4 +231,5 @@ Each slice includes an integration test that drives implementation:
 All tests should be runnable via:
 ```bash
 timeout 10 godot --headless --path . tests/test_missile_pickup.tscn
+timeout 10 godot --headless --path . tests/test_missile_damage_boost.tscn
 ```

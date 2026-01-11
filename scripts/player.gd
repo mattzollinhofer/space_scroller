@@ -226,6 +226,9 @@ func shoot(is_new_tap: bool = false) -> void:
 	var projectile = projectile_scene.instantiate()
 	projectile.position = position + Vector2(80, 0)  # Spawn ahead of player
 
+	# Apply damage boost to projectile (base damage 1 + boost level)
+	projectile.damage = 1 + _damage_boost
+
 	# Add to parent (Main scene) so it persists independently
 	get_parent().add_child(projectile)
 

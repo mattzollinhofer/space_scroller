@@ -1,4 +1,4 @@
-[gd_scene load_steps=33 format=3 uid="uid://d0n8g3kv2kq7y"]
+[gd_scene load_steps=34 format=3 uid="uid://d0n8g3kv2kq7y"]
 
 [ext_resource type="Script" path="res://scripts/scroll_controller.gd" id="1_scroll"]
 [ext_resource type="Script" path="res://scripts/background/star_field.gd" id="2_starfield"]
@@ -18,19 +18,20 @@
 [ext_resource type="PackedScene" uid="uid://progress_bar_scene" path="res://scenes/ui/progress_bar.tscn" id="17_progress_bar"]
 [ext_resource type="PackedScene" uid="uid://cufo_friend" path="res://scenes/pickups/star_pickup.tscn" id="18_star_pickup"]
 [ext_resource type="PackedScene" uid="uid://sidekick_pickup" path="res://scenes/pickups/sidekick_pickup.tscn" id="19_sidekick_pickup"]
-[ext_resource type="PackedScene" uid="uid://chealth_display" path="res://scenes/ui/health_display.tscn" id="20_health_display"]
-[ext_resource type="PackedScene" uid="uid://clives_display" path="res://scenes/ui/lives_display.tscn" id="27_lives_display"]
-[ext_resource type="PackedScene" uid="uid://clevel_complete_screen" path="res://scenes/ui/level_complete_screen.tscn" id="21_level_complete"]
-[ext_resource type="PackedScene" uid="uid://cscore_display" path="res://scenes/ui/score_display.tscn" id="22_score_display"]
-[ext_resource type="PackedScene" uid="uid://cpause_menu" path="res://scenes/ui/pause_menu.tscn" id="23_pause_menu"]
-[ext_resource type="PackedScene" uid="uid://cpause_button" path="res://scenes/ui/pause_button.tscn" id="24_pause_button"]
-[ext_resource type="PackedScene" uid="uid://cshooting_enemy" path="res://scenes/enemies/shooting_enemy.tscn" id="25_shooting_enemy"]
-[ext_resource type="PackedScene" uid="uid://ccharger_enemy" path="res://scenes/enemies/charger_enemy.tscn" id="26_charger_enemy"]
-[ext_resource type="PackedScene" uid="uid://cgarlic_enemy_scene" path="res://scenes/enemies/garlic_enemy.tscn" id="27_garlic_enemy"]
-[ext_resource type="PackedScene" uid="uid://cghost_eye_enemy_scene" path="res://scenes/enemies/ghost_eye_enemy.tscn" id="28_ghost_eye_enemy"]
-[ext_resource type="PackedScene" uid="uid://cjelly_snail_enemy_scene" path="res://scenes/enemies/jelly_snail_enemy.tscn" id="29_jelly_snail_enemy"]
-[ext_resource type="PackedScene" uid="uid://ccrab_enemy_scene" path="res://scenes/enemies/crab_enemy.tscn" id="30_crab_enemy"]
-[ext_resource type="PackedScene" uid="uid://cdamage_boost_display" path="res://scenes/ui/damage_boost_display.tscn" id="31_damage_boost_display"]
+[ext_resource type="PackedScene" uid="uid://cmissile_pickup" path="res://scenes/pickups/missile_pickup.tscn" id="20_missile_pickup"]
+[ext_resource type="PackedScene" uid="uid://chealth_display" path="res://scenes/ui/health_display.tscn" id="21_health_display"]
+[ext_resource type="PackedScene" uid="uid://clives_display" path="res://scenes/ui/lives_display.tscn" id="22_lives_display"]
+[ext_resource type="PackedScene" uid="uid://clevel_complete_screen" path="res://scenes/ui/level_complete_screen.tscn" id="23_level_complete"]
+[ext_resource type="PackedScene" uid="uid://cscore_display" path="res://scenes/ui/score_display.tscn" id="24_score_display"]
+[ext_resource type="PackedScene" uid="uid://cpause_menu" path="res://scenes/ui/pause_menu.tscn" id="25_pause_menu"]
+[ext_resource type="PackedScene" uid="uid://cpause_button" path="res://scenes/ui/pause_button.tscn" id="26_pause_button"]
+[ext_resource type="PackedScene" uid="uid://cshooting_enemy" path="res://scenes/enemies/shooting_enemy.tscn" id="27_shooting_enemy"]
+[ext_resource type="PackedScene" uid="uid://ccharger_enemy" path="res://scenes/enemies/charger_enemy.tscn" id="28_charger_enemy"]
+[ext_resource type="PackedScene" uid="uid://cgarlic_enemy_scene" path="res://scenes/enemies/garlic_enemy.tscn" id="29_garlic_enemy"]
+[ext_resource type="PackedScene" uid="uid://cghost_eye_enemy_scene" path="res://scenes/enemies/ghost_eye_enemy.tscn" id="30_ghost_eye_enemy"]
+[ext_resource type="PackedScene" uid="uid://cjelly_snail_enemy_scene" path="res://scenes/enemies/jelly_snail_enemy.tscn" id="31_jelly_snail_enemy"]
+[ext_resource type="PackedScene" uid="uid://ccrab_enemy_scene" path="res://scenes/enemies/crab_enemy.tscn" id="32_crab_enemy"]
+[ext_resource type="PackedScene" uid="uid://cdamage_boost_display" path="res://scenes/ui/damage_boost_display.tscn" id="33_damage_boost_display"]
 
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_top"]
 size = Vector2(2048, 80)
@@ -92,14 +93,15 @@ initial_count = 4
 script = ExtResource("14_enemy_spawner")
 stationary_enemy_scene = ExtResource("12_stationary_enemy")
 patrol_enemy_scene = ExtResource("13_patrol_enemy")
-shooting_enemy_scene = ExtResource("25_shooting_enemy")
-charger_enemy_scene = ExtResource("26_charger_enemy")
-garlic_enemy_scene = ExtResource("27_garlic_enemy")
-ghost_eye_enemy_scene = ExtResource("28_ghost_eye_enemy")
-jelly_snail_enemy_scene = ExtResource("29_jelly_snail_enemy")
-crab_enemy_scene = ExtResource("30_crab_enemy")
+shooting_enemy_scene = ExtResource("27_shooting_enemy")
+charger_enemy_scene = ExtResource("28_charger_enemy")
+garlic_enemy_scene = ExtResource("29_garlic_enemy")
+ghost_eye_enemy_scene = ExtResource("30_ghost_eye_enemy")
+jelly_snail_enemy_scene = ExtResource("31_jelly_snail_enemy")
+crab_enemy_scene = ExtResource("32_crab_enemy")
 star_pickup_scene = ExtResource("18_star_pickup")
 sidekick_pickup_scene = ExtResource("19_sidekick_pickup")
+missile_pickup_scene = ExtResource("20_missile_pickup")
 spawn_rate_min = 3.0
 spawn_rate_max = 6.0
 patrol_spawn_chance = 0.4
@@ -120,13 +122,13 @@ level_complete_screen_path = NodePath("../LevelCompleteScreen")
 
 [node name="ProgressBar" parent="." instance=ExtResource("17_progress_bar")]
 
-[node name="HealthDisplay" parent="." instance=ExtResource("20_health_display")]
+[node name="HealthDisplay" parent="." instance=ExtResource("21_health_display")]
 
-[node name="LivesDisplay" parent="." instance=ExtResource("27_lives_display")]
+[node name="LivesDisplay" parent="." instance=ExtResource("22_lives_display")]
 
-[node name="DamageBoostDisplay" parent="." instance=ExtResource("31_damage_boost_display")]
+[node name="DamageBoostDisplay" parent="." instance=ExtResource("33_damage_boost_display")]
 
-[node name="ScoreDisplay" parent="." instance=ExtResource("22_score_display")]
+[node name="ScoreDisplay" parent="." instance=ExtResource("24_score_display")]
 
 [node name="UILayer" type="CanvasLayer" parent="."]
 
@@ -134,10 +136,10 @@ level_complete_screen_path = NodePath("../LevelCompleteScreen")
 
 [node name="FireButton" parent="UILayer" instance=ExtResource("15_fire_button")]
 
-[node name="PauseButton" parent="UILayer" instance=ExtResource("24_pause_button")]
+[node name="PauseButton" parent="UILayer" instance=ExtResource("26_pause_button")]
 
 [node name="GameOverScreen" parent="." instance=ExtResource("10_gameover")]
 
-[node name="LevelCompleteScreen" parent="." instance=ExtResource("21_level_complete")]
+[node name="LevelCompleteScreen" parent="." instance=ExtResource("23_level_complete")]
 
-[node name="PauseMenu" parent="." instance=ExtResource("23_pause_menu")]
+[node name="PauseMenu" parent="." instance=ExtResource("25_pause_menu")]

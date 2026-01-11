@@ -34,6 +34,9 @@ extends Node2D
 ## Sidekick pickup scene to spawn when kill threshold is reached
 @export var sidekick_pickup_scene: PackedScene
 
+## Missile pickup scene to spawn when kill threshold is reached
+@export var missile_pickup_scene: PackedScene
+
 ## Minimum spawn interval in seconds
 @export var spawn_rate_min: float = 2.0
 
@@ -472,38 +475,91 @@ func _on_enemy_killed(enemy: Node) -> void:
 
 
 ## Choose which pickup type to spawn based on player state
-## Returns true for sidekick, false for star (health boost)
-func _choose_pickup_type() -> bool:
+## Returns pickup type string: "star", "sidekick", or "missile"
+func _choose_pickup_type() -> String:
 	var player = get_tree().root.get_node_or_null("Main/Player")
 	var has_sidekick = get_tree().get_nodes_in_group("sidekick").size() > 0
 	var health_full = false
+	var has_damage_boost = false
 
-	if player and player.has_method("get_health"):
-		health_full = player.get_health() >= player.max_health
+	if player:
+		if player.has_method("get_health"):
+			health_full = player.get_health() >= player.max_health
+		if player.has_method("get_damage_boost"):
+			has_damage_boost = player.get_damage_boost() > 0
 
 	# Smart selection: give what the player can actually use
-	if has_sidekick and not health_full:
-		# Has sidekick but needs health -> give star
-		return false
+	# Priority logic:
+	# 1. If player needs health (not full), prefer star
+	# 2. If player needs sidekick (doesn't have one), prefer sidekick
+	# 3. If player has both sidekick and full health, prefer missile (damage boost)
+	# 4. Otherwise use weighted random
+
+	if has_sidekick and health_full:
+		# Player is "maxed out" on health and sidekick - offer missile
+		# Still give some variety with weighted random including missile
+		var roll = _rng.randf()
+		if roll < 0.5:
+			# 50% chance: missile (preferred when maxed)
+			return "missile"
+		elif roll < 0.75:
+			# 25% chance: star
+			return "star"
+		else:
+			# 25% chance: sidekick
+			return "sidekick"
+	elif has_sidekick and not health_full:
+		# Has sidekick but needs health -> prefer star
+		var roll = _rng.randf()
+		if roll < 0.6:
+			return "star"
+		elif roll < 0.8:
+			return "missile"
+		else:
+			return "sidekick"
 	elif health_full and not has_sidekick:
-		# Full health but no sidekick -> give sidekick
-		return true
+		# Full health but no sidekick -> prefer sidekick
+		var roll = _rng.randf()
+		if roll < 0.6:
+			return "sidekick"
+		elif roll < 0.8:
+			return "missile"
+		else:
+			return "star"
 	else:
-		# Either can use both or neither -> random 50/50
-		return _rng.randf() < 0.5
+		# Neither condition - weighted random: ~40% star, ~40% sidekick, ~20% missile
+		var roll = _rng.randf()
+		if roll < 0.4:
+			return "star"
+		elif roll < 0.8:
+			return "sidekick"
+		else:
+			return "missile"
 
 
-## Spawn a pickup (star or sidekick) from a random edge
+## Spawn a pickup (star, sidekick, or missile) from a random edge
 ## Smart selection: avoids giving unusable pickups when possible
 func _spawn_random_pickup() -> void:
-	var spawn_sidekick = _choose_pickup_type()
+	var pickup_type = _choose_pickup_type()
 
 	var pickup: Node2D
-	if spawn_sidekick and sidekick_pickup_scene:
-		pickup = sidekick_pickup_scene.instantiate()
-	elif star_pickup_scene:
-		pickup = star_pickup_scene.instantiate()
-	else:
+	match pickup_type:
+		"missile":
+			if missile_pickup_scene:
+				pickup = missile_pickup_scene.instantiate()
+			elif star_pickup_scene:
+				# Fallback to star if missile scene not set
+				pickup = star_pickup_scene.instantiate()
+		"sidekick":
+			if sidekick_pickup_scene:
+				pickup = sidekick_pickup_scene.instantiate()
+			elif star_pickup_scene:
+				pickup = star_pickup_scene.instantiate()
+		"star", _:
+			if star_pickup_scene:
+				pickup = star_pickup_scene.instantiate()
+
+	if not pickup:
 		push_warning("No pickup scene assigned to EnemySpawner")
 		return
 

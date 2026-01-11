@@ -22,20 +22,21 @@ Each slice delivers incremental user value and is tested end-to-end.
 
 #### Tasks
 
-- [ ] 1.1 Write integration test: missile pickup collection shows damage boost indicator
+- [x] 1.1 Write integration test: missile pickup collection shows damage boost indicator
   - Spawn player, spawn MissilePickup at player position
   - Verify DamageBoostDisplay shows "x2" after collection
   - Verify pickup_collect sfx played
-- [ ] 1.2 Run test, verify expected failure
-- [ ] 1.3 Make smallest change to progress (repeat until test passes)
-  - Expected iterations: create missile_pickup.gd extending BasePickup
-  - Add `_damage_boost` property and `add_damage_boost()` method to player.gd
-  - Add `damage_boost_changed` signal to player.gd
-  - Create missile_pickup.tscn with fireball-1.png sprite
-  - Create DamageBoostDisplay scene with CanvasLayer, icon, and label
-  - Wire DamageBoostDisplay to player signal
-- [ ] 1.4 Document each red-green iteration in this task list
-- [ ] 1.5 Refactor if needed (keep tests green)
+- [x] 1.2 Run test, verify expected failure
+  - [missile_pickup.tscn not found] -> Created missile_pickup.gd and missile_pickup.tscn
+- [x] 1.3 Make smallest change to progress (repeat until test passes)
+  - [x] Iteration 1: [missile_pickup.tscn not found] -> Created missile_pickup.gd extending BasePickup, created missile_pickup.tscn with fireball-1.png sprite
+  - [x] Iteration 2: [Pickup not collected - player lacks add_damage_boost()] -> Added _damage_boost, add_damage_boost(), get_damage_boost(), and damage_boost_changed signal to player.gd
+  - [x] Iteration 3: [DamageBoostDisplay not found] -> Created damage_boost_display.gd and damage_boost_display.tscn, added to main.tscn
+  - [x] Iteration 4: [Display not visible - could not find player] -> Fixed player lookup path by trying sibling first (get_parent().get_node_or_null("Player"))
+  - [x] Iteration 5: Success - Test passes
+- [x] 1.4 Document each red-green iteration in this task list
+- [x] 1.5 Refactor if needed (keep tests green)
+  - No refactoring needed
 - [ ] 1.6 Commit working slice
 
 **Acceptance Criteria:**

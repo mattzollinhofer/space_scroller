@@ -50,14 +50,16 @@ func show_game_over() -> void:
 			qualifies = score_manager.qualifies_for_top_10()
 
 	if qualifies:
-		# Show initials entry, hide button until confirmed
+		# Show initials entry, hide other elements until confirmed
 		_awaiting_initials = true
 		if _initials_entry:
 			_initials_entry.visible = true
 			_initials_entry.show_entry()
 		if _main_menu_button:
 			_main_menu_button.visible = false
-		# Hide high score label to avoid overlap with initials entry
+		# Hide score and high score labels to avoid overlap with initials entry
+		if _score_label:
+			_score_label.visible = false
 		if _high_score_label:
 			_high_score_label.visible = false
 		# Show new high score indicator if it's the top score
@@ -69,6 +71,8 @@ func show_game_over() -> void:
 			_initials_entry.visible = false
 		if _main_menu_button:
 			_main_menu_button.visible = true
+		if _score_label:
+			_score_label.visible = true
 		if _high_score_label:
 			_high_score_label.visible = true
 		_update_high_score_display()
@@ -90,9 +94,11 @@ func _on_initials_confirmed(initials: String) -> void:
 		if score_manager.has_method("save_high_score"):
 			score_manager.save_high_score(initials)
 
-	# Hide initials entry, show high score label again
+	# Hide initials entry, show score labels again
 	if _initials_entry:
 		_initials_entry.visible = false
+	if _score_label:
+		_score_label.visible = true
 	if _high_score_label:
 		_high_score_label.visible = true
 

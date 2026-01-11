@@ -12,36 +12,29 @@ func _ready() -> void:
 
 
 func _connect_to_player() -> void:
-	# Find the player in the scene tree
-	var player = get_tree().root.get_node_or_null("Main/Player")
+	# Find the player - try sibling first (when in main.tscn), then root path
+	var player = get_parent().get_node_or_null("Player")
+	if not player:
+		player = get_tree().root.get_node_or_null("Main/Player")
+
 	if player:
-		print("DamageBoostDisplay: Connected to player at Main/Player")
 		# Connect to damage_boost_changed signal
 		if player.has_signal("damage_boost_changed"):
 			player.damage_boost_changed.connect(_update_display)
-			print("DamageBoostDisplay: Connected to damage_boost_changed signal")
 		# Get initial damage boost
 		if player.has_method("get_damage_boost"):
-			var initial = player.get_damage_boost()
-			print("DamageBoostDisplay: Initial damage boost = %d" % initial)
-			_update_display(initial)
-	else:
-		print("DamageBoostDisplay: Could not find player at Main/Player")
+			_update_display(player.get_damage_boost())
 
 
 ## Update the display based on current damage boost
 func _update_display(boost: int) -> void:
-	print("DamageBoostDisplay: _update_display called with boost = %d" % boost)
 	if boost <= 0:
 		visible = false
-		print("DamageBoostDisplay: Hiding (boost <= 0)")
 		return
 
 	visible = true
-	print("DamageBoostDisplay: Showing (boost > 0), visible = %s" % visible)
 
 	# Update the label to show damage multiplier (base 1 + boost)
 	var label = get_node_or_null("Container/Label")
 	if label:
 		label.text = "x%d" % (1 + boost)
-		print("DamageBoostDisplay: Label set to %s" % label.text)

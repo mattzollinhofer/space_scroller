@@ -152,7 +152,8 @@ Each slice delivers incremental user value and is tested end-to-end.
   - All four tests pass
 - [x] 4.6 Refactor if needed (keep tests green)
   - No refactoring needed - implementation follows existing patterns cleanly
-- [ ] 4.7 Commit working slice
+- [x] 4.7 Commit working slice
+  - Committed in 5602318
 
 **Acceptance Criteria:**
 - [x] Completing level saves damage boost to GameState

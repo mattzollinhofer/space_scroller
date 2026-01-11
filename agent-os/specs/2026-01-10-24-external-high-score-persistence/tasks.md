@@ -66,23 +66,23 @@ no retries, no offline queueing.
 
 #### Tasks
 
-- [ ] 2.1 Write integration test that verifies fetch_top_scores method exists
-- [ ] 2.2 Run test, verify expected failure (method not found)
-- [ ] 2.3 Add `fetch_top_scores(count: int = 10, callback: Callable)` stub
-- [ ] 2.4 Run test, verify method exists
-- [ ] 2.5 Implement HTTPRequest GET with orderBy="score" and limitToLast query params
-- [ ] 2.6 Parse JSON response into Array of dictionaries
-- [ ] 2.7 Sort descending by score (Firebase returns ascending for limitToLast)
-- [ ] 2.8 Call callback with parsed results
-- [ ] 2.9 Add 4-second timeout handling
-- [ ] 2.10 On error/timeout, call callback with empty array
-- [ ] 2.11 Write test that verifies callback is called (with empty array if no Firebase)
-- [ ] 2.12 Run test, verify success
-- [ ] 2.13 Refactor if needed (keep tests green)
-- [ ] 2.14 Run all slice tests (1 and 2) to verify no regressions
+- [x] 2.1 Write integration test that verifies fetch_top_scores method exists
+- [x] 2.2 Run test, verify expected failure (method not found) -> "FirebaseService does not have 'fetch_top_scores' method"
+- [x] 2.3 Add `fetch_top_scores(count: int = 10, callback: Callable)` stub
+- [x] 2.4 Run test, verify method exists -> Success
+- [x] 2.5 Implement HTTPRequest GET with orderBy="score" and limitToLast query params
+- [x] 2.6 Parse JSON response into Array of dictionaries
+- [x] 2.7 Sort descending by score (Firebase returns ascending for limitToLast)
+- [x] 2.8 Call callback with parsed results
+- [x] 2.9 Add 4-second timeout handling (via HTTPRequest.timeout = 4.0)
+- [x] 2.10 On error/timeout, call callback with empty array
+- [x] 2.11 Write test that verifies callback is called (with empty array if no Firebase)
+- [x] 2.12 Run test, verify success -> Success (callback received with 0 scores)
+- [x] 2.13 Refactor if needed (keep tests green) -> Refactored to use separate HTTPRequest nodes for submit/fetch
+- [x] 2.14 Run all slice tests (1 and 2) to verify no regressions -> All 3 Firebase tests pass
 - [ ] 2.15 Commit working slice
 
-**Acceptance Criteria:**
+**Acceptance Criteria:** All met
 - fetch_top_scores method exists with count and callback parameters
 - Returns Array of dictionaries with "score" and "initials" keys
 - Results are sorted descending by score

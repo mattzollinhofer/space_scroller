@@ -102,14 +102,14 @@ shooting 3) grow 4x larger then shrink to normal size 4) rapid jelly attack
     c. there is a new enemy called jelly snail. add to spawn sequence. slow
 zig-zag movement. 5 health. slow shooting. 10ish (+/- 3) per level
 
-22. [ ] Missile Power-Up — Add a collectible power-up that strengthens the
+22. [x] Missile Power-Up — Add a collectible power-up that strengthens the
     player's missiles. When collected, missile damage increases from 1 to 2. `S`
 
 23. [x] High Score Initials — Allow the player to enter their three-letter
     initials when achieving a high score, old-school arcade style. Display
     initials alongside scores on the high score screen. `S`
 
-24. [x] External High Score Persistence — Persist high scores to Firebase
+24. [ ] External High Score Persistence — Persist high scores to Firebase
     Realtime Database for global leaderboards. Display top scores from all
     players on the high score screen. Requires Firebase project setup and
     security rules to prevent cheating. `M`

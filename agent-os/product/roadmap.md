@@ -109,7 +109,7 @@ zig-zag movement. 5 health. slow shooting. 10ish (+/- 3) per level
     initials when achieving a high score, old-school arcade style. Display
     initials alongside scores on the high score screen. `S`
 
-24. [ ] External High Score Persistence — Persist high scores to Firebase
+24. [x] External High Score Persistence — Persist high scores to Firebase
     Realtime Database for global leaderboards. Display top scores from all
     players on the high score screen. Requires Firebase project setup and
     security rules to prevent cheating. `M`

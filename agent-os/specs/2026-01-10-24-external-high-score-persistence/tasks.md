@@ -103,15 +103,15 @@ no retries, no offline queueing.
 
 #### Tasks
 
-- [ ] 3.1 Create `docs/firebase-setup.md` with step-by-step Firebase project creation instructions
-- [ ] 3.2 Document enabling Firebase Realtime Database
-- [ ] 3.3 Document recommended security rules for public read/write to `/scores` path
-- [ ] 3.4 Document expected database structure (scores with score, initials, timestamp fields)
-- [ ] 3.5 Document how to copy configuration to firebase_config.json
-- [ ] 3.6 Review documentation for clarity and completeness
-- [ ] 3.7 Commit documentation
+- [x] 3.1 Create `docs/firebase-setup.md` with step-by-step Firebase project creation instructions
+- [x] 3.2 Document enabling Firebase Realtime Database
+- [x] 3.3 Document recommended security rules for public read/write to `/scores` path
+- [x] 3.4 Document expected database structure (scores with score, initials, timestamp fields)
+- [x] 3.5 Document how to copy configuration to firebase_config.json
+- [x] 3.6 Review documentation for clarity and completeness
+- [x] 3.7 Commit documentation
 
-**Acceptance Criteria:**
+**Acceptance Criteria:** All met
 - docs/firebase-setup.md exists with complete setup instructions
 - Instructions cover Firebase project creation
 - Security rules are documented

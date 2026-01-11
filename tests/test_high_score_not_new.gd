@@ -25,34 +25,32 @@ func _ready() -> void:
 
 	var score_manager = get_node("/root/ScoreManager")
 
-	# First, create an existing high score of 10,000
-	score_manager.reset_score()
-	score_manager.add_points(10000)
-	score_manager.save_high_score()
-	print("Set existing high score to: %d" % score_manager.get_high_score())
+	# Fill the top 10 with scores higher than 5000 so 5000 won't qualify
+	# This ensures no initials entry will show (which would hide the high score label)
+	var base_scores = [50000, 45000, 40000, 35000, 30000, 25000, 20000, 15000, 10000, 8000]
+	for i in range(base_scores.size()):
+		score_manager.reset_score()
+		score_manager.add_points(base_scores[i])
+		score_manager.save_high_score()
 
-	# Now reset for a new game with lower score
+	print("Filled top 10 with scores. Highest: %d, Lowest: %d" % [score_manager.get_high_score(), 8000])
+
+	# Now reset for a new game with lower score that won't qualify for top 10
 	score_manager.reset_score()
 	score_manager.add_points(5000)
-	print("Set current score to: %d (should NOT beat high score)" % score_manager.get_score())
+	print("Set current score to: %d (should NOT qualify for top 10)" % score_manager.get_score())
 
-	# Load and setup main scene
-	var main_scene = load("res://scenes/main.tscn")
-	if not main_scene:
-		_fail("Could not load main scene")
+	# Load game over screen directly (don't use main.tscn to avoid state resets)
+	var scene = load("res://scenes/ui/game_over_screen.tscn")
+	if not scene:
+		_fail("Could not load game_over_screen.tscn")
 		return
 
-	var main = main_scene.instantiate()
-	add_child(main)
+	game_over_screen = scene.instantiate()
+	add_child(game_over_screen)
 
 	# Wait a frame for scene to initialize
 	await get_tree().process_frame
-
-	# Find game over screen
-	game_over_screen = main.get_node_or_null("GameOverScreen")
-	if not game_over_screen:
-		_fail("GameOverScreen node not found")
-		return
 
 	# Show game over screen
 	print("Showing game over screen...")
@@ -76,9 +74,9 @@ func _check_game_over_screen() -> void:
 
 	print("High score label text: '%s'" % high_score_label.text)
 
-	# High score should still be 10,000
-	if not "10,000" in high_score_label.text:
-		_fail("High score should remain '10,000', got '%s'" % high_score_label.text)
+	# High score should be 50,000 (our highest entry)
+	if not "50,000" in high_score_label.text:
+		_fail("High score should be '50,000', got '%s'" % high_score_label.text)
 		return
 
 	# Check current score label shows 5,000

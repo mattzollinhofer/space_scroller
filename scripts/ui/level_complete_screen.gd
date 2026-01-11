@@ -62,9 +62,12 @@ func show_level_complete() -> void:
 	_update_score_display()
 	_unlock_next_level()
 
-	# Check if score qualifies for top 10
+	# Only show initials entry on final level (game complete)
+	# For mid-game level completions, just show score normally
+	var is_final_level: bool = current_level >= MAX_LEVEL
 	var qualifies: bool = false
-	if has_node("/root/ScoreManager"):
+
+	if is_final_level and has_node("/root/ScoreManager"):
 		var score_manager = get_node("/root/ScoreManager")
 		if score_manager.has_method("qualifies_for_top_10"):
 			qualifies = score_manager.qualifies_for_top_10()
@@ -79,15 +82,18 @@ func show_level_complete() -> void:
 			_next_level_button.visible = false
 		if _main_menu_button:
 			_main_menu_button.visible = false
+		# Hide high score label to avoid overlap with initials entry
+		if _high_score_label:
+			_high_score_label.visible = false
 		# Show new high score indicator if it's the top score
 		_show_new_high_score_indicator()
-		# Show existing high score while waiting for initials
-		_update_existing_high_score_display()
 	else:
 		# No initials needed, just update display normally
 		_awaiting_initials = false
 		if _initials_entry:
 			_initials_entry.visible = false
+		if _high_score_label:
+			_high_score_label.visible = true
 		_update_high_score_display()
 		_update_buttons()
 
@@ -107,12 +113,16 @@ func _on_initials_confirmed(initials: String) -> void:
 		if score_manager.has_method("save_high_score"):
 			score_manager.save_high_score(initials)
 
+	# Hide initials entry, show high score label again
+	if _initials_entry:
+		_initials_entry.visible = false
+	if _high_score_label:
+		_high_score_label.visible = true
+
 	# Update high score display with initials
 	_update_high_score_display_with_initials()
 
-	# Hide initials entry, show buttons
-	if _initials_entry:
-		_initials_entry.visible = false
+	# Show buttons
 	_update_buttons()
 
 	_play_sfx("button_click")

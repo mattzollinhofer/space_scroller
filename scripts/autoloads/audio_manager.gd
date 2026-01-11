@@ -13,7 +13,7 @@ const AUDIO_SETTINGS_PATH := "user://audio_settings.cfg"
 const CROSSFADE_DURATION := 1.0
 
 ## Music volume (dB) - lowered to balance with SFX
-const MUSIC_VOLUME_DB := -3.0
+const MUSIC_VOLUME_DB := -5.5
 
 ## Per-SFX volume adjustments (dB) - for balancing individual sounds
 var _sfx_volume_db: Dictionary = {

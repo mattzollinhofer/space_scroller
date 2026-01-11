@@ -57,10 +57,11 @@ func show_game_over() -> void:
 			_initials_entry.show_entry()
 		if _main_menu_button:
 			_main_menu_button.visible = false
+		# Hide high score label to avoid overlap with initials entry
+		if _high_score_label:
+			_high_score_label.visible = false
 		# Show new high score indicator if it's the top score
 		_show_new_high_score_indicator()
-		# Show existing high score while waiting for initials
-		_update_existing_high_score_display()
 	else:
 		# No initials needed, just update display normally
 		_awaiting_initials = false
@@ -68,6 +69,8 @@ func show_game_over() -> void:
 			_initials_entry.visible = false
 		if _main_menu_button:
 			_main_menu_button.visible = true
+		if _high_score_label:
+			_high_score_label.visible = true
 		_update_high_score_display()
 
 	visible = true
@@ -87,12 +90,16 @@ func _on_initials_confirmed(initials: String) -> void:
 		if score_manager.has_method("save_high_score"):
 			score_manager.save_high_score(initials)
 
+	# Hide initials entry, show high score label again
+	if _initials_entry:
+		_initials_entry.visible = false
+	if _high_score_label:
+		_high_score_label.visible = true
+
 	# Update high score display with initials
 	_update_high_score_display_with_initials()
 
-	# Hide initials entry, show button
-	if _initials_entry:
-		_initials_entry.visible = false
+	# Show button
 	if _main_menu_button:
 		_main_menu_button.visible = true
 

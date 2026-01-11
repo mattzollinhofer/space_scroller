@@ -46,6 +46,9 @@ func _ready() -> void:
 	_level_complete_screen = scene.instantiate()
 	add_child(_level_complete_screen)
 
+	# Set to final level (6) - initials only show on game complete
+	_level_complete_screen.set_current_level(6)
+
 	# Show level complete screen
 	_level_complete_screen.show_level_complete()
 

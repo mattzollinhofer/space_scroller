@@ -37,13 +37,14 @@ Each slice delivers incremental user value and is tested end-to-end.
 - [x] 1.4 Document each red-green iteration in this task list
 - [x] 1.5 Refactor if needed (keep tests green)
   - No refactoring needed
-- [ ] 1.6 Commit working slice
+- [x] 1.6 Commit working slice
+  - Committed in ae72722 (along with other changes)
 
 **Acceptance Criteria:**
-- Collecting missile pickup increases player damage boost
-- UI shows fireball icon with "x2" label when damage boost is 1
-- Pickup plays collection sound and animation
-- Indicator hidden when damage boost is 0
+- [x] Collecting missile pickup increases player damage boost
+- [x] UI shows fireball icon with "x2" label when damage boost is 1
+- [x] Pickup plays collection sound and animation
+- [x] Indicator hidden when damage boost is 0
 
 ---
 

@@ -42,9 +42,9 @@ no retries, no offline queueing.
 - [x] 1.14 Write test that verifies ScoreManager.save_high_score() calls FirebaseService
 - [x] 1.15 Run test, verify success -> Success
 - [x] 1.16 Refactor if needed (keep tests green) -> No refactoring needed
-- [ ] 1.17 Commit working slice
+- [x] 1.17 Commit working slice -> Committed: 2a207e0
 
-**Acceptance Criteria:**
+**Acceptance Criteria:** All met
 - FirebaseService autoload exists and is accessible via `/root/FirebaseService`
 - submit_score method accepts score and optional initials
 - Config is loaded from `config/firebase_config.json`

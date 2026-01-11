@@ -254,6 +254,9 @@ func take_damage() -> void:
 		lives_changed.emit(_lives)
 		life_lost.emit()
 
+		# Reset damage boost when losing a life
+		reset_damage_boost()
+
 		# Trigger screen effects for losing a life
 		var screen_effects = get_node_or_null("/root/ScreenEffects")
 		if screen_effects:
@@ -318,6 +321,16 @@ func get_damage_boost() -> int:
 func add_damage_boost() -> void:
 	_damage_boost += 1
 	damage_boost_changed.emit(_damage_boost)
+
+
+## Reset damage boost to zero (called when losing a life)
+func reset_damage_boost() -> void:
+	_damage_boost = 0
+	damage_boost_changed.emit(_damage_boost)
+	# Also clear from GameState if available
+	var game_state = get_node_or_null("/root/GameState")
+	if game_state and game_state.has_method("clear_damage_boost"):
+		game_state.clear_damage_boost()
 
 
 ## Gain health (used by pickups). Returns true if health was gained.

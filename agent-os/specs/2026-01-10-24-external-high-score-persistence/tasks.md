@@ -80,7 +80,7 @@ no retries, no offline queueing.
 - [x] 2.12 Run test, verify success -> Success (callback received with 0 scores)
 - [x] 2.13 Refactor if needed (keep tests green) -> Refactored to use separate HTTPRequest nodes for submit/fetch
 - [x] 2.14 Run all slice tests (1 and 2) to verify no regressions -> All 3 Firebase tests pass
-- [ ] 2.15 Commit working slice
+- [x] 2.15 Commit working slice -> Committed: f991a4e
 
 **Acceptance Criteria:** All met
 - fetch_top_scores method exists with count and callback parameters

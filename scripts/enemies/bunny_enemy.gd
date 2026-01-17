@@ -35,9 +35,9 @@ func _fire_projectile() -> void:
 	if _balloon_projectile_texture and projectile.has_method("set_texture"):
 		projectile.set_texture(_balloon_projectile_texture)
 
-	# Make balloon projectile larger than default (adjusted for 256px sprites, matching garlic)
+	# Make balloon projectile 1.75x larger
 	if projectile.has_method("set_projectile_scale"):
-		projectile.set_projectile_scale(0.9375)
+		projectile.set_projectile_scale(1.75)
 
 	# Add to scene tree (use parent to avoid projectile being destroyed with enemy)
 	if get_parent():

@@ -28,6 +28,9 @@ extends Node2D
 ## Crab enemy scene to spawn (Level 3 special enemy)
 @export var crab_enemy_scene: PackedScene
 
+## Bunny enemy scene to spawn (Level 6 special enemy)
+@export var bunny_enemy_scene: PackedScene
+
 ## Star pickup scene to spawn when kill threshold is reached
 @export var star_pickup_scene: PackedScene
 
@@ -219,6 +222,8 @@ func spawn_wave(wave_configs: Array) -> void:
 					_spawn_jelly_snail_enemy()
 				"crab":
 					_spawn_crab_enemy()
+				"bunny":
+					_spawn_bunny_enemy()
 				_:
 					_spawn_stationary_enemy()
 
@@ -283,6 +288,9 @@ func _try_spawn_special_enemy() -> bool:
 					return true
 				"crab":
 					_spawn_crab_enemy()
+					return true
+				"bunny":
+					_spawn_bunny_enemy()
 					return true
 				_:
 					push_warning("Unknown special enemy type: %s" % enemy_type)
@@ -359,6 +367,15 @@ func _spawn_crab_enemy() -> void:
 		return
 
 	var enemy = crab_enemy_scene.instantiate()
+	_setup_enemy(enemy)
+
+
+func _spawn_bunny_enemy() -> void:
+	if not bunny_enemy_scene:
+		push_warning("No bunny enemy scene assigned to EnemySpawner")
+		return
+
+	var enemy = bunny_enemy_scene.instantiate()
 	_setup_enemy(enemy)
 
 

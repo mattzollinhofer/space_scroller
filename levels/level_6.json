@@ -8,24 +8,24 @@
   },
   "metadata": {
     "scroll_speed_multiplier": 1.40,
-    "background_theme": "jelly",
-    "background_modulate": [1.0, 0.7, 0.9, 1.0],
-    "explosion_sprite": "res://assets/sprites/rainbow-explosion-1.png",
-    "boss_sprite": "res://assets/sprites/jelly-monster-1.png",
+    "background_theme": "balloon",
+    "background_modulate": [1.0, 0.85, 0.9, 1.0],
+    "explosion_sprite": "res://assets/sprites/explosion-balloon-1.png",
+    "boss_sprite": "res://assets/sprites/boss-ivan-1.png",
     "boss_config": {
       "health": 25,
       "scale": 1.5,
-      "attacks": [11, 12, 13],
+      "attacks": [11],
       "attack_cooldown": 2.0,
       "explosion_scale": 2.0,
-      "explosion_sprite": "res://assets/sprites/rainbow-explosion-1.png",
-      "projectile_sprite": "res://assets/sprites/weapon-jelly-1.png",
+      "explosion_sprite": "res://assets/sprites/explosion-balloon-1.png",
+      "projectile_sprite": "res://assets/sprites/balloon-attack-1.png",
       "death_spawn_count": 10,
-      "death_spawn_sprite": "res://assets/sprites/weapon-jelly-1.png"
+      "death_spawn_sprite": "res://assets/sprites/balloon-attack-1.png"
     },
     "special_enemies": [
       {
-        "enemy_type": "jelly_snail",
+        "enemy_type": "bunny",
         "spawn_probability": 0.45,
         "allowed_sections": [1, 2, 3, 4, 5]
       }
@@ -33,7 +33,7 @@
   },
   "sections": [
     {
-      "name": "Jelly Entrance",
+      "name": "Stuffed Entrance",
       "start_percent": 0,
       "end_percent": 12,
       "obstacle_density": "medium",
@@ -42,40 +42,40 @@
       ]
     },
     {
-      "name": "Rainbow Passage",
+      "name": "Balloon Passage",
       "start_percent": 12,
       "end_percent": 28,
       "obstacle_density": "medium",
       "enemy_waves": [
         { "enemy_type": "shooting", "count": 3 },
         { "enemy_type": "patrol", "count": 2 },
-        { "enemy_type": "jelly_snail", "count": 1 }
+        { "enemy_type": "bunny", "count": 1 }
       ]
     },
     {
-      "name": "Gelatinous Depths",
+      "name": "Plush Depths",
       "start_percent": 28,
       "end_percent": 45,
       "obstacle_density": "high",
       "enemy_waves": [
         { "enemy_type": "charger", "count": 3 },
         { "enemy_type": "shooting", "count": 3 },
-        { "enemy_type": "jelly_snail", "count": 2 }
+        { "enemy_type": "bunny", "count": 2 }
       ]
     },
     {
-      "name": "Slime Gardens",
+      "name": "Toy Gardens",
       "start_percent": 45,
       "end_percent": 62,
       "obstacle_density": "high",
       "enemy_waves": [
         { "enemy_type": "shooting", "count": 3 },
         { "enemy_type": "patrol", "count": 2 },
-        { "enemy_type": "jelly_snail", "count": 2 }
+        { "enemy_type": "bunny", "count": 2 }
       ]
     },
     {
-      "name": "Wobbling Wastes",
+      "name": "Fluffy Wastes",
       "start_percent": 62,
       "end_percent": 80,
       "obstacle_density": "high",
@@ -83,11 +83,11 @@
         { "enemy_type": "charger", "count": 3 },
         { "enemy_type": "shooting", "count": 3 },
         { "enemy_type": "patrol", "count": 2 },
-        { "enemy_type": "jelly_snail", "count": 2 }
+        { "enemy_type": "bunny", "count": 2 }
       ]
     },
     {
-      "name": "Jelly Kingdom",
+      "name": "Ivan's Kingdom",
       "start_percent": 80,
       "end_percent": 100,
       "obstacle_density": "high",
@@ -95,7 +95,7 @@
         { "enemy_type": "charger", "count": 3 },
         { "enemy_type": "shooting", "count": 4 },
         { "enemy_type": "patrol", "count": 2 },
-        { "enemy_type": "jelly_snail", "count": 2 }
+        { "enemy_type": "bunny", "count": 2 }
       ]
     }
   ]

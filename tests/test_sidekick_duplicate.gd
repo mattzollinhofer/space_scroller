@@ -112,7 +112,7 @@ func _run_duplicate_sidekick_test() -> void:
 		_fail("Expected 2 pickups collected signals, got %d" % _pickup_collected_count)
 		return
 
-	print("Only one sidekick active at a time - duplicate pickup ignored correctly!")
+	print("Only one sidekick active at a time - new pickup replaces old sidekick!")
 	_pass()
 
 

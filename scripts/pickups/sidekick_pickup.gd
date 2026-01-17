@@ -43,9 +43,9 @@ func _spawn_sidekick(player: Node2D) -> void:
 
 	# Check if a sidekick already exists using the "sidekick" group
 	var existing_sidekicks = get_tree().get_nodes_in_group("sidekick")
-	if existing_sidekicks.size() > 0:
-		# Sidekick already exists, don't spawn another
-		return
+	for existing in existing_sidekicks:
+		# Remove the old sidekick to make room for the new one
+		existing.queue_free()
 
 	# Spawn the sidekick
 	var sidekick = sidekick_scene.instantiate()

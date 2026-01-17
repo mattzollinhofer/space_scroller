@@ -119,8 +119,8 @@ func _ready() -> void:
 	_check_section_change()
 	# Start gameplay background music
 	_start_gameplay_music()
-	# Spawn sidekick if player had one from previous level
-	_restore_sidekick_from_game_state()
+	# Spawn sidekick if player had one from previous level (deferred to ensure player is ready)
+	call_deferred("_restore_sidekick_from_game_state")
 
 
 ## Start gameplay background music via AudioManager
@@ -158,8 +158,16 @@ func _restore_sidekick_from_game_state() -> void:
 	if game_state.has_method("get_sidekick_sprite"):
 		sprite_path = game_state.get_sidekick_sprite()
 
+	# Ensure we have a player reference
+	if not _player:
+		_player = get_tree().root.get_node_or_null("Main/Player")
+
+	if not _player:
+		push_warning("Cannot restore sidekick - player not found")
+		return
+
 	# Setup sidekick with player reference and sprite
-	if _player and sidekick.has_method("setup"):
+	if sidekick.has_method("setup"):
 		sidekick.setup(_player, sprite_path)
 
 	# Add to main scene

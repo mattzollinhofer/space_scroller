@@ -101,7 +101,7 @@ const BUDDY_PROJECTILES := {
 	"res://assets/sprites/friend-ufo-1.png": "res://assets/sprites/sidekick-attack-1.png",
 	"res://assets/sprites/star-dragon-1.png": "res://assets/sprites/weapon-dragon-1.png",
 	"res://assets/sprites/cosmic-cat-2.png": "res://assets/sprites/weapon-celestial-cat-1.png",
-	"res://assets/sprites/player.png": ""  # Empty = use default laser
+	"res://assets/sprites/player.png": "res://assets/sprites/laser-bolt.png"
 }
 
 ## Spawn a projectile from the sidekick's position

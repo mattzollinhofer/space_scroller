@@ -15,7 +15,7 @@
     "boss_config": {
       "health": 25,
       "scale": 1.5,
-      "attacks": [11],
+      "attacks": [7, 11],
       "attack_cooldown": 2.0,
       "explosion_scale": 2.0,
       "explosion_sprite": "res://assets/sprites/explosion-balloon-1.png",

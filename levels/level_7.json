@@ -1,0 +1,102 @@
+{
+  "total_distance": 20000,
+  "enemy_config": {
+    "zigzag_speed_min": 190,
+    "zigzag_speed_max": 250,
+    "zigzag_angle_min": 25,
+    "zigzag_angle_max": 60
+  },
+  "metadata": {
+    "scroll_speed_multiplier": 1.45,
+    "background_theme": "star",
+    "background_modulate": [0.9, 0.85, 1.0, 1.0],
+    "explosion_sprite": "res://assets/sprites/star-explosion-1.png",
+    "boss_sprite": "res://assets/sprites/star-boss.png",
+    "boss_config": {
+      "health": 28,
+      "scale": 1.6,
+      "attacks": [7, 8, 11],
+      "attack_cooldown": 1.8,
+      "explosion_scale": 2.0,
+      "explosion_sprite": "res://assets/sprites/star-explosion-1.png",
+      "projectile_sprite": "res://assets/sprites/star-attack-1.png",
+      "death_spawn_count": 12,
+      "death_spawn_sprite": "res://assets/sprites/star-attack-1.png"
+    },
+    "special_enemies": [
+      {
+        "enemy_type": "star",
+        "spawn_probability": 0.5,
+        "allowed_sections": [1, 2, 3, 4, 5]
+      }
+    ]
+  },
+  "sections": [
+    {
+      "name": "Stellar Gateway",
+      "start_percent": 0,
+      "end_percent": 12,
+      "obstacle_density": "medium",
+      "enemy_waves": [
+        { "enemy_type": "stationary", "count": 5 }
+      ]
+    },
+    {
+      "name": "Cosmic Corridor",
+      "start_percent": 12,
+      "end_percent": 28,
+      "obstacle_density": "medium",
+      "enemy_waves": [
+        { "enemy_type": "shooting", "count": 4 },
+        { "enemy_type": "patrol", "count": 2 },
+        { "enemy_type": "star", "count": 1 }
+      ]
+    },
+    {
+      "name": "Nebula Depths",
+      "start_percent": 28,
+      "end_percent": 45,
+      "obstacle_density": "high",
+      "enemy_waves": [
+        { "enemy_type": "charger", "count": 4 },
+        { "enemy_type": "shooting", "count": 3 },
+        { "enemy_type": "star", "count": 2 }
+      ]
+    },
+    {
+      "name": "Astral Plains",
+      "start_percent": 45,
+      "end_percent": 62,
+      "obstacle_density": "high",
+      "enemy_waves": [
+        { "enemy_type": "shooting", "count": 4 },
+        { "enemy_type": "patrol", "count": 3 },
+        { "enemy_type": "star", "count": 2 }
+      ]
+    },
+    {
+      "name": "Supernova Zone",
+      "start_percent": 62,
+      "end_percent": 80,
+      "obstacle_density": "high",
+      "enemy_waves": [
+        { "enemy_type": "charger", "count": 4 },
+        { "enemy_type": "shooting", "count": 4 },
+        { "enemy_type": "patrol", "count": 2 },
+        { "enemy_type": "star", "count": 2 }
+      ]
+    },
+    {
+      "name": "Star Core",
+      "start_percent": 80,
+      "end_percent": 100,
+      "obstacle_density": "high",
+      "enemy_waves": [
+        { "enemy_type": "charger", "count": 4 },
+        { "enemy_type": "shooting", "count": 5 },
+        { "enemy_type": "patrol", "count": 3 },
+        { "enemy_type": "star", "count": 3 }
+      ]
+    }
+  ]
+}

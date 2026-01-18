@@ -36,6 +36,7 @@ signal life_lost()
 signal died()
 signal projectile_fired()
 signal damage_boost_changed(new_boost: int)
+signal triple_shot_changed(active: bool)
 
 ## Reference to virtual joystick (auto-detected from scene tree)
 var virtual_joystick: Node = null
@@ -67,6 +68,18 @@ var _fire_timer: float = 0.0
 ## Track if fire was pressed last frame (for tap detection)
 var _was_firing: bool = false
 
+## Rapid fire mode state
+var _rapid_fire_active: bool = false
+var _rapid_fire_timer: float = 0.0
+const RAPID_FIRE_COOLDOWN: float = 0.05  # Very fast firing when active
+
+## Piercing shots mode state
+var _piercing_shots_active: bool = false
+var _piercing_shots_timer: float = 0.0
+
+## Triple shot mode state (permanent until life lost)
+var _triple_shot_active: bool = false
+
 
 func _ready() -> void:
 	# Get starting lives from GameState (based on difficulty)
@@ -86,6 +99,13 @@ func _ready() -> void:
 				_damage_boost = carried_boost
 				# Emit signal so UI updates
 				damage_boost_changed.emit(_damage_boost)
+		# Check if we have triple shot carried over from a previous level
+		if game_state.has_method("has_triple_shot"):
+			var carried_triple_shot = game_state.has_triple_shot()
+			if carried_triple_shot:
+				_triple_shot_active = true
+				# Emit signal so UI updates
+				triple_shot_changed.emit(_triple_shot_active)
 	else:
 		_lives = starting_lives
 
@@ -172,6 +192,20 @@ func _physics_process(delta: float) -> void:
 	if _fire_timer > 0:
 		_fire_timer -= delta
 
+	# Handle rapid fire timer
+	if _rapid_fire_active:
+		_rapid_fire_timer -= delta
+		if _rapid_fire_timer <= 0:
+			_rapid_fire_active = false
+
+	# Handle piercing shots timer
+	if _piercing_shots_active:
+		_piercing_shots_timer -= delta
+		if _piercing_shots_timer <= 0:
+			_piercing_shots_active = false
+
+	# Triple shot is now permanent until life lost (no timer)
+
 	# Check for shooting input (keyboard or touch fire button)
 	var should_fire = Input.is_action_pressed("shoot")
 	if fire_button and fire_button.has_method("is_pressed"):
@@ -225,19 +259,46 @@ func shoot(is_new_tap: bool = false) -> void:
 		push_warning("No projectile scene assigned to Player")
 		return
 
-	# Use faster tap rate for new presses, slower hold rate for continuous fire
-	var cooldown = tap_fire_cooldown if is_new_tap else hold_fire_cooldown
+	# Use rapid fire cooldown if active, otherwise normal tap/hold cooldowns
+	var cooldown: float
+	if _rapid_fire_active:
+		cooldown = RAPID_FIRE_COOLDOWN
+	else:
+		cooldown = tap_fire_cooldown if is_new_tap else hold_fire_cooldown
 	_fire_timer = cooldown
 
-	# Spawn projectile at player's position (offset slightly to the right)
-	var projectile = projectile_scene.instantiate()
-	projectile.position = position + Vector2(80, 0)  # Spawn ahead of player
+	# Determine projectile configurations (offset, direction)
+	var shot_configs: Array = [[Vector2(80, 0), Vector2.RIGHT]]  # Default: single shot
+	if _triple_shot_active:
+		# Triple shot with spread: center straight, top/bottom angled
+		var spread_angle = deg_to_rad(15)  # 15 degree spread
+		shot_configs = [
+			[Vector2(80, 0), Vector2.RIGHT],  # Center shot - straight
+			[Vector2(80, -20), Vector2(cos(-spread_angle), sin(-spread_angle))],  # Top shot - angled up
+			[Vector2(80, 20), Vector2(cos(spread_angle), sin(spread_angle))]  # Bottom shot - angled down
+		]
 
-	# Apply damage boost to projectile (base damage 1 + boost level)
-	projectile.damage = 1 + _damage_boost
+	# Spawn projectile(s) at player's position
+	for config in shot_configs:
+		var offset: Vector2 = config[0]
+		var direction: Vector2 = config[1]
 
-	# Add to parent (Main scene) so it persists independently
-	get_parent().add_child(projectile)
+		var projectile = projectile_scene.instantiate()
+		projectile.position = position + offset
+
+		# Set direction for spread shots
+		if "direction" in projectile:
+			projectile.direction = direction
+
+		# Apply damage boost to projectile (base damage 1 + boost level)
+		projectile.damage = 1 + _damage_boost
+
+		# Apply piercing if active
+		if _piercing_shots_active and "piercing" in projectile:
+			projectile.piercing = true
+
+		# Add to parent (Main scene) so it persists independently
+		get_parent().add_child(projectile)
 
 	# Emit signal for audio hook
 	projectile_fired.emit()
@@ -261,8 +322,9 @@ func take_damage() -> void:
 		lives_changed.emit(_lives)
 		life_lost.emit()
 
-		# Reset damage boost when losing a life
+		# Reset damage boost and triple shot when losing a life
 		reset_damage_boost()
+		reset_triple_shot()
 
 		# Trigger screen effects for losing a life
 		var screen_effects = get_node_or_null("/root/ScreenEffects")
@@ -328,6 +390,49 @@ func get_damage_boost() -> int:
 func add_damage_boost() -> void:
 	_damage_boost += 1
 	damage_boost_changed.emit(_damage_boost)
+
+
+## Activate rapid fire mode for a duration (called by RapidFirePickup)
+func activate_rapid_fire(duration: float) -> void:
+	_rapid_fire_active = true
+	_rapid_fire_timer = duration
+
+
+## Check if rapid fire is active
+func is_rapid_fire_active() -> bool:
+	return _rapid_fire_active
+
+
+## Activate piercing shots mode for a duration (called by PiercingShotPickup)
+func activate_piercing_shots(duration: float) -> void:
+	_piercing_shots_active = true
+	_piercing_shots_timer = duration
+
+
+## Check if piercing shots is active
+func is_piercing_shots_active() -> bool:
+	return _piercing_shots_active
+
+
+## Activate triple shot mode permanently until life lost (called by TripleShotPickup)
+func activate_triple_shot(_duration: float = 0.0) -> void:
+	_triple_shot_active = true
+	triple_shot_changed.emit(_triple_shot_active)
+
+
+## Check if triple shot is active
+func is_triple_shot_active() -> bool:
+	return _triple_shot_active
+
+
+## Reset triple shot to inactive (called when losing a life)
+func reset_triple_shot() -> void:
+	_triple_shot_active = false
+	triple_shot_changed.emit(_triple_shot_active)
+	# Also clear from GameState if available
+	var game_state = get_node_or_null("/root/GameState")
+	if game_state and game_state.has_method("clear_triple_shot"):
+		game_state.clear_triple_shot()
 
 
 ## Reset damage boost to zero (called when losing a life)

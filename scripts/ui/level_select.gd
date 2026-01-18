@@ -9,6 +9,7 @@ extends Control
 @onready var _level4_button: Button = $CenterContainer/VBoxContainer/LevelGrid/Level4Button
 @onready var _level5_button: Button = $CenterContainer/VBoxContainer/LevelGrid/Level5Button
 @onready var _level6_button: Button = $CenterContainer/VBoxContainer/LevelGrid/Level6Button
+@onready var _level7_button: Button = $CenterContainer/VBoxContainer/LevelGrid/Level7Button
 @onready var _back_button: Button = $CenterContainer/VBoxContainer/BackButton
 
 
@@ -20,6 +21,7 @@ func _ready() -> void:
 	_level4_button.pressed.connect(_on_level_selected.bind(4))
 	_level5_button.pressed.connect(_on_level_selected.bind(5))
 	_level6_button.pressed.connect(_on_level_selected.bind(6))
+	_level7_button.pressed.connect(_on_level_selected.bind(7))
 	_back_button.pressed.connect(_on_back_pressed)
 
 	# Update button states based on unlock status
@@ -46,6 +48,9 @@ func _update_button_states() -> void:
 
 	_level6_button.disabled = false
 	_update_button_appearance(_level6_button, true)
+
+	_level7_button.disabled = false
+	_update_button_appearance(_level7_button, true)
 
 
 ## Check if a level is unlocked via ScoreManager
@@ -81,6 +86,10 @@ func _on_level_selected(level_number: int) -> void:
 		# Clear carried-over state when starting from level select
 		game_state.clear_current_lives()
 		game_state.clear_sidekick_state()
+		if game_state.has_method("clear_damage_boost"):
+			game_state.clear_damage_boost()
+		if game_state.has_method("clear_triple_shot"):
+			game_state.clear_triple_shot()
 
 	# Transition to main game scene
 	if has_node("/root/TransitionManager"):

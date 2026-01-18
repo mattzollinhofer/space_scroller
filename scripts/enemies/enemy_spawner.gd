@@ -31,6 +31,9 @@ extends Node2D
 ## Bunny enemy scene to spawn (Level 6 special enemy)
 @export var bunny_enemy_scene: PackedScene
 
+## Star enemy scene to spawn (Level 7 special enemy)
+@export var star_enemy_scene: PackedScene
+
 ## Star pickup scene to spawn when kill threshold is reached
 @export var star_pickup_scene: PackedScene
 
@@ -39,6 +42,18 @@ extends Node2D
 
 ## Missile pickup scene to spawn when kill threshold is reached
 @export var missile_pickup_scene: PackedScene
+
+## Rapid fire pickup scene (pizza cutter - level 4)
+@export var rapid_fire_pickup_scene: PackedScene
+
+## Screen clear pickup scene (wand - level 5)
+@export var screen_clear_pickup_scene: PackedScene
+
+## Piercing shot pickup scene (needle - level 6)
+@export var piercing_shot_pickup_scene: PackedScene
+
+## Triple shot pickup scene (sword - all levels)
+@export var triple_shot_pickup_scene: PackedScene
 
 ## Minimum spawn interval in seconds
 @export var spawn_rate_min: float = 2.0
@@ -103,6 +118,9 @@ var _explosion_sprite: String = ""
 
 ## Current section index (set by LevelManager for special enemy spawning)
 var _current_section: int = 0
+
+## Current level number (set by LevelManager for level-specific pickups)
+var _current_level: int = 1
 
 
 func _ready() -> void:
@@ -199,6 +217,11 @@ func set_current_section(section_index: int) -> void:
 	_current_section = section_index
 
 
+## Set current level number (called by LevelManager for level-specific pickups)
+func set_current_level(level_number: int) -> void:
+	_current_level = level_number
+
+
 ## Spawn a wave of enemies based on configuration
 ## wave_config is an array of dictionaries with enemy_type and count
 func spawn_wave(wave_configs: Array) -> void:
@@ -224,6 +247,8 @@ func spawn_wave(wave_configs: Array) -> void:
 					_spawn_crab_enemy()
 				"bunny":
 					_spawn_bunny_enemy()
+				"star":
+					_spawn_star_enemy()
 				_:
 					_spawn_stationary_enemy()
 
@@ -291,6 +316,9 @@ func _try_spawn_special_enemy() -> bool:
 					return true
 				"bunny":
 					_spawn_bunny_enemy()
+					return true
+				"star":
+					_spawn_star_enemy()
 					return true
 				_:
 					push_warning("Unknown special enemy type: %s" % enemy_type)
@@ -376,6 +404,15 @@ func _spawn_bunny_enemy() -> void:
 		return
 
 	var enemy = bunny_enemy_scene.instantiate()
+	_setup_enemy(enemy)
+
+
+func _spawn_star_enemy() -> void:
+	if not star_enemy_scene:
+		push_warning("No star enemy scene assigned to EnemySpawner")
+		return
+
+	var enemy = star_enemy_scene.instantiate()
 	_setup_enemy(enemy)
 
 
@@ -491,9 +528,22 @@ func _on_enemy_killed(enemy: Node) -> void:
 		_next_pickup_threshold *= 2
 
 
-## Choose which pickup type to spawn based on player state
-## Returns pickup type string: "star", "sidekick", or "missile"
+## Choose which pickup type to spawn based on player state and current level
+## Returns pickup type string: "star", "sidekick", "missile", "triple_shot", or level-specific pickups
 func _choose_pickup_type() -> String:
+	# Check for triple shot pickup (15% chance on all levels)
+	if _rng.randf() < 0.15 and triple_shot_pickup_scene:
+		return "triple_shot"
+
+	# Check for level-specific pickup (30% chance on applicable levels)
+	if _rng.randf() < 0.3:
+		if _current_level == 4 and rapid_fire_pickup_scene:
+			return "rapid_fire"
+		elif _current_level == 5 and screen_clear_pickup_scene:
+			return "screen_clear"
+		elif _current_level == 6 and piercing_shot_pickup_scene:
+			return "piercing_shot"
+
 	var player = get_tree().root.get_node_or_null("Main/Player")
 	var has_sidekick = get_tree().get_nodes_in_group("sidekick").size() > 0
 	var health_full = false
@@ -554,13 +604,34 @@ func _choose_pickup_type() -> String:
 			return "missile"
 
 
-## Spawn a pickup (star, sidekick, or missile) from a random edge
+## Spawn a pickup from a random edge
 ## Smart selection: avoids giving unusable pickups when possible
+## Includes level-specific pickups (rapid_fire on level 4, screen_clear on level 5)
 func _spawn_random_pickup() -> void:
 	var pickup_type = _choose_pickup_type()
 
 	var pickup: Node2D
 	match pickup_type:
+		"triple_shot":
+			if triple_shot_pickup_scene:
+				pickup = triple_shot_pickup_scene.instantiate()
+			elif star_pickup_scene:
+				pickup = star_pickup_scene.instantiate()
+		"rapid_fire":
+			if rapid_fire_pickup_scene:
+				pickup = rapid_fire_pickup_scene.instantiate()
+			elif star_pickup_scene:
+				pickup = star_pickup_scene.instantiate()
+		"screen_clear":
+			if screen_clear_pickup_scene:
+				pickup = screen_clear_pickup_scene.instantiate()
+			elif star_pickup_scene:
+				pickup = star_pickup_scene.instantiate()
+		"piercing_shot":
+			if piercing_shot_pickup_scene:
+				pickup = piercing_shot_pickup_scene.instantiate()
+			elif star_pickup_scene:
+				pickup = star_pickup_scene.instantiate()
 		"missile":
 			if missile_pickup_scene:
 				pickup = missile_pickup_scene.instantiate()

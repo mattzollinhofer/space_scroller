@@ -11,6 +11,7 @@ const CHARACTER_COSMIC_HAMSTER := "cosmic_hamster"
 const CHARACTER_ASTRO_MAPLE := "astro_maple"
 const CHARACTER_GARFIELD := "garfield"
 const CHARACTER_DECLYN := "declyn"
+const CHARACTER_ROCKY := "rocky"
 
 ## Difficulty identifiers
 const DIFFICULTY_NORMAL := "normal"
@@ -38,7 +39,8 @@ const LEVEL_PATHS := {
 	3: "res://levels/level_3.json",
 	4: "res://levels/level_4.json",
 	5: "res://levels/level_5.json",
-	6: "res://levels/level_6.json"
+	6: "res://levels/level_6.json",
+	7: "res://levels/level_7.json"
 }
 
 ## Currently selected character for this session
@@ -61,6 +63,9 @@ var _sidekick_sprite: String = ""
 
 ## Current damage boost carried over between levels (0 means no boost)
 var _damage_boost: int = 0
+
+## Whether player has triple shot carried over between levels
+var _has_triple_shot: bool = false
 
 ## Signal emitted when character selection changes
 signal character_changed(character_id: String)
@@ -86,7 +91,7 @@ func get_selected_character() -> String:
 
 ## Set the selected character for this session
 func set_selected_character(character_id: String) -> void:
-	if character_id in [CHARACTER_BLUE_BLASTER, CHARACTER_SPACE_DRAGON, CHARACTER_COSMIC_CAT, CHARACTER_SPACE_SHEEP, CHARACTER_COSMIC_HAMSTER, CHARACTER_ASTRO_MAPLE, CHARACTER_GARFIELD, CHARACTER_DECLYN]:
+	if character_id in [CHARACTER_BLUE_BLASTER, CHARACTER_SPACE_DRAGON, CHARACTER_COSMIC_CAT, CHARACTER_SPACE_SHEEP, CHARACTER_COSMIC_HAMSTER, CHARACTER_ASTRO_MAPLE, CHARACTER_GARFIELD, CHARACTER_DECLYN, CHARACTER_ROCKY]:
 		_selected_character = character_id
 		character_changed.emit(character_id)
 	else:
@@ -112,6 +117,8 @@ func get_character_texture_path(character_id: String) -> String:
 			return "res://assets/sprites/garfield-1.png"
 		CHARACTER_DECLYN:
 			return "res://assets/sprites/declyn-dragon-1.png"
+		CHARACTER_ROCKY:
+			return "res://assets/sprites/rocky-1.png"
 		_:
 			return "res://assets/sprites/player.png"
 
@@ -133,6 +140,8 @@ func get_character_projectile_sprite(character_id: String) -> String:
 			return "res://assets/sprites/lasagna-attack-1.png"
 		CHARACTER_DECLYN:
 			return "res://assets/sprites/ice-attack-1.png"
+		CHARACTER_ROCKY:
+			return "res://assets/sprites/rock-attack-1.png"
 		_:
 			return ""  # Use default laser-bolt
 
@@ -156,13 +165,15 @@ func get_character_display_name(character_id: String) -> String:
 			return "Garfield"
 		CHARACTER_DECLYN:
 			return "Ice Dragon"
+		CHARACTER_ROCKY:
+			return "Rocky"
 		_:
 			return "Unknown"
 
 
 ## Get all available characters
 func get_all_characters() -> Array[String]:
-	return [CHARACTER_BLUE_BLASTER, CHARACTER_SPACE_DRAGON, CHARACTER_COSMIC_CAT, CHARACTER_SPACE_SHEEP, CHARACTER_COSMIC_HAMSTER, CHARACTER_ASTRO_MAPLE, CHARACTER_GARFIELD, CHARACTER_DECLYN]
+	return [CHARACTER_BLUE_BLASTER, CHARACTER_SPACE_DRAGON, CHARACTER_COSMIC_CAT, CHARACTER_SPACE_SHEEP, CHARACTER_COSMIC_HAMSTER, CHARACTER_ASTRO_MAPLE, CHARACTER_GARFIELD, CHARACTER_DECLYN, CHARACTER_ROCKY]
 
 
 ## Get the currently selected level number
@@ -279,3 +290,18 @@ func set_damage_boost(boost: int) -> void:
 ## Clear damage boost (called when starting a fresh game or player loses a life)
 func clear_damage_boost() -> void:
 	_damage_boost = 0
+
+
+## Check if player has triple shot (for persistence between levels)
+func has_triple_shot() -> bool:
+	return _has_triple_shot
+
+
+## Set triple shot state (called when completing a level)
+func set_triple_shot(active: bool) -> void:
+	_has_triple_shot = active
+
+
+## Clear triple shot (called when starting a fresh game or player loses a life)
+func clear_triple_shot() -> void:
+	_has_triple_shot = false

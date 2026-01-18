@@ -8,16 +8,24 @@ extends Area2D
 ## Damage dealt to enemies on hit
 @export var damage: int = 1
 
+## Whether projectile passes through enemies instead of stopping
+var piercing: bool = false
+
+## Direction of travel (normalized). Default is right (1, 0)
+var direction: Vector2 = Vector2.RIGHT
+
 ## Right edge of viewport plus margin for despawn
 var _despawn_x: float = 2148.0
+var _viewport_height: float = 1536.0
 
 ## Impact spark scene for enemy hit effect
 var _impact_spark_scene: PackedScene = null
 
 
 func _ready() -> void:
-	# Get viewport width for despawn check
+	# Get viewport dimensions for despawn check
 	_despawn_x = ProjectSettings.get_setting("display/window/size/viewport_width") + 100.0
+	_viewport_height = ProjectSettings.get_setting("display/window/size/viewport_height")
 
 	# Connect area_entered signal for enemy collision
 	area_entered.connect(_on_area_entered)
@@ -30,11 +38,11 @@ func _ready() -> void:
 
 
 func _process(delta: float) -> void:
-	# Move right
-	position.x += speed * delta
+	# Move in direction
+	position += direction * speed * delta
 
-	# Despawn when off right edge
-	if position.x > _despawn_x:
+	# Despawn when off screen (any edge)
+	if position.x > _despawn_x or position.x < -100 or position.y < -100 or position.y > _viewport_height + 100:
 		queue_free()
 
 
@@ -42,10 +50,11 @@ func _on_area_entered(area: Area2D) -> void:
 	# Check if it's an enemy with take_hit method
 	if area.has_method("take_hit"):
 		area.take_hit(damage)
-		# Spawn impact spark at collision point before destroying projectile
+		# Spawn impact spark at collision point
 		_spawn_impact_spark()
-		# Destroy projectile on hit
-		queue_free()
+		# Destroy projectile on hit (unless piercing)
+		if not piercing:
+			queue_free()
 
 
 ## Apply character-specific projectile sprite if one exists

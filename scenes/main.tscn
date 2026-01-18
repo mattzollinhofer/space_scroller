@@ -1,4 +1,4 @@
-[gd_scene load_steps=34 format=3 uid="uid://d0n8g3kv2kq7y"]
+[gd_scene load_steps=40 format=3 uid="uid://d0n8g3kv2kq7y"]
 
 [ext_resource type="Script" path="res://scripts/scroll_controller.gd" id="1_scroll"]
 [ext_resource type="Script" path="res://scripts/background/star_field.gd" id="2_starfield"]
@@ -33,6 +33,12 @@
 [ext_resource type="PackedScene" uid="uid://ccrab_enemy_scene" path="res://scenes/enemies/crab_enemy.tscn" id="32_crab_enemy"]
 [ext_resource type="PackedScene" uid="uid://cbunny_enemy_scene" path="res://scenes/enemies/bunny_enemy.tscn" id="34_bunny_enemy"]
 [ext_resource type="PackedScene" uid="uid://cdamage_boost_display" path="res://scenes/ui/damage_boost_display.tscn" id="33_damage_boost_display"]
+[ext_resource type="PackedScene" uid="uid://rapid_fire_pickup" path="res://scenes/pickups/rapid_fire_pickup.tscn" id="35_rapid_fire_pickup"]
+[ext_resource type="PackedScene" uid="uid://screen_clear_pickup" path="res://scenes/pickups/screen_clear_pickup.tscn" id="36_screen_clear_pickup"]
+[ext_resource type="PackedScene" uid="uid://piercing_shot_pickup" path="res://scenes/pickups/piercing_shot_pickup.tscn" id="37_piercing_shot_pickup"]
+[ext_resource type="PackedScene" uid="uid://triple_shot_pickup" path="res://scenes/pickups/triple_shot_pickup.tscn" id="38_triple_shot_pickup"]
+[ext_resource type="PackedScene" uid="uid://cstar_enemy_scene" path="res://scenes/enemies/star_enemy.tscn" id="39_star_enemy"]
+[ext_resource type="PackedScene" uid="uid://ctriple_shot_display" path="res://scenes/ui/triple_shot_display.tscn" id="40_triple_shot_display"]
 
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_top"]
 size = Vector2(2048, 80)
@@ -101,9 +107,14 @@ ghost_eye_enemy_scene = ExtResource("30_ghost_eye_enemy")
 jelly_snail_enemy_scene = ExtResource("31_jelly_snail_enemy")
 crab_enemy_scene = ExtResource("32_crab_enemy")
 bunny_enemy_scene = ExtResource("34_bunny_enemy")
+star_enemy_scene = ExtResource("39_star_enemy")
 star_pickup_scene = ExtResource("18_star_pickup")
 sidekick_pickup_scene = ExtResource("19_sidekick_pickup")
 missile_pickup_scene = ExtResource("20_missile_pickup")
+rapid_fire_pickup_scene = ExtResource("35_rapid_fire_pickup")
+screen_clear_pickup_scene = ExtResource("36_screen_clear_pickup")
+piercing_shot_pickup_scene = ExtResource("37_piercing_shot_pickup")
+triple_shot_pickup_scene = ExtResource("38_triple_shot_pickup")
 spawn_rate_min = 3.0
 spawn_rate_max = 6.0
 patrol_spawn_chance = 0.4
@@ -129,6 +140,8 @@ level_complete_screen_path = NodePath("../LevelCompleteScreen")
 [node name="LivesDisplay" parent="." instance=ExtResource("22_lives_display")]
 
 [node name="DamageBoostDisplay" parent="." instance=ExtResource("33_damage_boost_display")]
+
+[node name="TripleShotDisplay" parent="." instance=ExtResource("40_triple_shot_display")]
 
 [node name="ScoreDisplay" parent="." instance=ExtResource("24_score_display")]
 

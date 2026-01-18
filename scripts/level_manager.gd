@@ -310,6 +310,10 @@ func _setup_wave_based_spawning() -> void:
 	if _enemy_spawner and _enemy_spawner.has_method("set_enemy_config"):
 		_enemy_spawner.set_enemy_config(_enemy_config)
 
+	# Pass current level number to spawner for level-specific pickups
+	if _enemy_spawner and _enemy_spawner.has_method("set_current_level"):
+		_enemy_spawner.set_current_level(_level_number)
+
 	# Pass special enemies config to spawner for level-specific special enemies
 	var special_enemies = _level_metadata.get("special_enemies", [])
 	if _enemy_spawner and _enemy_spawner.has_method("set_special_enemies_config"):

@@ -56,6 +56,8 @@ signal hit_by_projectile()
 
 
 func _ready() -> void:
+	# Add to enemy group for easy identification
+	add_to_group("enemy")
 	# Connect signal for collision detection with player (CharacterBody2D)
 	body_entered.connect(_on_body_entered)
 	# Connect signal for collision detection with projectiles (Area2D)

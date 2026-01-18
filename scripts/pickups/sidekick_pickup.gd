@@ -11,7 +11,13 @@ const SIDEKICK_SPRITES := [
 	"res://assets/sprites/star-dragon-1.png",
 	"res://assets/sprites/cosmic-cat-2.png",
 	"res://assets/sprites/player.png",
-	"res://assets/sprites/friend-ufo-1.png"
+	"res://assets/sprites/friend-ufo-1.png",
+	"res://assets/sprites/rocky-1.png",
+	"res://assets/sprites/space-sheep-1.png",
+	"res://assets/sprites/comsic-hampster-1.png",
+	"res://assets/sprites/astro-maple-2.png",
+	"res://assets/sprites/garfield-1.png",
+	"res://assets/sprites/declyn-dragon-1.png"
 ]
 
 ## The randomly chosen sprite path for this pickup

@@ -1,4 +1,4 @@
-[gd_scene load_steps=11 format=3 uid="uid://character_selection_scene"]
+[gd_scene load_steps=12 format=3 uid="uid://character_selection_scene"]
 
 [ext_resource type="Script" path="res://scripts/ui/character_selection.gd" id="1_char_select"]
 [ext_resource type="Texture2D" path="res://assets/sprites/player.png" id="2_blue_blaster"]
@@ -9,6 +9,7 @@
 [ext_resource type="Texture2D" path="res://assets/sprites/astro-maple-2.png" id="7_astro_maple"]
 [ext_resource type="Texture2D" path="res://assets/sprites/garfield-1.png" id="8_garfield"]
 [ext_resource type="Texture2D" path="res://assets/sprites/declyn-dragon-1.png" id="9_declyn"]
+[ext_resource type="Texture2D" path="res://assets/sprites/rocky-1.png" id="11_rocky"]
 [ext_resource type="PackedScene" uid="uid://cmenu_background_scene" path="res://scenes/ui/menu_background.tscn" id="10_menu_bg"]
 
 [node name="CharacterSelection" type="Control"]
@@ -149,6 +150,17 @@ icon_alignment = 1
 vertical_icon_alignment = 0
 expand_icon = true
 text = "Ice Dragon"
+
+[node name="RockyButton" type="Button" parent="CenterContainer/VBoxContainer/CharacterGrid"]
+custom_minimum_size = Vector2(200, 240)
+layout_mode = 2
+theme_override_colors/font_color = Color(0.7, 0.7, 0.7, 1)
+theme_override_font_sizes/font_size = 28
+icon = ExtResource("11_rocky")
+icon_alignment = 1
+vertical_icon_alignment = 0
+expand_icon = true
+text = "Rocky"
 
 [node name="Spacer2" type="Control" parent="CenterContainer/VBoxContainer"]
 custom_minimum_size = Vector2(0, 15)

@@ -101,7 +101,13 @@ const BUDDY_PROJECTILES := {
 	"res://assets/sprites/friend-ufo-1.png": "res://assets/sprites/sidekick-attack-1.png",
 	"res://assets/sprites/star-dragon-1.png": "res://assets/sprites/weapon-dragon-1.png",
 	"res://assets/sprites/cosmic-cat-2.png": "res://assets/sprites/weapon-celestial-cat-1.png",
-	"res://assets/sprites/player.png": "res://assets/sprites/laser-bolt.png"
+	"res://assets/sprites/player.png": "res://assets/sprites/laser-bolt.png",
+	"res://assets/sprites/rocky-1.png": "res://assets/sprites/rock-attack-1.png",
+	"res://assets/sprites/space-sheep-1.png": "res://assets/sprites/weapon-space-sheep-grass-1.png",
+	"res://assets/sprites/comsic-hampster-1.png": "res://assets/sprites/weapon-hamster-food-1.png",
+	"res://assets/sprites/astro-maple-2.png": "res://assets/sprites/astro-maple-attack.png",
+	"res://assets/sprites/garfield-1.png": "res://assets/sprites/lasagna-attack-1.png",
+	"res://assets/sprites/declyn-dragon-1.png": "res://assets/sprites/ice-attack-1.png"
 }
 
 ## Spawn a projectile from the sidekick's position

@@ -71,6 +71,13 @@ func _apply_character_projectile_sprite() -> void:
 		sprite_node.texture = load(sprite_path)
 
 
+## Set a custom sprite for this projectile (used by special gun pickup)
+func set_custom_sprite(sprite_path: String) -> void:
+	var sprite_node = get_node_or_null("Sprite2D")
+	if sprite_node and ResourceLoader.exists(sprite_path):
+		sprite_node.texture = load(sprite_path)
+
+
 ## Spawns impact spark particle effect at current position
 func _spawn_impact_spark() -> void:
 	if _impact_spark_scene == null:

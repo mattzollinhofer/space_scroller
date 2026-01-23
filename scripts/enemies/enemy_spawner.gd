@@ -55,6 +55,9 @@ extends Node2D
 ## Triple shot pickup scene (sword - all levels)
 @export var triple_shot_pickup_scene: PackedScene
 
+## Special gun pickup scene (all levels)
+@export var special_gun_pickup_scene: PackedScene
+
 ## Minimum spawn interval in seconds
 @export var spawn_rate_min: float = 2.0
 
@@ -529,11 +532,15 @@ func _on_enemy_killed(enemy: Node) -> void:
 
 
 ## Choose which pickup type to spawn based on player state and current level
-## Returns pickup type string: "star", "sidekick", "missile", "triple_shot", or level-specific pickups
+## Returns pickup type string: "star", "sidekick", "missile", "triple_shot", "special_gun", or level-specific pickups
 func _choose_pickup_type() -> String:
 	# Check for triple shot pickup (15% chance on all levels)
 	if _rng.randf() < 0.15 and triple_shot_pickup_scene:
 		return "triple_shot"
+
+	# Check for special gun pickup (10% chance on all levels)
+	if _rng.randf() < 0.10 and special_gun_pickup_scene:
+		return "special_gun"
 
 	# Check for level-specific pickup (30% chance on applicable levels)
 	if _rng.randf() < 0.3:
@@ -564,16 +571,13 @@ func _choose_pickup_type() -> String:
 
 	if has_sidekick and health_full:
 		# Player is "maxed out" on health and sidekick - offer missile
-		# Still give some variety with weighted random including missile
+		# No star pickup when health is full
 		var roll = _rng.randf()
-		if roll < 0.5:
-			# 50% chance: missile (preferred when maxed)
+		if roll < 0.7:
+			# 70% chance: missile (preferred when maxed)
 			return "missile"
-		elif roll < 0.75:
-			# 25% chance: star
-			return "star"
 		else:
-			# 25% chance: sidekick
+			# 30% chance: sidekick
 			return "sidekick"
 	elif has_sidekick and not health_full:
 		# Has sidekick but needs health -> prefer star
@@ -586,13 +590,12 @@ func _choose_pickup_type() -> String:
 			return "sidekick"
 	elif health_full and not has_sidekick:
 		# Full health but no sidekick -> prefer sidekick
+		# No star pickup when health is full
 		var roll = _rng.randf()
-		if roll < 0.6:
+		if roll < 0.7:
 			return "sidekick"
-		elif roll < 0.8:
-			return "missile"
 		else:
-			return "star"
+			return "missile"
 	else:
 		# Neither condition - weighted random: ~40% star, ~40% sidekick, ~20% missile
 		var roll = _rng.randf()
@@ -615,6 +618,11 @@ func _spawn_random_pickup() -> void:
 		"triple_shot":
 			if triple_shot_pickup_scene:
 				pickup = triple_shot_pickup_scene.instantiate()
+			elif star_pickup_scene:
+				pickup = star_pickup_scene.instantiate()
+		"special_gun":
+			if special_gun_pickup_scene:
+				pickup = special_gun_pickup_scene.instantiate()
 			elif star_pickup_scene:
 				pickup = star_pickup_scene.instantiate()
 		"rapid_fire":

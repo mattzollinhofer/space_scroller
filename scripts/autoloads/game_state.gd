@@ -12,6 +12,9 @@ const CHARACTER_ASTRO_MAPLE := "astro_maple"
 const CHARACTER_GARFIELD := "garfield"
 const CHARACTER_DECLYN := "declyn"
 const CHARACTER_ROCKY := "rocky"
+const CHARACTER_MEXIE := "mexie"
+const CHARACTER_CAPYBARA := "capybara"
+const CHARACTER_STONEHIDE := "stonehide"
 
 ## Difficulty identifiers
 const DIFFICULTY_NORMAL := "normal"
@@ -67,6 +70,12 @@ var _damage_boost: int = 0
 ## Whether player has triple shot carried over between levels
 var _has_triple_shot: bool = false
 
+## Whether player has piercing shots carried over between levels
+var _has_piercing_shots: bool = false
+
+## Whether player has special gun carried over between levels
+var _has_special_gun: bool = false
+
 ## Signal emitted when character selection changes
 signal character_changed(character_id: String)
 
@@ -91,7 +100,7 @@ func get_selected_character() -> String:
 
 ## Set the selected character for this session
 func set_selected_character(character_id: String) -> void:
-	if character_id in [CHARACTER_BLUE_BLASTER, CHARACTER_SPACE_DRAGON, CHARACTER_COSMIC_CAT, CHARACTER_SPACE_SHEEP, CHARACTER_COSMIC_HAMSTER, CHARACTER_ASTRO_MAPLE, CHARACTER_GARFIELD, CHARACTER_DECLYN, CHARACTER_ROCKY]:
+	if character_id in [CHARACTER_BLUE_BLASTER, CHARACTER_SPACE_DRAGON, CHARACTER_COSMIC_CAT, CHARACTER_SPACE_SHEEP, CHARACTER_COSMIC_HAMSTER, CHARACTER_ASTRO_MAPLE, CHARACTER_GARFIELD, CHARACTER_DECLYN, CHARACTER_ROCKY, CHARACTER_MEXIE, CHARACTER_CAPYBARA, CHARACTER_STONEHIDE]:
 		_selected_character = character_id
 		character_changed.emit(character_id)
 	else:
@@ -119,6 +128,12 @@ func get_character_texture_path(character_id: String) -> String:
 			return "res://assets/sprites/declyn-dragon-1.png"
 		CHARACTER_ROCKY:
 			return "res://assets/sprites/rocky-1.png"
+		CHARACTER_MEXIE:
+			return "res://assets/sprites/mexie-1.png"
+		CHARACTER_CAPYBARA:
+			return "res://assets/sprites/capybara-character-1.png"
+		CHARACTER_STONEHIDE:
+			return "res://assets/sprites/stonehide-1.png"
 		_:
 			return "res://assets/sprites/player.png"
 
@@ -142,6 +157,12 @@ func get_character_projectile_sprite(character_id: String) -> String:
 			return "res://assets/sprites/ice-attack-1.png"
 		CHARACTER_ROCKY:
 			return "res://assets/sprites/rock-attack-1.png"
+		CHARACTER_MEXIE:
+			return "res://assets/sprites/mexie-attack-1.png"
+		CHARACTER_CAPYBARA:
+			return "res://assets/sprites/dirtball-attack-1.png"
+		CHARACTER_STONEHIDE:
+			return "res://assets/sprites/flower-petal-1.png"
 		_:
 			return ""  # Use default laser-bolt
 
@@ -167,13 +188,19 @@ func get_character_display_name(character_id: String) -> String:
 			return "Ice Dragon"
 		CHARACTER_ROCKY:
 			return "Rocky"
+		CHARACTER_MEXIE:
+			return "Mexie"
+		CHARACTER_CAPYBARA:
+			return "Capybara"
+		CHARACTER_STONEHIDE:
+			return "Stonehide"
 		_:
 			return "Unknown"
 
 
 ## Get all available characters
 func get_all_characters() -> Array[String]:
-	return [CHARACTER_BLUE_BLASTER, CHARACTER_SPACE_DRAGON, CHARACTER_COSMIC_CAT, CHARACTER_SPACE_SHEEP, CHARACTER_COSMIC_HAMSTER, CHARACTER_ASTRO_MAPLE, CHARACTER_GARFIELD, CHARACTER_DECLYN, CHARACTER_ROCKY]
+	return [CHARACTER_BLUE_BLASTER, CHARACTER_SPACE_DRAGON, CHARACTER_COSMIC_CAT, CHARACTER_SPACE_SHEEP, CHARACTER_COSMIC_HAMSTER, CHARACTER_ASTRO_MAPLE, CHARACTER_GARFIELD, CHARACTER_DECLYN, CHARACTER_ROCKY, CHARACTER_MEXIE, CHARACTER_CAPYBARA, CHARACTER_STONEHIDE]
 
 
 ## Get the currently selected level number
@@ -305,3 +332,33 @@ func set_triple_shot(active: bool) -> void:
 ## Clear triple shot (called when starting a fresh game or player loses a life)
 func clear_triple_shot() -> void:
 	_has_triple_shot = false
+
+
+## Check if player has piercing shots (for persistence between levels)
+func has_piercing_shots() -> bool:
+	return _has_piercing_shots
+
+
+## Set piercing shots state (called when completing a level)
+func set_piercing_shots(active: bool) -> void:
+	_has_piercing_shots = active
+
+
+## Clear piercing shots (called when starting a fresh game or player loses a life)
+func clear_piercing_shots() -> void:
+	_has_piercing_shots = false
+
+
+## Check if player has special gun (for persistence between levels)
+func has_special_gun() -> bool:
+	return _has_special_gun
+
+
+## Set special gun state (called when completing a level)
+func set_special_gun(active: bool) -> void:
+	_has_special_gun = active
+
+
+## Clear special gun (called when starting a fresh game or player loses a life)
+func clear_special_gun() -> void:
+	_has_special_gun = false

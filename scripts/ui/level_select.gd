@@ -90,6 +90,8 @@ func _on_level_selected(level_number: int) -> void:
 			game_state.clear_damage_boost()
 		if game_state.has_method("clear_triple_shot"):
 			game_state.clear_triple_shot()
+		if game_state.has_method("clear_piercing_shots"):
+			game_state.clear_piercing_shots()
 
 	# Transition to main game scene
 	if has_node("/root/TransitionManager"):

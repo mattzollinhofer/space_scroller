@@ -1,4 +1,4 @@
-[gd_scene load_steps=40 format=3 uid="uid://d0n8g3kv2kq7y"]
+[gd_scene load_steps=42 format=3 uid="uid://d0n8g3kv2kq7y"]
 
 [ext_resource type="Script" path="res://scripts/scroll_controller.gd" id="1_scroll"]
 [ext_resource type="Script" path="res://scripts/background/star_field.gd" id="2_starfield"]
@@ -39,6 +39,8 @@
 [ext_resource type="PackedScene" uid="uid://triple_shot_pickup" path="res://scenes/pickups/triple_shot_pickup.tscn" id="38_triple_shot_pickup"]
 [ext_resource type="PackedScene" uid="uid://cstar_enemy_scene" path="res://scenes/enemies/star_enemy.tscn" id="39_star_enemy"]
 [ext_resource type="PackedScene" uid="uid://ctriple_shot_display" path="res://scenes/ui/triple_shot_display.tscn" id="40_triple_shot_display"]
+[ext_resource type="PackedScene" uid="uid://cpiercing_shot_display" path="res://scenes/ui/piercing_shot_display.tscn" id="41_piercing_shot_display"]
+[ext_resource type="PackedScene" uid="uid://special_gun_pickup" path="res://scenes/pickups/special_gun_pickup.tscn" id="42_special_gun_pickup"]
 
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_top"]
 size = Vector2(2048, 80)
@@ -115,6 +117,7 @@ rapid_fire_pickup_scene = ExtResource("35_rapid_fire_pickup")
 screen_clear_pickup_scene = ExtResource("36_screen_clear_pickup")
 piercing_shot_pickup_scene = ExtResource("37_piercing_shot_pickup")
 triple_shot_pickup_scene = ExtResource("38_triple_shot_pickup")
+special_gun_pickup_scene = ExtResource("42_special_gun_pickup")
 spawn_rate_min = 3.0
 spawn_rate_max = 6.0
 patrol_spawn_chance = 0.4
@@ -142,6 +145,8 @@ level_complete_screen_path = NodePath("../LevelCompleteScreen")
 [node name="DamageBoostDisplay" parent="." instance=ExtResource("33_damage_boost_display")]
 
 [node name="TripleShotDisplay" parent="." instance=ExtResource("40_triple_shot_display")]
+
+[node name="PiercingShotDisplay" parent="." instance=ExtResource("41_piercing_shot_display")]
 
 [node name="ScoreDisplay" parent="." instance=ExtResource("24_score_display")]
 

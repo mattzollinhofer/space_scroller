@@ -37,6 +37,8 @@ signal died()
 signal projectile_fired()
 signal damage_boost_changed(new_boost: int)
 signal triple_shot_changed(active: bool)
+signal piercing_shots_changed(active: bool)
+signal special_gun_changed(active: bool)
 
 ## Reference to virtual joystick (auto-detected from scene tree)
 var virtual_joystick: Node = null
@@ -73,12 +75,16 @@ var _rapid_fire_active: bool = false
 var _rapid_fire_timer: float = 0.0
 const RAPID_FIRE_COOLDOWN: float = 0.05  # Very fast firing when active
 
-## Piercing shots mode state
+## Piercing shots mode state (permanent until life lost)
 var _piercing_shots_active: bool = false
-var _piercing_shots_timer: float = 0.0
 
 ## Triple shot mode state (permanent until life lost)
 var _triple_shot_active: bool = false
+
+## Special gun mode state (permanent until life lost, 5 damage + special sprite)
+var _special_gun_active: bool = false
+const SPECIAL_GUN_SPRITE: String = "res://assets/sprites/special-pickup-attack-1.png"
+const SPECIAL_GUN_DAMAGE: int = 5
 
 
 func _ready() -> void:
@@ -106,6 +112,20 @@ func _ready() -> void:
 				_triple_shot_active = true
 				# Emit signal so UI updates
 				triple_shot_changed.emit(_triple_shot_active)
+		# Check if we have piercing shots carried over from a previous level
+		if game_state.has_method("has_piercing_shots"):
+			var carried_piercing = game_state.has_piercing_shots()
+			if carried_piercing:
+				_piercing_shots_active = true
+				# Emit signal so UI updates
+				piercing_shots_changed.emit(_piercing_shots_active)
+		# Check if we have special gun carried over from a previous level
+		if game_state.has_method("has_special_gun"):
+			var carried_special_gun = game_state.has_special_gun()
+			if carried_special_gun:
+				_special_gun_active = true
+				# Emit signal so UI updates
+				special_gun_changed.emit(_special_gun_active)
 	else:
 		_lives = starting_lives
 
@@ -198,11 +218,7 @@ func _physics_process(delta: float) -> void:
 		if _rapid_fire_timer <= 0:
 			_rapid_fire_active = false
 
-	# Handle piercing shots timer
-	if _piercing_shots_active:
-		_piercing_shots_timer -= delta
-		if _piercing_shots_timer <= 0:
-			_piercing_shots_active = false
+	# Piercing shots is now permanent until life lost (no timer)
 
 	# Triple shot is now permanent until life lost (no timer)
 
@@ -290,8 +306,16 @@ func shoot(is_new_tap: bool = false) -> void:
 		if "direction" in projectile:
 			projectile.direction = direction
 
-		# Apply damage boost to projectile (base damage 1 + boost level)
-		projectile.damage = 1 + _damage_boost
+		# Apply damage - special gun does 5, otherwise base damage 1 + boost level
+		if _special_gun_active:
+			projectile.damage = SPECIAL_GUN_DAMAGE
+			# Apply special gun sprite
+			if projectile.has_method("set_custom_sprite"):
+				projectile.set_custom_sprite(SPECIAL_GUN_SPRITE)
+			elif "custom_sprite_path" in projectile:
+				projectile.custom_sprite_path = SPECIAL_GUN_SPRITE
+		else:
+			projectile.damage = 1 + _damage_boost
 
 		# Apply piercing if active
 		if _piercing_shots_active and "piercing" in projectile:
@@ -322,9 +346,11 @@ func take_damage() -> void:
 		lives_changed.emit(_lives)
 		life_lost.emit()
 
-		# Reset damage boost and triple shot when losing a life
+		# Reset damage boost, triple shot, piercing shots, and special gun when losing a life
 		reset_damage_boost()
 		reset_triple_shot()
+		reset_piercing_shots()
+		reset_special_gun()
 
 		# Trigger screen effects for losing a life
 		var screen_effects = get_node_or_null("/root/ScreenEffects")
@@ -403,15 +429,50 @@ func is_rapid_fire_active() -> bool:
 	return _rapid_fire_active
 
 
-## Activate piercing shots mode for a duration (called by PiercingShotPickup)
-func activate_piercing_shots(duration: float) -> void:
+## Activate piercing shots mode permanently until life lost (called by PiercingShotPickup)
+func activate_piercing_shots(_duration: float = 0.0) -> void:
 	_piercing_shots_active = true
-	_piercing_shots_timer = duration
+	piercing_shots_changed.emit(_piercing_shots_active)
 
 
 ## Check if piercing shots is active
 func is_piercing_shots_active() -> bool:
 	return _piercing_shots_active
+
+
+## Reset piercing shots to inactive (called when losing a life)
+func reset_piercing_shots() -> void:
+	_piercing_shots_active = false
+	piercing_shots_changed.emit(_piercing_shots_active)
+	# Also clear from GameState if available
+	var game_state = get_node_or_null("/root/GameState")
+	if game_state and game_state.has_method("clear_piercing_shots"):
+		game_state.clear_piercing_shots()
+
+
+## Activate special gun mode permanently until life lost (called by SpecialGunPickup)
+func activate_special_gun() -> void:
+	_special_gun_active = true
+	special_gun_changed.emit(_special_gun_active)
+	# Save to GameState for persistence between levels
+	var game_state = get_node_or_null("/root/GameState")
+	if game_state and game_state.has_method("set_special_gun"):
+		game_state.set_special_gun(true)
+
+
+## Check if special gun is active
+func is_special_gun_active() -> bool:
+	return _special_gun_active
+
+
+## Reset special gun to inactive (called when losing a life)
+func reset_special_gun() -> void:
+	_special_gun_active = false
+	special_gun_changed.emit(_special_gun_active)
+	# Also clear from GameState if available
+	var game_state = get_node_or_null("/root/GameState")
+	if game_state and game_state.has_method("clear_special_gun"):
+		game_state.clear_special_gun()
 
 
 ## Activate triple shot mode permanently until life lost (called by TripleShotPickup)

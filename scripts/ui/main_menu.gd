@@ -20,6 +20,8 @@ func _on_play_button_pressed() -> void:
 			game_state.clear_damage_boost()
 		if game_state.has_method("clear_triple_shot"):
 			game_state.clear_triple_shot()
+		if game_state.has_method("clear_piercing_shots"):
+			game_state.clear_piercing_shots()
 		game_state.set_selected_level(1)  # Reset to level 1
 	if has_node("/root/TransitionManager"):
 		var transition_manager = get_node("/root/TransitionManager")

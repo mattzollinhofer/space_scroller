@@ -179,6 +179,8 @@ func _on_next_level_pressed() -> void:
 		_save_damage_boost_state(game_state)
 		# Save triple shot state to carry over to next level
 		_save_triple_shot_state(game_state)
+		# Save piercing shot state to carry over to next level
+		_save_piercing_shot_state(game_state)
 
 	# Score persists across levels (not reset here)
 
@@ -216,6 +218,15 @@ func _save_triple_shot_state(game_state: Node) -> void:
 			game_state.set_triple_shot(active)
 
 
+## Save piercing shot state to GameState for next level
+func _save_piercing_shot_state(game_state: Node) -> void:
+	var player = get_tree().root.get_node_or_null("Main/Player")
+	if player and player.has_method("is_piercing_shots_active"):
+		var active = player.is_piercing_shots_active()
+		if game_state.has_method("set_piercing_shots"):
+			game_state.set_piercing_shots(active)
+
+
 ## Handle main menu button press
 func _on_main_menu_pressed() -> void:
 	# Unpause before transitioning
@@ -232,6 +243,9 @@ func _on_main_menu_pressed() -> void:
 		# Clear triple shot when returning to main menu
 		if game_state.has_method("clear_triple_shot"):
 			game_state.clear_triple_shot()
+		# Clear piercing shots when returning to main menu
+		if game_state.has_method("clear_piercing_shots"):
+			game_state.clear_piercing_shots()
 	# Reset score - run has ended (beat final level)
 	if has_node("/root/ScoreManager"):
 		get_node("/root/ScoreManager").reset_score()

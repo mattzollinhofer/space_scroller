@@ -13,6 +13,9 @@ extends Control
 @onready var _garfield_button: Button = $CenterContainer/VBoxContainer/CharacterGrid/GarfieldButton
 @onready var _declyn_button: Button = $CenterContainer/VBoxContainer/CharacterGrid/DeclynButton
 @onready var _rocky_button: Button = $CenterContainer/VBoxContainer/CharacterGrid/RockyButton
+@onready var _mexie_button: Button = $CenterContainer/VBoxContainer/CharacterGrid/MexieButton
+@onready var _capybara_button: Button = $CenterContainer/VBoxContainer/CharacterGrid/CapybaraButton
+@onready var _stonehide_button: Button = $CenterContainer/VBoxContainer/CharacterGrid/StonehideButton
 @onready var _back_button: Button = $CenterContainer/VBoxContainer/ButtonContainer/BackButton
 @onready var _ok_button: Button = $CenterContainer/VBoxContainer/ButtonContainer/OKButton
 
@@ -38,7 +41,10 @@ func _ready() -> void:
 		GameState.CHARACTER_ASTRO_MAPLE: _astro_maple_button,
 		GameState.CHARACTER_GARFIELD: _garfield_button,
 		GameState.CHARACTER_DECLYN: _declyn_button,
-		GameState.CHARACTER_ROCKY: _rocky_button
+		GameState.CHARACTER_ROCKY: _rocky_button,
+		GameState.CHARACTER_MEXIE: _mexie_button,
+		GameState.CHARACTER_CAPYBARA: _capybara_button,
+		GameState.CHARACTER_STONEHIDE: _stonehide_button
 	}
 
 	# Map difficulty IDs to their buttons
@@ -57,6 +63,9 @@ func _ready() -> void:
 	_garfield_button.pressed.connect(_on_character_selected.bind(GameState.CHARACTER_GARFIELD))
 	_declyn_button.pressed.connect(_on_character_selected.bind(GameState.CHARACTER_DECLYN))
 	_rocky_button.pressed.connect(_on_character_selected.bind(GameState.CHARACTER_ROCKY))
+	_mexie_button.pressed.connect(_on_character_selected.bind(GameState.CHARACTER_MEXIE))
+	_capybara_button.pressed.connect(_on_character_selected.bind(GameState.CHARACTER_CAPYBARA))
+	_stonehide_button.pressed.connect(_on_character_selected.bind(GameState.CHARACTER_STONEHIDE))
 
 	# Connect difficulty button signals
 	_normal_button.pressed.connect(_on_difficulty_selected.bind(GameState.DIFFICULTY_NORMAL))

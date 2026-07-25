@@ -1,30 +1,54 @@
 extends Control
 ## High Scores screen displaying the top 10 scores with player initials.
 ## Accessible from the main menu via the High Scores button.
+## Shows local scores instantly, then upgrades to the global online leaderboard.
 
 ## Reference to the container for score entries
 @onready var _score_container: VBoxContainer = $CenterContainer/VBoxContainer/ScoreContainer
 @onready var _back_button: Button = $CenterContainer/VBoxContainer/BackButton
+@onready var _title_label: Label = $CenterContainer/VBoxContainer/TitleLabel
 
 
 func _ready() -> void:
 	# Connect back button signal
 	_back_button.pressed.connect(_on_back_pressed)
 
-	# Populate the high scores list
-	_populate_scores()
+	# Show local scores immediately so the screen works offline and without delay
+	_populate_scores(_local_high_scores())
+
+	# Then upgrade to the global leaderboard if it can be fetched
+	_fetch_global_scores()
 
 
-## Populate the score list from ScoreManager
-func _populate_scores() -> void:
+## Get the locally stored high scores from ScoreManager
+func _local_high_scores() -> Array:
+	if has_node("/root/ScoreManager"):
+		return get_node("/root/ScoreManager").get_high_scores()
+	return []
+
+
+## Request the global leaderboard from Firebase (silent, fire-and-forget)
+func _fetch_global_scores() -> void:
+	if not has_node("/root/FirebaseService"):
+		return
+	get_node("/root/FirebaseService").fetch_top_scores(10, _on_global_scores_fetched)
+
+
+## Handle the global leaderboard fetch result. A non-empty result replaces the
+## displayed scores; an empty result (offline, timeout, or unconfigured backend)
+## leaves the local scores in place.
+func _on_global_scores_fetched(scores: Array) -> void:
+	if scores.is_empty():
+		return
+	_populate_scores(scores)
+	_title_label.text = "Global High Scores"
+
+
+## Populate the score list from the given high scores array
+func _populate_scores(high_scores: Array) -> void:
 	# Clear existing entries (except any template)
 	for child in _score_container.get_children():
 		child.queue_free()
-
-	# Get high scores from ScoreManager
-	var high_scores: Array = []
-	if has_node("/root/ScoreManager"):
-		high_scores = get_node("/root/ScoreManager").get_high_scores()
 
 	# Create entries for all 10 slots
 	for i in range(10):

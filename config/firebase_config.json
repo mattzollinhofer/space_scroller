@@ -1,4 +1,4 @@
 {
-	"project_id": "your-firebase-project-id",
-	"database_url": "https://your-firebase-project-id-default-rtdb.firebaseio.com"
+	"project_id": "z-space-scroller",
+	"database_url": "https://z-space-scroller-default-rtdb.firebaseio.com"
 }

@@ -1,0 +1,6 @@
+[gd_scene load_steps=2 format=3 uid="uid://test_firebase_submit_headless"]
+
+[ext_resource type="Script" path="res://tests/test_firebase_submit_headless.gd" id="1_test"]
+
+[node name="TestFirebaseSubmitHeadless" type="Node2D"]
+script = ExtResource("1_test")

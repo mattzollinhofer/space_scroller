@@ -68,6 +68,11 @@ func _setup_http_requests() -> void:
 ## Submit a score to Firebase Realtime Database
 ## Fire-and-forget pattern - no callback, no await, silent failure
 func submit_score(score: int, initials: String = "AAA") -> void:
+	# Never write to the shared leaderboard from headless (automated test) runs,
+	# so the test suite does not pollute the live board with fixture scores.
+	if DisplayServer.get_name() == "headless":
+		return
+
 	# Silent failure if database URL not configured
 	if _database_url.is_empty():
 		return

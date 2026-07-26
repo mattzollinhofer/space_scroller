@@ -1209,7 +1209,6 @@ func is_grow_shrinking() -> bool:
 
 
 func _attack_rapid_jelly() -> void:
-	## Rapid Jelly Attack: Fire 4 projectiles straight forward (left) simultaneously
 	## Jelly-themed burst attack for Level 6 boss - like horizontal barrage but no spread
 	if not boss_projectile_scene:
 		push_warning("Boss projectile scene not assigned")

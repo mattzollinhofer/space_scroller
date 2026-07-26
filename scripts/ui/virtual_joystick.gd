@@ -3,10 +3,10 @@ extends Control
 ## Provides a normalized direction vector that the player script can read.
 
 ## Radius of the joystick base in pixels
-@export var joystick_radius: float = 150.0
+@export var joystick_radius: float = 130.0
 
 ## Radius of the thumb (inner circle) in pixels
-@export var thumb_radius: float = 64.0
+@export var thumb_radius: float = 55.0
 
 ## Color of the joystick base (semi-transparent)
 @export var base_color: Color = Color(0.2, 0.22, 0.28, 0.5)

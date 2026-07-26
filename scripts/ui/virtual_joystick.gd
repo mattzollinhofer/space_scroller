@@ -3,16 +3,19 @@ extends Control
 ## Provides a normalized direction vector that the player script can read.
 
 ## Radius of the joystick base in pixels
-@export var joystick_radius: float = 100.0
+@export var joystick_radius: float = 150.0
 
 ## Radius of the thumb (inner circle) in pixels
-@export var thumb_radius: float = 40.0
+@export var thumb_radius: float = 64.0
 
 ## Color of the joystick base (semi-transparent)
-@export var base_color: Color = Color(0.3, 0.3, 0.3, 0.5)
+@export var base_color: Color = Color(0.2, 0.22, 0.28, 0.5)
 
 ## Color of the thumb indicator
-@export var thumb_color: Color = Color(0.7, 0.7, 0.7, 0.8)
+@export var thumb_color: Color = Color(0.85, 0.87, 0.95, 0.9)
+
+## Color of the outline ring drawn around the base and thumb
+@export var ring_color: Color = Color(1, 1, 1, 0.8)
 
 ## Current input direction (normalized, or zero if not touching)
 var _direction: Vector2 = Vector2.ZERO
@@ -38,10 +41,13 @@ func _ready() -> void:
 
 
 func _draw() -> void:
-	# Draw the base circle
+	# Base: translucent fill plus a bright ring so it reads as a control
 	draw_circle(_center, joystick_radius, base_color)
-	# Draw the thumb at its current position
-	draw_circle(_center + _thumb_offset, thumb_radius, thumb_color)
+	draw_circle(_center, joystick_radius, ring_color, false, 6.0, true)
+	# Thumb knob with an outline
+	var thumb_center := _center + _thumb_offset
+	draw_circle(thumb_center, thumb_radius, thumb_color)
+	draw_circle(thumb_center, thumb_radius, ring_color, false, 4.0, true)
 
 
 func _input(event: InputEvent) -> void:

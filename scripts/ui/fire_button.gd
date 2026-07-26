@@ -1,16 +1,19 @@
 extends Control
 ## Fire button for touch input on mobile devices.
-## Covers the right side of the screen and detects touch/click to fire.
+## Drawn as a clear circular button in the bottom-right corner.
 ## Player script queries is_pressed() to check if firing should occur.
 
-## Radius of the indicator dot in pixels
-@export var indicator_radius: float = 30.0
+## Color of the button fill (semi-transparent)
+@export var fill_color: Color = Color(0.7, 0.15, 0.15, 0.5)
 
-## Color of the indicator dot (semi-transparent white)
-@export var indicator_color: Color = Color(0.7, 0.7, 0.7, 0.5)
+## Color of the outline ring
+@export var ring_color: Color = Color(1, 1, 1, 0.8)
 
-## Margin from bottom-right corner
-@export var indicator_margin: float = 50.0
+## Color of the inner core
+@export var core_color: Color = Color(1, 0.45, 0.3, 0.9)
+
+## Color of the inner core while the button is held
+@export var core_pressed_color: Color = Color(1, 0.8, 0.4, 1)
 
 ## Whether the fire button is currently being pressed
 var _is_pressed: bool = false
@@ -19,19 +22,14 @@ var _is_pressed: bool = false
 var _touch_index: int = -2
 
 
-func _ready() -> void:
-	# Set up the control to cover the right half of the screen
-	# This will be configured in the scene file using anchors
-	pass
-
-
 func _draw() -> void:
-	# Draw a small indicator dot in the bottom-right corner
-	var indicator_pos = Vector2(
-		size.x - indicator_margin,
-		size.y - indicator_margin
-	)
-	draw_circle(indicator_pos, indicator_radius, indicator_color)
+	# Draw a clear circular button centered in the control so it reads as "fire"
+	var button_center := size / 2.0
+	var radius := minf(size.x, size.y) / 2.0 - 6.0
+	draw_circle(button_center, radius, fill_color)
+	draw_circle(button_center, radius, ring_color, false, 6.0, true)
+	var core := core_pressed_color if _is_pressed else core_color
+	draw_circle(button_center, radius * 0.42, core)
 
 
 func _input(event: InputEvent) -> void:
@@ -50,6 +48,7 @@ func _handle_touch(event: InputEventScreenTouch) -> void:
 		if _is_within_bounds(local_pos):
 			_is_pressed = true
 			_touch_index = event.index
+			queue_redraw()
 	else:
 		# Touch released
 		if event.index == _touch_index:
@@ -63,6 +62,7 @@ func _handle_mouse_button(event: InputEventMouseButton) -> void:
 			if _is_within_bounds(local_pos):
 				_is_pressed = true
 				_touch_index = -1  # -1 indicates mouse
+				queue_redraw()
 		else:
 			if _touch_index == -1:
 				_reset()
@@ -81,6 +81,7 @@ func _is_within_bounds(local_pos: Vector2) -> bool:
 func _reset() -> void:
 	_is_pressed = false
 	_touch_index = -2
+	queue_redraw()
 
 
 ## Returns whether the fire button is currently pressed.
@@ -96,3 +97,4 @@ func _simulate_press(pressed: bool) -> void:
 		_touch_index = -1  # Simulate mouse press
 	else:
 		_touch_index = -2
+	queue_redraw()

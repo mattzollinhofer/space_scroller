@@ -12,7 +12,7 @@ jobs:
   build-and-deploy:
     runs-on: ubuntu-24.04
     container:
-      image: barichello/godot-ci:4.3
+      image: barichello/godot-ci:4.5.1
 
     steps:
       - name: Checkout repository
@@ -20,8 +20,8 @@ jobs:
 
       - name: Setup export templates
         run: |
-          mkdir -p /github/home/.local/share/godot/export_templates/4.3.stable
-          mv /root/.local/share/godot/export_templates/4.3.stable/* /github/home/.local/share/godot/export_templates/4.3.stable/
+          mkdir -p /github/home/.local/share/godot/export_templates/4.5.1.stable
+          mv /root/.local/share/godot/export_templates/4.5.1.stable/* /github/home/.local/share/godot/export_templates/4.5.1.stable/
 
       - name: Create build directory
         run: mkdir -p build/web

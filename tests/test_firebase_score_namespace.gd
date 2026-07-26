@@ -26,6 +26,22 @@ func _ready() -> void:
 	print("  - game_id 'test_game' -> 'test_game/scores': OK")
 
 	service.free()
+
+	# Integration: the shipped config must yield a namespaced "<game_id>/scores"
+	# path (not the root "scores"), proving _load_config() actually reads the
+	# "game_id" key and wires it through. Repo-agnostic: passes for any game_id,
+	# but fails if the config key is renamed/typo'd (path would fall back to "scores").
+	var configured = Node.new()
+	configured.set_script(load("res://scripts/autoloads/firebase_service.gd"))
+	add_child(configured)  # _ready() -> _load_config() reads res://config/firebase_config.json
+	var configured_path = configured._scores_path()
+	if configured_path == "scores" or not configured_path.ends_with("/scores"):
+		_fail("Shipped config should yield a namespaced '<game_id>/scores' path, got '%s'" % configured_path)
+		configured.queue_free()
+		return
+	print("  - shipped config -> namespaced path '%s': OK" % configured_path)
+	configured.queue_free()
+
 	_pass()
 
 

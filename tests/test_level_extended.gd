@@ -108,7 +108,6 @@ func _pass() -> void:
 	print("- 6 sections exist with correct names")
 	print("- Section percentages are contiguous (0-100)")
 	print("- All enemy waves have valid types and counts")
-	await get_tree().create_timer(0.5).timeout
 	get_tree().quit(0)
 
 
@@ -118,5 +117,4 @@ func _fail(reason: String) -> void:
 	print("")
 	print("=== TEST FAILED ===")
 	print("Reason: %s" % reason)
-	await get_tree().create_timer(0.5).timeout
 	get_tree().quit(1)

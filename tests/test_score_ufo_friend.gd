@@ -145,7 +145,6 @@ func _pass() -> void:
 	_test_passed = true
 	print("=== TEST PASSED ===")
 	print("Score increases correctly when Star Pickup is collected.")
-	await get_tree().create_timer(1.0).timeout
 	get_tree().quit(0)
 
 
@@ -154,5 +153,4 @@ func _fail(reason: String) -> void:
 	_failure_reason = reason
 	print("=== TEST FAILED ===")
 	print("Reason: %s" % reason)
-	await get_tree().create_timer(1.0).timeout
 	get_tree().quit(1)

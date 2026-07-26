@@ -229,7 +229,6 @@ func _pass() -> void:
 	print("- Barrage: YES")
 	print("- Vertical Sweep: YES")
 	print("- Charge: YES")
-	await get_tree().create_timer(0.5).timeout
 	get_tree().quit(0)
 
 
@@ -239,5 +238,4 @@ func _fail(reason: String) -> void:
 	print("")
 	print("=== TEST FAILED ===")
 	print("Reason: " + reason)
-	await get_tree().create_timer(0.5).timeout
 	get_tree().quit(1)

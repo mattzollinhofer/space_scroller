@@ -104,11 +104,9 @@ func _run_test() -> void:
 func _pass() -> void:
 	_test_passed = true
 	print("=== TEST PASSED ===")
-	await get_tree().create_timer(0.1).timeout
 	get_tree().quit(0)
 
 
 func _fail(reason: String) -> void:
 	print("=== TEST FAILED: %s ===" % reason)
-	await get_tree().create_timer(0.1).timeout
 	get_tree().quit(1)

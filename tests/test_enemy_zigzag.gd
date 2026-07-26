@@ -107,7 +107,6 @@ func _pass() -> void:
 	print("=== TEST PASSED ===")
 	print("- Enemy Y position changed by %f pixels" % (_max_y_observed - _min_y_observed))
 	print("- Enemy stayed within Y bounds (%f - %f)" % [_enemy.Y_MIN, _enemy.Y_MAX])
-	await get_tree().create_timer(0.5).timeout
 	get_tree().quit(0)
 
 
@@ -117,5 +116,4 @@ func _fail(reason: String) -> void:
 	print("")
 	print("=== TEST FAILED ===")
 	print("Reason: %s" % reason)
-	await get_tree().create_timer(0.5).timeout
 	get_tree().quit(1)

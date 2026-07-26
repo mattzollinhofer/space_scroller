@@ -76,7 +76,6 @@ func _pass() -> void:
 	print("")
 	print("=== TEST PASSED ===")
 	print("- spawn_wave correctly spawns ChargerEnemy when enemy_type is 'charger'")
-	await get_tree().create_timer(0.5).timeout
 	get_tree().quit(0)
 
 
@@ -86,5 +85,4 @@ func _fail(reason: String) -> void:
 	print("")
 	print("=== TEST FAILED ===")
 	print("Reason: %s" % reason)
-	await get_tree().create_timer(0.5).timeout
 	get_tree().quit(1)

@@ -151,7 +151,6 @@ func _pass() -> void:
 	print("- Health: 24 HP")
 	print("- Attacks: [11, 12, 13] (Up/Down Shooting, Grow/Shrink, Rapid Jelly)")
 	print("- Projectile: weapon-jelly-1.png")
-	await get_tree().create_timer(0.5).timeout
 	get_tree().quit(0)
 
 
@@ -160,5 +159,4 @@ func _fail(reason: String) -> void:
 	_failure_reason = reason
 	print("=== TEST FAILED ===")
 	print("Reason: %s" % reason)
-	await get_tree().create_timer(0.5).timeout
 	get_tree().quit(1)

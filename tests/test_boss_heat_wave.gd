@@ -158,7 +158,6 @@ func _pass() -> void:
 	print("- Boss moves in sweeping arc during attack")
 	print("- Fires continuous stream of projectiles")
 	print("- Projectiles use faster speed (900-1000)")
-	await get_tree().create_timer(0.5).timeout
 	get_tree().quit(0)
 
 
@@ -168,5 +167,4 @@ func _fail(reason: String) -> void:
 	print("")
 	print("=== TEST FAILED ===")
 	print("Reason: %s" % reason)
-	await get_tree().create_timer(0.5).timeout
 	get_tree().quit(1)

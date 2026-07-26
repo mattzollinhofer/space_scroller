@@ -87,11 +87,9 @@ func _pass() -> void:
 	_test_passed = true
 	print("=== TEST PASSED ===")
 	print("Triple shot pickup grants temporary 3-projectile attack.")
-	await get_tree().create_timer(0.1).timeout
 	get_tree().quit(0)
 
 
 func _fail(reason: String) -> void:
 	print("=== TEST FAILED: %s ===" % reason)
-	await get_tree().create_timer(0.1).timeout
 	get_tree().quit(1)

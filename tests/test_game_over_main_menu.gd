@@ -116,7 +116,6 @@ func _pass() -> void:
 	_test_passed = true
 	print("=== TEST PASSED ===")
 	print("Main menu button exists and is properly connected.")
-	await get_tree().create_timer(0.5).timeout
 	get_tree().quit(0)
 
 
@@ -125,5 +124,4 @@ func _fail(reason: String) -> void:
 	_failure_reason = reason
 	print("=== TEST FAILED ===")
 	print("Reason: %s" % reason)
-	await get_tree().create_timer(0.5).timeout
 	get_tree().quit(1)

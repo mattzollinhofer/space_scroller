@@ -107,7 +107,6 @@ func _pass() -> void:
 	print("=== TEST PASSED ===")
 	print("- Filler enemies spawn every 4-6 seconds when enabled")
 	print("- Filler spawning can be disabled independently")
-	await get_tree().create_timer(0.5).timeout
 	get_tree().quit(0)
 
 
@@ -117,5 +116,4 @@ func _fail(reason: String) -> void:
 	print("")
 	print("=== TEST FAILED ===")
 	print("Reason: %s" % reason)
-	await get_tree().create_timer(0.5).timeout
 	get_tree().quit(1)

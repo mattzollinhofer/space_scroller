@@ -205,7 +205,6 @@ func _pass() -> void:
 	print("- Red flash effect visible on first hit")
 	print("- Patrol enemy died on second hit")
 	print("- Stationary enemy still dies in one hit")
-	await get_tree().create_timer(1.0).timeout
 	get_tree().quit(0)
 
 
@@ -214,5 +213,4 @@ func _fail(reason: String) -> void:
 	_failure_reason = reason
 	print("=== TEST FAILED ===")
 	print("Reason: %s" % reason)
-	await get_tree().create_timer(1.0).timeout
 	get_tree().quit(1)

@@ -69,7 +69,6 @@ func _pass() -> void:
 	_test_passed = true
 	print("=== TEST PASSED ===")
 	print("Mute toggle works correctly.")
-	await get_tree().create_timer(0.5).timeout
 	get_tree().quit(0)
 
 
@@ -77,5 +76,4 @@ func _fail(reason: String) -> void:
 	_test_failed = true
 	print("=== TEST FAILED ===")
 	print("Reason: %s" % reason)
-	await get_tree().create_timer(0.5).timeout
 	get_tree().quit(1)

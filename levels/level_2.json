@@ -10,16 +10,16 @@
     "scroll_speed_multiplier": 1.12,
     "background_theme": "inner_solar",
     "explosion_sprite": "res://assets/sprites/explosion-red-shark-1.png",
-    "boss_sprite": "res://assets/sprites/boss-shark-1.png",
+    "boss_sprite": "res://assets/sprites/coffee-boss-1.png",
     "obstacle_modulate": [0.85, 0.55, 0.4, 1.0],
     "boss_config": {
       "health": 13,
-      "scale": 1.75,
+      "scale": 3.5,
       "attacks": [0, 3],
       "attack_cooldown": 4.0,
       "explosion_scale": 2.0,
       "explosion_sprite": "res://assets/sprites/explosion-red-shark-1.png",
-      "projectile_sprite": "res://assets/sprites/weapon-shark-1.png",
+      "projectile_sprite": "res://assets/sprites/coffee-attack-1.png",
       "death_spawn_count": 10,
       "death_spawn_sprite": "res://assets/sprites/weapon-shark-1.png"
     }

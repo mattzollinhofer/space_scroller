@@ -2,6 +2,8 @@ extends Node2D
 ## Edge case test: Impact spark appears when projectile hits boss
 ## Verifies impact spark works on boss, not just regular enemies
 
+const TestHelpers = preload("res://tests/test_helpers.gd")
+
 var _test_passed: bool = false
 var _test_failed: bool = false
 var _failure_reason: String = ""
@@ -29,6 +31,15 @@ func _ready() -> void:
 	# Mark entrance as complete so boss can be hit
 	boss._entrance_complete = true
 	boss._battle_position = boss.position
+
+	# The boss disables collision in _ready() and only re-enables it when the
+	# real entrance animation completes (_on_entrance_complete). Faking the
+	# entrance above skips that, so enable monitoring/monitorable here to match a
+	# live, hittable boss - otherwise the projectile passes straight through.
+	# Set directly (not deferred) and before spawning the projectile so the boss
+	# is already monitorable when the projectile registers as a new overlap.
+	boss.monitoring = true
+	boss.monitorable = true
 
 	# Stop attack cycle so it doesn't interfere
 	boss.stop_attack_cycle()
@@ -64,8 +75,8 @@ func _process(delta: float) -> void:
 	# Check if projectile has been freed (hit occurred)
 	if not is_instance_valid(projectile):
 		print("Projectile destroyed - checking for impact spark...")
-		# Give one frame for spark to be spawned
-		await get_tree().process_frame
+		# Poll for the spark rather than assuming it appears within one frame.
+		await TestHelpers.poll_until(get_tree(), func(): return _find_impact_spark(get_tree().root) != null, 1.0)
 		_check_for_impact_spark()
 
 

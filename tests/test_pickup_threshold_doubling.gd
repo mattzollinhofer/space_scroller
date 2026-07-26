@@ -2,10 +2,12 @@ extends Node2D
 ## Integration test: Pickup spawn threshold doubles after each spawn
 ## Verifies that after 5 kills spawn pickup, next threshold is 10, then 20...
 
+const TestHelpers = preload("res://tests/test_helpers.gd")
+
 var _test_passed: bool = false
 var _test_failed: bool = false
 var _failure_reason: String = ""
-var _test_timeout: float = 10.0
+var _test_timeout: float = 8.0
 var _timer: float = 0.0
 
 var _main: Node = null
@@ -70,7 +72,8 @@ func _run_threshold_test() -> void:
 	for i in range(5):
 		await _spawn_and_kill_enemy()
 
-	await get_tree().create_timer(0.2).timeout
+	# Poll until the pickup spawn resets the kill counter
+	await TestHelpers.poll_until(get_tree(), func(): return _enemy_spawner._kill_count == 0, 2.0)
 
 	# Verify threshold doubled to 10
 	var threshold_after_first = _enemy_spawner._next_pickup_threshold
@@ -93,7 +96,8 @@ func _run_threshold_test() -> void:
 	for i in range(10):
 		await _spawn_and_kill_enemy()
 
-	await get_tree().create_timer(0.2).timeout
+	# Poll until the second pickup spawn resets the kill counter
+	await TestHelpers.poll_until(get_tree(), func(): return _enemy_spawner._kill_count == 0, 2.0)
 
 	# Verify threshold doubled to 20
 	var threshold_after_second = _enemy_spawner._next_pickup_threshold

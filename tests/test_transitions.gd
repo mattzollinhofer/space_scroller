@@ -2,6 +2,8 @@ extends Node2D
 ## Integration test: Screen transitions have smooth fade effects
 ## Run this scene to verify TransitionManager functionality works end-to-end.
 
+const TestHelpers = preload("res://tests/test_helpers.gd")
+
 var _test_passed: bool = false
 var _test_failed: bool = false
 var _failure_reason: String = ""
@@ -67,8 +69,9 @@ func _ready() -> void:
 	print("Testing fade_out()...")
 	transition_manager.fade_out()
 
-	# Wait for fade to complete then check alpha
-	await get_tree().create_timer(0.5).timeout
+	# Poll for the fade tween to settle rather than sleeping longer than the
+	# 0.3s fade duration and hoping the timing lines up.
+	await TestHelpers.poll_until(get_tree(), func(): return _overlay_alpha(overlay) >= 0.99, 2.0)
 
 	var after_fade_alpha = overlay.color.a if overlay is ColorRect else overlay.modulate.a
 	if after_fade_alpha < 0.9:
@@ -80,8 +83,8 @@ func _ready() -> void:
 	print("Testing fade_in()...")
 	transition_manager.fade_in()
 
-	# Wait for fade to complete then check alpha
-	await get_tree().create_timer(0.5).timeout
+	# Poll for the fade tween to settle back to transparent.
+	await TestHelpers.poll_until(get_tree(), func(): return _overlay_alpha(overlay) <= 0.01, 2.0)
 
 	var after_fade_in_alpha = overlay.color.a if overlay is ColorRect else overlay.modulate.a
 	if after_fade_in_alpha > 0.1:
@@ -91,6 +94,12 @@ func _ready() -> void:
 
 	# All checks passed
 	_pass()
+
+
+func _overlay_alpha(overlay) -> float:
+	if overlay is ColorRect:
+		return overlay.color.a
+	return overlay.modulate.a
 
 
 func _pass() -> void:

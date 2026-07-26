@@ -2,6 +2,8 @@ extends Node2D
 ## Integration test: Boss Rapid Jelly Attack (attack type 13) fires 6 projectiles straight forward
 ## Verifies boss fires exactly 6 projectiles simultaneously, all traveling straight left.
 
+const TestHelpers = preload("res://tests/test_helpers.gd")
+
 var _test_passed: bool = false
 var _test_failed: bool = false
 var _failure_reason: String = ""
@@ -51,11 +53,13 @@ func _ready() -> void:
 	# Wait for wind-up and attack execution (wind_up is 0.5s by default)
 	print("Waiting for attack to execute...")
 
-	# Check state periodically
-	for i in range(10):
-		await get_tree().create_timer(0.2).timeout
-		_count_projectiles()
-		print("Tick %d: State=%d, Projectiles=%d, Children=%d" % [i, _boss._attack_state, _projectiles_spawned.size(), get_child_count()])
+	# Rapid Jelly fires its whole burst simultaneously, then the projectiles fly
+	# left and despawn (~1s). Poll for the burst and capture it the instant it
+	# appears, so we count the full burst rather than racing its despawn.
+	var appeared := await TestHelpers.poll_until(get_tree(), func(): return _projectile_count() > 0, 5.0)
+	if not appeared:
+		_fail("Rapid Jelly never fired any projectiles (attack did not execute)")
+		return
 
 	print("Projectiles spawned: %d" % _projectiles_spawned.size())
 
@@ -84,6 +88,11 @@ func _ready() -> void:
 
 	# All checks passed
 	_pass()
+
+
+func _projectile_count() -> int:
+	_count_projectiles()
+	return _projectiles_spawned.size()
 
 
 func _count_projectiles() -> void:

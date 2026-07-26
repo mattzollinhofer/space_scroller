@@ -2,6 +2,8 @@ extends Node2D
 ## Integration test: Patrol enemy awards 200 points on kill
 ## Verifies that destroying a patrol enemy (2 HP) awards 200 points vs 100 for stationary.
 
+const TestHelpers = preload("res://tests/test_helpers.gd")
+
 var _test_passed: bool = false
 var _test_failed: bool = false
 var _failure_reason: String = ""
@@ -65,17 +67,13 @@ func _run_patrol_enemy_test() -> void:
 	# Spawn a patrol enemy via the spawner's spawn_wave method
 	_enemy_spawner.spawn_wave([{"enemy_type": "patrol", "count": 1}])
 
-	# Wait for enemy to spawn and initialize
-	await get_tree().process_frame
-	await get_tree().process_frame
-
-	# Find the spawned patrol enemy
-	var enemies = _enemy_spawner.get_children().filter(func(child): return child is PatrolEnemy)
-	if enemies.is_empty():
+	# Poll for the patrol enemy to spawn rather than guessing a fixed frame count
+	var spawned := await TestHelpers.poll_until(get_tree(), func(): return not _enemy_spawner.get_children().filter(func(child): return child is PatrolEnemy).is_empty(), 2.0)
+	if not spawned:
 		_fail("No patrol enemy was spawned")
 		return
 
-	var enemy = enemies[0]
+	var enemy = _enemy_spawner.get_children().filter(func(child): return child is PatrolEnemy)[0]
 	print("Patrol enemy spawned, health: %d" % enemy.health)
 
 	# Verify it's a patrol enemy (2 HP)
@@ -86,9 +84,8 @@ func _run_patrol_enemy_test() -> void:
 	# Kill the enemy (set health to 0 to trigger death)
 	enemy.health = 0
 
-	# Wait for death to process and score to update
-	await get_tree().process_frame
-	await get_tree().process_frame
+	# Poll for the kill to award points
+	await TestHelpers.poll_until(get_tree(), func(): return _get_current_score() >= initial_score + 200, 2.0)
 
 	# Check score increased by 200 points (patrol enemy value)
 	var new_score = _get_current_score()

@@ -2,6 +2,9 @@ extends Node
 ## Test that sidekick persists between levels via GameState
 
 var _test_passed: bool = false
+var _test_failed: bool = false
+var _test_timeout: float = 8.0
+var _timer: float = 0.0
 
 
 func _ready() -> void:
@@ -101,6 +104,17 @@ func _run_test() -> void:
 	_pass()
 
 
+func _process(delta: float) -> void:
+	if _test_passed or _test_failed:
+		return
+
+	_timer += delta
+
+	if _timer >= _test_timeout:
+		_fail("Test timed out")
+		return
+
+
 func _pass() -> void:
 	_test_passed = true
 	print("=== TEST PASSED ===")
@@ -108,5 +122,6 @@ func _pass() -> void:
 
 
 func _fail(reason: String) -> void:
+	_test_failed = true
 	print("=== TEST FAILED: %s ===" % reason)
 	get_tree().quit(1)

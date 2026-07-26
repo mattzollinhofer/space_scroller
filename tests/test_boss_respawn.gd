@@ -2,10 +2,12 @@ extends Node2D
 ## Integration test: Player respawns at boss entrance if defeated during fight
 ## Run this scene to verify player respawns instead of game over during boss fight.
 
+const TestHelpers = preload("res://tests/test_helpers.gd")
+
 var _test_passed: bool = false
 var _test_failed: bool = false
 var _failure_reason: String = ""
-var _test_timeout: float = 25.0
+var _test_timeout: float = 8.0
 var _timer: float = 0.0
 
 var level_manager: Node = null
@@ -70,13 +72,17 @@ func _on_boss_spawned() -> void:
 	print("Boss spawned!")
 	_boss_spawned = true
 
-	# Wait for boss entrance to complete (entrance is 2s, add buffer)
-	await get_tree().create_timer(2.5).timeout
-
 	_boss = level_manager.get_boss() if level_manager.has_method("get_boss") else main.get_node_or_null("Boss")
 
 	if not _boss:
 		_fail("Boss not found after spawn")
+		return
+
+	# Poll for the boss entrance to finish (it ignores damage until then) instead
+	# of a fixed sleep.
+	var entered := await TestHelpers.poll_until(get_tree(), func(): return _boss and _boss._entrance_complete, 5.0)
+	if not entered:
+		_fail("Boss entrance never completed")
 		return
 
 	# Record initial boss health
@@ -130,9 +136,19 @@ func _trigger_player_death() -> void:
 	_player_died = true
 	print("Player death sequence complete")
 
-	# Wait for respawn to process
-	await get_tree().create_timer(0.5).timeout
+	# Poll for the respawn to reset the boss to full health instead of a fixed
+	# wait. If it never resets, _check_respawn() reports the exact failure.
+	await TestHelpers.poll_until(get_tree(), func(): return _boss_health_is_full(), 1.5)
 	_check_respawn()
+
+
+func _boss_health_is_full() -> bool:
+	var b = level_manager.get_boss() if level_manager.has_method("get_boss") else main.get_node_or_null("Boss")
+	if not b or not is_instance_valid(b):
+		return false
+	var h = b.health if "health" in b else -1
+	var mh = b._max_health if "_max_health" in b else -2
+	return h == mh
 
 
 func _check_respawn() -> void:

@@ -2,10 +2,12 @@ extends Node2D
 ## Integration test: Boss takes damage and health bar updates
 ## Run this scene to verify boss damage system and health bar UI.
 
+const TestHelpers = preload("res://tests/test_helpers.gd")
+
 var _test_passed: bool = false
 var _test_failed: bool = false
 var _failure_reason: String = ""
-var _test_timeout: float = 15.0
+var _test_timeout: float = 8.0
 var _timer: float = 0.0
 
 var main: Node = null
@@ -52,8 +54,19 @@ func _on_boss_spawned() -> void:
 	print("Boss spawned signal received")
 	_boss_spawned = true
 
-	# Wait for boss to be added and entrance to complete
-	await get_tree().create_timer(2.5).timeout
+	# Locate the boss, then poll for its entrance to finish (it ignores damage
+	# until then) instead of a fixed sleep.
+	_boss = level_manager.get_boss() if level_manager.has_method("get_boss") else null
+	if not _boss:
+		_boss = _find_boss_in_tree(main)
+	if not _boss:
+		_fail("Boss not found in scene tree")
+		return
+
+	var entered := await TestHelpers.poll_until(get_tree(), func(): return _boss and _boss._entrance_complete, 5.0)
+	if not entered:
+		_fail("Boss entrance never completed")
+		return
 
 	_verify_boss_and_test_damage()
 

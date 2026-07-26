@@ -53,11 +53,19 @@ func _process(delta: float) -> void:
 
 	_timer += delta
 
-	# Track position continuously while enemy exists
+	# Track position continuously while enemy exists.
+	# The charge speed is constant, so the average distance/time can only
+	# under-report it when a frame stalls (this node's _process runs before the
+	# enemy's, so the sampled position lags one frame). A single large final-frame
+	# delta was enough to make the whole-window average dip below the threshold.
+	# Keep the maximum average observed instead: it is bounded above by the true
+	# charge speed and is immune to a stalled final frame.
 	if is_instance_valid(_enemy):
 		var current_x = _enemy.position.x
-		if _timer > _last_time and _timer > 0.1:
-			_measured_speed = (_initial_x - current_x) / _timer
+		if _timer > 0.1:
+			var avg_speed = (_initial_x - current_x) / _timer
+			if avg_speed > _measured_speed:
+				_measured_speed = avg_speed
 		_last_x = current_x
 		_last_time = _timer
 

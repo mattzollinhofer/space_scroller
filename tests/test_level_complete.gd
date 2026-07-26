@@ -2,10 +2,12 @@ extends Node2D
 ## Integration test: Level complete screen shows after boss is defeated
 ## Run this scene to verify level completion flow works correctly.
 
+const TestHelpers = preload("res://tests/test_helpers.gd")
+
 var _test_passed: bool = false
 var _test_failed: bool = false
 var _failure_reason: String = ""
-var _test_timeout: float = 20.0
+var _test_timeout: float = 8.0
 var _timer: float = 0.0
 
 var main: Node = null
@@ -80,9 +82,13 @@ func _on_boss_spawned() -> void:
 	if boss:
 		if boss.has_signal("boss_entered"):
 			boss.boss_entered.connect(_on_boss_entered)
-		# Wait for entrance animation (2 seconds + margin)
+		# Poll for the entrance to finish (boss ignores damage until then)
+		# instead of a fixed sleep.
 		print("Waiting for boss entrance animation...")
-		await get_tree().create_timer(2.5).timeout
+		var entered := await TestHelpers.poll_until(get_tree(), func(): return boss._entrance_complete, 5.0)
+		if not entered:
+			_fail("Boss entrance never completed")
+			return
 		_defeat_boss()
 	else:
 		_fail("Boss not found in scene tree after boss_spawned signal")
@@ -103,9 +109,10 @@ func _defeat_boss() -> void:
 				boss.take_hit(1)
 			await get_tree().process_frame
 
-	# Wait for death animation and level complete screen
+	# Poll for the level complete screen (shown ~2.5s after boss defeat) instead
+	# of a fixed wait that was shorter than that delay.
 	print("Waiting for level complete screen...")
-	await get_tree().create_timer(2.0).timeout
+	await TestHelpers.poll_until(get_tree(), func(): return level_complete_screen.visible, 5.0)
 
 	_check_level_complete()
 

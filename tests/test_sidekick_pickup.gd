@@ -2,6 +2,8 @@ extends Node2D
 ## Integration test: Player collects sidekick_pickup and sidekick follows player
 ## Verifies that collecting a SidekickPickup spawns a sidekick that follows the player.
 
+const TestHelpers = preload("res://tests/test_helpers.gd")
+
 var _test_passed: bool = false
 var _test_failed: bool = false
 var _failure_reason: String = ""
@@ -68,28 +70,19 @@ func _run_sidekick_pickup_test() -> void:
 	_main.add_child(sidekick_pickup)
 	print("Sidekick Pickup spawned at player position: %s" % str(sidekick_pickup.position))
 
-	# Wait for collision detection and collection
-	await get_tree().process_frame
-	await get_tree().process_frame
-	await get_tree().process_frame
-	await get_tree().create_timer(0.1).timeout
-
-	# Check if pickup was collected
-	if not _pickup_collected:
+	# Poll for collection rather than guessing how many frames the physics overlap
+	# and collected signal take.
+	var collected := await TestHelpers.poll_until(get_tree(), func(): return _pickup_collected, 3.0)
+	if not collected:
 		_fail("Sidekick Pickup was not collected (collected signal not emitted)")
 		return
 
 	print("Sidekick pickup collected!")
 
-	# Check if a sidekick was spawned
-	var sidekick = _main.get_node_or_null("Sidekick")
-	if not sidekick:
-		# Also check if it was added with a different name pattern
-		for child in _main.get_children():
-			if child.is_in_group("sidekick") or child.get_class() == "Sidekick" or (child.has_method("get_script") and child.get_script() and "Sidekick" in str(child.get_script().resource_path)):
-				sidekick = child
-				break
+	# Poll for the deferred sidekick spawn (spawn is call_deferred after collection).
+	await TestHelpers.poll_until(get_tree(), func(): return _find_sidekick() != null, 3.0)
 
+	var sidekick = _find_sidekick()
 	if not sidekick:
 		_fail("Sidekick was not spawned after collecting pickup")
 		return
@@ -105,17 +98,18 @@ func _run_sidekick_pickup_test() -> void:
 	_player.position = new_player_pos
 	print("Player moved to: %s" % str(new_player_pos))
 
-	# Wait for sidekick to follow (give it time to lerp)
-	await get_tree().create_timer(0.5).timeout
+	# Calculate distance to expected position (player + offset)
+	# Sidekick should be behind and slightly offset from player
+	var expected_offset = Vector2(-50, -30)  # Behind and above player
+	var expected_pos = new_player_pos + expected_offset
+
+	# Poll until the sidekick lerps near its follow position (wide tolerance kept).
+	await TestHelpers.poll_until(get_tree(), func(): return sidekick.position.distance_to(expected_pos) <= 200, 3.0)
 
 	# Verify sidekick followed (should be moving toward player)
 	var sidekick_pos = sidekick.position
 	print("Sidekick position after player move: %s" % str(sidekick_pos))
 
-	# Calculate distance to expected position (player + offset)
-	# Sidekick should be behind and slightly offset from player
-	var expected_offset = Vector2(-50, -30)  # Behind and above player
-	var expected_pos = new_player_pos + expected_offset
 	var distance_to_expected = sidekick_pos.distance_to(expected_pos)
 
 	# Allow some tolerance since we're using lerp
@@ -128,7 +122,8 @@ func _run_sidekick_pickup_test() -> void:
 	_player.position = new_player_pos
 	print("Player moved to: %s" % str(new_player_pos))
 
-	await get_tree().create_timer(0.5).timeout
+	# Poll until the sidekick has moved meaningfully toward the new player position.
+	await TestHelpers.poll_until(get_tree(), func(): return sidekick.position.distance_to(sidekick_pos) >= 50, 3.0)
 
 	var sidekick_pos_after = sidekick.position
 	print("Sidekick position after second move: %s" % str(sidekick_pos_after))
@@ -140,6 +135,19 @@ func _run_sidekick_pickup_test() -> void:
 
 	print("Sidekick successfully follows player!")
 	_pass()
+
+
+func _find_sidekick() -> Node:
+	var sidekick = _main.get_node_or_null("Sidekick")
+	if sidekick:
+		return sidekick
+
+	# Also check if it was added with a different name pattern
+	for child in _main.get_children():
+		if child.is_in_group("sidekick") or child.get_class() == "Sidekick" or (child.has_method("get_script") and child.get_script() and "Sidekick" in str(child.get_script().resource_path)):
+			return child
+
+	return null
 
 
 func _on_pickup_collected() -> void:

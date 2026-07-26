@@ -2,10 +2,13 @@ extends Node2D
 ## Integration test: Boss Grow/Shrink Attack (attack type 12) scales to 4x then returns to normal
 ## Verifies boss scales up to 4x original size then shrinks back to normal.
 
+const TestHelpers = preload("res://tests/test_helpers.gd")
+
 var _test_passed: bool = false
 var _test_failed: bool = false
 var _failure_reason: String = ""
 var _boss: Node = null
+var _sprite: Node = null
 var _initial_scale: Vector2 = Vector2.ONE
 var _max_scale_reached: float = 0.0
 var _scale_samples: Array = []
@@ -29,9 +32,9 @@ func _ready() -> void:
 	_boss._entrance_complete = true
 
 	# Get initial sprite scale
-	var sprite = _boss.get_node_or_null("AnimatedSprite2D")
-	if sprite:
-		_initial_scale = sprite.scale
+	_sprite = _boss.get_node_or_null("AnimatedSprite2D")
+	if _sprite:
+		_initial_scale = _sprite.scale
 		print("Initial sprite scale: %s" % str(_initial_scale))
 	else:
 		_fail("Boss has no AnimatedSprite2D")
@@ -55,24 +58,20 @@ func _ready() -> void:
 	# Track scale during attack
 	print("Waiting for attack to execute...")
 
-	# Check every 0.1 seconds for 4 seconds to capture scale changes
-	for i in range(40):
-		await get_tree().create_timer(0.1).timeout
+	# Phase 1: poll until the boss has grown to at least 3.5x, tracking the running
+	# max scale. This replaces a fixed 4s sample window and returns the instant the
+	# grow phase peaks.
+	var grew := await TestHelpers.poll_until(get_tree(), func(): return _sample_grown(), 6.0)
+	print("Max scale reached during grow: %f" % _max_scale_reached)
 
-		var current_scale = sprite.scale
-		_scale_samples.append(current_scale.x)
-
-		if current_scale.x > _max_scale_reached:
-			_max_scale_reached = current_scale.x
-			print("New max scale reached: %f" % _max_scale_reached)
-
-		# Check if boss is in grow/shrink state
-		if _boss.has_method("is_grow_shrinking") and _boss.is_grow_shrinking():
-			print("Boss is in grow/shrink state at scale=%f" % current_scale.x)
+	# Phase 2: poll until the boss has shrunk back to within 10% of its original
+	# scale. Phase 1 guarantees we enter this already at peak size, so this waits
+	# for the real shrink rather than matching the pre-grow scale.
+	var returned := await TestHelpers.poll_until(get_tree(), func(): return _sample_returned(), 6.0)
 
 	# Final scale check
-	var final_scale = sprite.scale
-	print("Scale samples: %s" % str(_scale_samples))
+	var final_scale = _sprite.scale
+	print("Grew to 3.5x: %s, returned to original: %s" % [str(grew), str(returned)])
 	print("Max scale reached: %f" % _max_scale_reached)
 	print("Final scale: %s" % str(final_scale))
 
@@ -96,6 +95,20 @@ func _ready() -> void:
 
 	# All checks passed
 	_pass()
+
+
+func _sample_grown() -> bool:
+	var s: float = _sprite.scale.x
+	if s > _max_scale_reached:
+		_max_scale_reached = s
+	return _max_scale_reached >= _initial_scale.x * 3.5
+
+
+func _sample_returned() -> bool:
+	var s: float = _sprite.scale.x
+	if s > _max_scale_reached:
+		_max_scale_reached = s
+	return abs(_sprite.scale.x - _initial_scale.x) <= _initial_scale.x * 0.1
 
 
 func _pass() -> void:

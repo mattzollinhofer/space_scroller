@@ -2,10 +2,12 @@ extends Node2D
 ## Integration test: Boss cycles through multiple attack patterns
 ## Run this scene to verify boss performs vertical sweep and charge attacks.
 
+const TestHelpers = preload("res://tests/test_helpers.gd")
+
 var _test_passed: bool = false
 var _test_failed: bool = false
 var _failure_reason: String = ""
-var _test_timeout: float = 30.0
+var _test_timeout: float = 8.0
 var _timer: float = 0.0
 
 var main: Node = null
@@ -61,10 +63,25 @@ func _on_boss_spawned() -> void:
 	print("Boss spawned signal received")
 	_boss_spawned = true
 
-	# Wait for boss entrance to complete
-	await get_tree().create_timer(2.5).timeout
+	# Skip the entrance animation instead of sleeping for it: kill the entrance
+	# tween, snap the boss to its battle position, and mark entrance complete.
+	# This frees up the capped test timeout for the pattern-cycle monitor.
+	_boss = level_manager.get_boss() if level_manager.has_method("get_boss") else null
+	if not _boss:
+		_boss = _find_boss_in_tree(main)
+	if not _boss:
+		_fail("Boss not found in scene tree")
+		return
+	_skip_boss_entrance()
 
 	_verify_boss_and_test_patterns()
+
+
+func _skip_boss_entrance() -> void:
+	if _boss._entrance_tween and _boss._entrance_tween.is_valid():
+		_boss._entrance_tween.kill()
+	_boss.position = _boss._battle_position
+	_boss._entrance_complete = true
 
 
 func _verify_boss_and_test_patterns() -> void:
@@ -113,7 +130,7 @@ func _monitor_attack_patterns() -> void:
 	if _test_passed or _test_failed:
 		return
 
-	var cycle_wait_time = 12.0  # Time to wait for one full cycle
+	var cycle_wait_time = 6.0  # Cap; the loop breaks early once all patterns are seen
 
 	print("Monitoring attack patterns for " + str(cycle_wait_time) + " seconds...")
 
@@ -145,6 +162,10 @@ func _monitor_attack_patterns() -> void:
 			if _position_changes_detected < 5:
 				_position_changes_detected += 1
 				print("Position change detected: delta = " + str(position_delta))
+
+		# Break early once all three patterns and a position change are observed.
+		if _patterns_observed.has(0) and _patterns_observed.has(1) and _patterns_observed.has(2) and _position_changes_detected >= 1:
+			break
 
 	_evaluate_results()
 

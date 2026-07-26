@@ -2,6 +2,8 @@ extends Node2D
 ## Edge case test: Hit flash and telegraph don't permanently conflict
 ## Verifies modulate returns to normal state after both effects complete
 
+const TestHelpers = preload("res://tests/test_helpers.gd")
+
 var _test_passed: bool = false
 var _test_failed: bool = false
 var _failure_reason: String = ""
@@ -89,18 +91,16 @@ func _process(delta: float) -> void:
 
 
 func _verify_final_state() -> void:
-	# Wait for all tweens to complete
-	await get_tree().create_timer(0.5).timeout
+	# Poll for the modulate to settle back to normal instead of blindly sleeping
+	# before reading the exact property (sprite.modulate) that is under test.
+	await TestHelpers.poll_until(get_tree(), func(): return _modulate_is_normal(), 1.5)
 
 	var mod = sprite.modulate
 	print("Final modulate: %s" % mod)
 
 	# Modulate should be near normal (1,1,1,1)
 	# Allow for some tolerance due to timing
-	var is_normal = mod.r >= 0.9 and mod.r <= 1.1 and \
-					mod.g >= 0.9 and mod.g <= 1.1 and \
-					mod.b >= 0.9 and mod.b <= 1.1 and \
-					mod.a >= 0.9 and mod.a <= 1.1
+	var is_normal = _modulate_is_normal()
 
 	if not is_normal:
 		# If not normal, it might be stuck in telegraph or flash state
@@ -126,6 +126,16 @@ func _verify_final_state() -> void:
 	print("No permanent visual conflicts detected")
 	print("Both hit flash and telegraph operate without corrupting state")
 	_pass()
+
+
+func _modulate_is_normal() -> bool:
+	if not is_instance_valid(sprite):
+		return false
+	var m = sprite.modulate
+	return m.r >= 0.9 and m.r <= 1.1 and \
+			m.g >= 0.9 and m.g <= 1.1 and \
+			m.b >= 0.9 and m.b <= 1.1 and \
+			m.a >= 0.9 and m.a <= 1.1
 
 
 func _pass() -> void:

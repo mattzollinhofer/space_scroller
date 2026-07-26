@@ -1,7 +1,12 @@
 extends Node2D
 ## Test: Screen clear pickup destroys all enemies on screen
 
+const TestHelpers = preload("res://tests/test_helpers.gd")
+
 var _test_passed: bool = false
+var _test_failed: bool = false
+var _test_timeout: float = 8.0
+var _timer: float = 0.0
 
 
 func _ready() -> void:
@@ -57,14 +62,11 @@ func _run_test() -> void:
 
 	print("Screen clear pickup spawned - OK")
 
-	# Wait for collection and enemy destruction (enemies take time to die)
-	await get_tree().create_timer(0.5).timeout
+	# Poll until collection destroys enemies rather than guessing a settle time
+	await TestHelpers.poll_until(get_tree(), func(): return _count_live_enemies() < enemies_before, 3.0)
 
 	# Count enemies after pickup (filter out destroyed ones)
-	var enemies_after = 0
-	for enemy in get_tree().get_nodes_in_group("enemy"):
-		if is_instance_valid(enemy) and not enemy.is_queued_for_deletion():
-			enemies_after += 1
+	var enemies_after = _count_live_enemies()
 	print("Enemies after pickup: %d" % enemies_after)
 
 	if enemies_after >= enemies_before:
@@ -76,6 +78,24 @@ func _run_test() -> void:
 	_pass()
 
 
+func _count_live_enemies() -> int:
+	var count = 0
+	for enemy in get_tree().get_nodes_in_group("enemy"):
+		if is_instance_valid(enemy) and not enemy.is_queued_for_deletion():
+			count += 1
+	return count
+
+
+func _process(delta: float) -> void:
+	if _test_passed or _test_failed:
+		return
+
+	_timer += delta
+
+	if _timer >= _test_timeout:
+		_fail("Test timed out")
+
+
 func _pass() -> void:
 	_test_passed = true
 	print("=== TEST PASSED ===")
@@ -84,5 +104,6 @@ func _pass() -> void:
 
 
 func _fail(reason: String) -> void:
+	_test_failed = true
 	print("=== TEST FAILED: %s ===" % reason)
 	get_tree().quit(1)

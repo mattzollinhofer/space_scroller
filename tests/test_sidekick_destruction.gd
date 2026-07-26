@@ -2,6 +2,8 @@ extends Node2D
 ## Integration test: Sidekick destroyed on enemy contact
 ## Verifies that when an enemy collides with the sidekick, the sidekick is destroyed.
 
+const TestHelpers = preload("res://tests/test_helpers.gd")
+
 var _test_passed: bool = false
 var _test_failed: bool = false
 var _failure_reason: String = ""
@@ -110,21 +112,13 @@ func _run_sidekick_destruction_test() -> void:
 	_main.add_child(enemy)
 	print("Enemy spawned at sidekick position: %s" % str(enemy.position))
 
-	# Wait for collision detection
-	await get_tree().process_frame
-	await get_tree().process_frame
-	await get_tree().create_timer(0.2).timeout
-
-	# Check if sidekick was destroyed
-	var sidekick_after = _find_sidekick()
-	if sidekick_after and is_instance_valid(sidekick_after):
-		# Check if sidekick is in process of being destroyed (might still exist during animation)
-		# We'll wait a bit more for destruction animation
-		await get_tree().create_timer(0.5).timeout
-		sidekick_after = _find_sidekick()
-		if sidekick_after and is_instance_valid(sidekick_after):
-			_fail("Sidekick was NOT destroyed by enemy contact - still exists in scene")
-			return
+	# Poll until the sidekick is fully removed from the scene. Enemy contact sets
+	# _is_destroying and plays a ~0.3s destruction tween before queue_free, so the
+	# node lingers briefly; poll rather than guess the collision + animation timing.
+	var removed := await TestHelpers.poll_until(get_tree(), _sidekick_gone, 2.0)
+	if not removed:
+		_fail("Sidekick was NOT destroyed by enemy contact - still exists in scene")
+		return
 
 	print("Sidekick was destroyed by enemy contact!")
 
@@ -151,6 +145,12 @@ func _find_sidekick() -> Node:
 			return child
 
 	return null
+
+
+## True once no sidekick remains in the scene (destroyed and freed).
+func _sidekick_gone() -> bool:
+	var s = _find_sidekick()
+	return s == null or not is_instance_valid(s)
 
 
 func _on_pickup_collected() -> void:

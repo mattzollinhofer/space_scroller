@@ -3,10 +3,12 @@ extends Node2D
 ## Verifies the wide spread pattern fires many slow projectiles.
 ## Level 3 "cold/expansive" theme - numerous but slower.
 
+const TestHelpers = preload("res://tests/test_helpers.gd")
+
 var _test_passed: bool = false
 var _test_failed: bool = false
 var _failure_reason: String = ""
-var _test_timeout: float = 15.0
+var _test_timeout: float = 8.0
 var _timer: float = 0.0
 
 var _boss: Node = null
@@ -48,8 +50,13 @@ func _ready() -> void:
 	_boss.start_attack_cycle()
 	print("Attack cycle started, waiting for Ice Shards...")
 
-	# Wait for attack to fire
-	await get_tree().create_timer(1.5).timeout
+	# Ice Shards is verified by the "numerous" on-screen count (10+). Each volley is
+	# 8 slow shards fired in rapid succession, so 10+ accumulate on screen shortly
+	# after the attack begins. Poll for that on-screen state rather than checking
+	# once after a fixed sleep.
+	var enough := await TestHelpers.poll_until(get_tree(), func(): return _find_boss_projectiles().size() >= 10, 6.0)
+	if not enough:
+		print("Did not observe 10+ ice shards within poll window; verifying current state...")
 	_verify_ice_shards()
 
 

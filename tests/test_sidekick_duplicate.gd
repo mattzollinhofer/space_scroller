@@ -2,6 +2,8 @@ extends Node2D
 ## Integration test: Collecting sidekick when one already active
 ## Verifies that only one sidekick can be active at a time.
 
+const TestHelpers = preload("res://tests/test_helpers.gd")
+
 var _test_passed: bool = false
 var _test_failed: bool = false
 var _failure_reason: String = ""
@@ -66,8 +68,8 @@ func _run_duplicate_sidekick_test() -> void:
 	_main.add_child(first_pickup)
 	print("First sidekick pickup spawned at player position")
 
-	# Wait for collection
-	await get_tree().create_timer(0.2).timeout
+	# Wait for collection and the deferred sidekick spawn
+	await TestHelpers.poll_until(get_tree(), func(): return _main.get_node_or_null("Sidekick") != null, 3.0)
 
 	# Verify first sidekick spawned
 	var first_sidekick = _main.get_node_or_null("Sidekick")
@@ -94,8 +96,10 @@ func _run_duplicate_sidekick_test() -> void:
 	_main.add_child(second_pickup)
 	print("Second sidekick pickup spawned at player position")
 
-	# Wait for collection
-	await get_tree().create_timer(0.2).timeout
+	# Wait for the second collection to process: the pickup emits collected and
+	# defers a spawn that frees the old sidekick and adds a new one. Poll until the
+	# second collected signal has fired and the count has settled back to one.
+	await TestHelpers.poll_until(get_tree(), func(): return _pickup_collected_count == 2 and _count_sidekicks() == 1, 3.0)
 
 	# Verify still only one sidekick
 	var sidekick_count_after = _count_sidekicks()

@@ -2,6 +2,8 @@ extends Node2D
 ## Integration test: Player collects missile_pickup and sees damage boost indicator
 ## Verifies that collecting a MissilePickup increases damage boost and shows UI indicator.
 
+const TestHelpers = preload("res://tests/test_helpers.gd")
+
 var _test_passed: bool = false
 var _test_failed: bool = false
 var _failure_reason: String = ""
@@ -92,11 +94,8 @@ func _run_missile_pickup_test() -> void:
 	_main.add_child(missile_pickup)
 	print("Missile Pickup spawned at player position: %s" % str(missile_pickup.position))
 
-	# Wait for collision detection and collection
-	await get_tree().process_frame
-	await get_tree().process_frame
-	await get_tree().process_frame
-	await get_tree().create_timer(0.1).timeout
+	# Poll for collection instead of guessing a fixed settle time
+	await TestHelpers.poll_until(get_tree(), func(): return _pickup_collected, 3.0)
 
 	# Check if pickup was collected
 	if not _pickup_collected:

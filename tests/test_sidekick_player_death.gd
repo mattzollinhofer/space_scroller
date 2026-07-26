@@ -2,10 +2,12 @@ extends Node2D
 ## Integration test: Sidekick destroyed on player death
 ## Verifies that the sidekick is destroyed when the player dies.
 
+const TestHelpers = preload("res://tests/test_helpers.gd")
+
 var _test_passed: bool = false
 var _test_failed: bool = false
 var _failure_reason: String = ""
-var _test_timeout: float = 15.0  # Increased timeout for invincibility waits
+var _test_timeout: float = 8.0
 var _timer: float = 0.0
 
 var _main: Node = null
@@ -64,12 +66,9 @@ func _run_player_death_test() -> void:
 	_main.add_child(pickup)
 	print("Sidekick pickup spawned at player position")
 
-	# Wait for collection
-	await get_tree().create_timer(0.2).timeout
-
-	# Verify sidekick spawned
-	var sidekick = _get_sidekick()
-	if not sidekick:
+	# Wait for collection and the deferred sidekick spawn
+	var spawned := await TestHelpers.poll_until(get_tree(), func(): return _get_sidekick() != null, 3.0)
+	if not spawned:
 		_fail("Sidekick was not spawned after collecting pickup")
 		return
 
@@ -83,34 +82,29 @@ func _run_player_death_test() -> void:
 		_fail("Expected 1 sidekick, got %d" % sidekick_count_before)
 		return
 
-	# Kill the player by removing all lives and dealing damage
-	# Player starts with 3 lives, need to deal damage 3 times
-	# Player has 1.5 second invincibility after each hit
-	var starting_lives = _player.get_lives()
-	print("Player starting lives: %d" % starting_lives)
+	# Kill the player fast by setting health and lives directly, then dealing one
+	# hit. With 1 health and 1 life a single take_damage() depletes the last life
+	# and emits died() through the real death path (no invincibility wait), instead
+	# of driving 9 real hits that each block on a 1.5s invincibility timer.
+	_player._health = 1
+	_player._lives = 1
+	await get_tree().process_frame
 
-	# Deal damage until player dies
-	while _player.get_lives() > 0:
-		var lives_before = _player.get_lives()
-		_player.take_damage()
-		var lives_after = _player.get_lives()
-		print("Dealt damage - lives before: %d, after: %d" % [lives_before, lives_after])
+	var lives_before = _player.get_lives()
+	_player.take_damage()
+	print("Dealt fatal damage - lives before: %d, after: %d" % [lives_before, _player.get_lives()])
 
-		if lives_after <= 0:
-			print("Player died!")
-			break
+	if _player.get_lives() > 0:
+		_fail("Player should be dead after fatal damage, but has %d lives" % _player.get_lives())
+		return
 
-		# Wait for invincibility to end (1.5 seconds + small buffer)
-		await get_tree().create_timer(1.6).timeout
+	print("Player died!")
 
-	# Wait for death processing and sidekick destruction animation (0.3s) + buffer
-	await get_tree().create_timer(0.5).timeout
+	# Wait for the sidekick to be destroyed in response to the player's death.
+	var destroyed := await TestHelpers.poll_until(get_tree(), func(): return _count_valid_sidekicks() == 0, 3.0)
 
 	# Count sidekicks after player death (only count valid sidekicks not being destroyed)
-	var sidekick_count_after = 0
-	for s in get_tree().get_nodes_in_group("sidekick"):
-		if is_instance_valid(s) and not s.get("_is_destroying"):
-			sidekick_count_after += 1
+	var sidekick_count_after = _count_valid_sidekicks()
 
 	print("Sidekick count after player death: %d" % sidekick_count_after)
 
@@ -120,7 +114,7 @@ func _run_player_death_test() -> void:
 	for s in remaining_sidekicks:
 		print("  - Valid: %s, Destroying: %s" % [is_instance_valid(s), s.get("_is_destroying")])
 
-	if sidekick_count_after != 0:
+	if not destroyed or sidekick_count_after != 0:
 		_fail("Expected sidekick to be destroyed after player death, but found %d sidekick(s)" % sidekick_count_after)
 		return
 
@@ -137,6 +131,15 @@ func _get_sidekick() -> Node:
 
 func _count_sidekicks() -> int:
 	return get_tree().get_nodes_in_group("sidekick").size()
+
+
+## Count sidekicks that are still alive and not already tearing down.
+func _count_valid_sidekicks() -> int:
+	var count = 0
+	for s in get_tree().get_nodes_in_group("sidekick"):
+		if is_instance_valid(s) and not s.get("_is_destroying"):
+			count += 1
+	return count
 
 
 func _process(delta: float) -> void:

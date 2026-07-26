@@ -2,10 +2,12 @@ extends Node2D
 ## Integration test: Boss Solar Flare attack (attack index 3)
 ## Verifies the radial burst pattern fires projectiles in all directions with faster speed.
 
+const TestHelpers = preload("res://tests/test_helpers.gd")
+
 var _test_passed: bool = false
 var _test_failed: bool = false
 var _failure_reason: String = ""
-var _test_timeout: float = 15.0
+var _test_timeout: float = 8.0
 var _timer: float = 0.0
 
 var _boss: Node = null
@@ -47,8 +49,11 @@ func _ready() -> void:
 	_boss.start_attack_cycle()
 	print("Attack cycle started, waiting for Solar Flare...")
 
-	# Wait for attack to fire
-	await get_tree().create_timer(1.5).timeout
+	# Poll for the attack to actually fire instead of a fixed sleep.
+	var fired := await TestHelpers.poll_until(get_tree(), func(): return _attack_fired_count > 0, 6.0)
+	if not fired:
+		_fail("Solar Flare never fired (no attack_fired signal within timeout)")
+		return
 	_verify_solar_flare()
 
 

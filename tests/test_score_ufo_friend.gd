@@ -3,6 +3,8 @@ extends Node2D
 ## Verifies that collecting a Star Pickup awards 500 bonus points.
 ## Note: This test was originally for "UFO Friend" which has been renamed to "Star Pickup"
 
+const TestHelpers = preload("res://tests/test_helpers.gd")
+
 var _test_passed: bool = false
 var _test_failed: bool = false
 var _failure_reason: String = ""
@@ -54,8 +56,8 @@ func _run_star_pickup_test() -> void:
 	if has_node("/root/ScoreManager"):
 		get_node("/root/ScoreManager").reset_score()
 
-	# Reduce player lives so gain_life() will succeed
-	# Player starts at max lives, so we need to take damage first
+	# Take one hit so the player is below max health; the star pickup only awards
+	# points when gain_health() succeeds, i.e. when health is not already full.
 	if _player.has_method("take_damage"):
 		_player.take_damage()
 		# Wait for damage processing
@@ -89,13 +91,8 @@ func _run_star_pickup_test() -> void:
 	_main.add_child(star_pickup)
 	print("Star Pickup spawned at player position: %s" % str(star_pickup.position))
 
-	# Wait for collision detection and collection (should be immediate)
-	await get_tree().process_frame
-	await get_tree().process_frame
-	await get_tree().process_frame
-
-	# Give a moment for all signals to propagate
-	await get_tree().create_timer(0.1).timeout
+	# Poll for collection instead of guessing a fixed settle time
+	await TestHelpers.poll_until(get_tree(), func(): return _star_collected, 3.0)
 
 	# Check if star was collected
 	if not _star_collected:

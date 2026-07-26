@@ -2,6 +2,8 @@ extends Node2D
 ## Integration test: Player collects star_pickup and gains health
 ## Verifies that collecting a StarPickup awards 500 bonus points and restores health.
 
+const TestHelpers = preload("res://tests/test_helpers.gd")
+
 var _test_passed: bool = false
 var _test_failed: bool = false
 var _failure_reason: String = ""
@@ -85,13 +87,8 @@ func _run_star_pickup_test() -> void:
 	_main.add_child(star_pickup)
 	print("Star Pickup spawned at player position: %s" % str(star_pickup.position))
 
-	# Wait for collision detection and collection (should be immediate)
-	await get_tree().process_frame
-	await get_tree().process_frame
-	await get_tree().process_frame
-
-	# Give a moment for all signals to propagate
-	await get_tree().create_timer(0.1).timeout
+	# Poll for collection instead of guessing a fixed settle time
+	await TestHelpers.poll_until(get_tree(), func(): return _star_collected, 3.0)
 
 	# Check if star was collected
 	if not _star_collected:

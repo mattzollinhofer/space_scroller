@@ -2,6 +2,8 @@ extends Node2D
 ## Integration test: Sidekick has no invincibility - single hit destruction
 ## Verifies that sidekick is destroyed on first enemy hit (no health system, no grace period).
 
+const TestHelpers = preload("res://tests/test_helpers.gd")
+
 var _test_passed: bool = false
 var _test_failed: bool = false
 var _failure_reason: String = ""
@@ -110,19 +112,17 @@ func _run_single_hit_destruction_test() -> void:
 	_main.add_child(enemy)
 	print("Enemy spawned at sidekick position for collision")
 
-	# Wait for physics collision to occur
-	await get_tree().process_frame
-	await get_tree().process_frame
-	await get_tree().create_timer(0.1).timeout
+	# Poll for the sidekick to enter its destruction state (or be freed) after the
+	# single enemy contact. The collision is resolved on a physics frame, which can
+	# lag a couple of process frames under load; polling avoids the race that a
+	# fixed 2-frame + 0.1s wait created (it hard-failed with no retry).
+	var destroying := await TestHelpers.poll_until(get_tree(), func(): return not is_instance_valid(sidekick) or sidekick.get("_is_destroying") == true, 1.0)
+	if not destroying:
+		_fail("Sidekick survived enemy contact - expected immediate destruction on first hit")
+		return
 
-	# After a single collision, sidekick should be in destruction state or gone
-	if sidekick and is_instance_valid(sidekick):
-		if sidekick.get("_is_destroying") == true:
-			print("Sidekick is being destroyed after single enemy contact")
-		else:
-			# Sidekick still exists and not being destroyed - this is a failure
-			_fail("Sidekick survived enemy contact - expected immediate destruction on first hit")
-			return
+	if is_instance_valid(sidekick):
+		print("Sidekick is being destroyed after single enemy contact")
 	else:
 		print("Sidekick already removed (immediate queue_free)")
 

@@ -2,10 +2,12 @@ extends Node2D
 ## Integration test: Player dies in section 1+, respawns instead of game over
 ## Run this scene to verify checkpoint respawn works.
 
+const TestHelpers = preload("res://tests/test_helpers.gd")
+
 var _test_passed: bool = false
 var _test_failed: bool = false
 var _failure_reason: String = ""
-var _test_timeout: float = 15.0
+var _test_timeout: float = 8.0
 var _timer: float = 0.0
 
 var level_manager: Node = null
@@ -92,8 +94,10 @@ func _trigger_player_death() -> void:
 	_player_died = true
 	print("Player death triggered")
 
-	# Wait a frame for respawn to process
-	await get_tree().create_timer(0.5).timeout
+	# Poll the respawn outcome instead of a blind sleep: give the engine a window
+	# to either show the game over screen (failure) or leave the player alive
+	# (respawn). Returns early the instant a game over screen appears.
+	await TestHelpers.poll_until(get_tree(), func(): return game_over_screen != null and game_over_screen.visible, 1.0)
 	_check_respawn()
 
 

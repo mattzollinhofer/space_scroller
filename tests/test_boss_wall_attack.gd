@@ -2,6 +2,8 @@ extends Node2D
 ## Integration test: Boss Wall Attack (attack type 9) spawns projectiles correctly
 ## Verifies 6 projectiles spawn that fan vertically then shoot horizontally.
 
+const TestHelpers = preload("res://tests/test_helpers.gd")
+
 var _test_passed: bool = false
 var _test_failed: bool = false
 var _failure_reason: String = ""
@@ -41,17 +43,16 @@ func _ready() -> void:
 	# Start attack cycle
 	_boss.start_attack_cycle()
 
-	# Wait for wind-up and attack execution
+	# Poll for the wall attack projectiles to appear (wind-up then fan-out) rather
+	# than guessing the timing with a fixed sleep. Wall projectiles are created at
+	# speed 0 and fan out near the boss, so all 6 are present together for a while.
 	print("Waiting for attack to execute...")
-	await get_tree().create_timer(1.5).timeout
-
-	# Count projectiles spawned - they are added to this node (the parent of boss)
-	_count_projectiles()
+	var appeared := await TestHelpers.poll_until(get_tree(), func(): return _projectile_count() >= 6, 5.0)
 
 	print("Projectiles spawned: %d" % _projectiles_spawned.size())
 
 	# Verify 6 projectiles were spawned
-	if _projectiles_spawned.size() < 6:
+	if not appeared or _projectiles_spawned.size() < 6:
 		_fail("Expected 6 projectiles, got: %d" % _projectiles_spawned.size())
 		return
 
@@ -59,6 +60,11 @@ func _ready() -> void:
 
 	# All checks passed
 	_pass()
+
+
+func _projectile_count() -> int:
+	_count_projectiles()
+	return _projectiles_spawned.size()
 
 
 func _count_projectiles() -> void:

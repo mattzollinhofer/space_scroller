@@ -2,10 +2,12 @@ extends Node2D
 ## Integration test: Enemy wave spawns when new section starts
 ## Run this scene to verify wave-based enemy spawning works.
 
+const TestHelpers = preload("res://tests/test_helpers.gd")
+
 var _test_passed: bool = false
 var _test_failed: bool = false
 var _failure_reason: String = ""
-var _test_timeout: float = 15.0
+var _test_timeout: float = 8.0
 var _timer: float = 0.0
 
 var level_manager: Node = null
@@ -70,16 +72,15 @@ func _on_section_changed(section_index: int) -> void:
 	print("Section changed to: %s" % section_index)
 
 	if section_index == _target_section:
-		# Wait a frame for wave to spawn
-		await get_tree().process_frame
-		await get_tree().process_frame
+		# Poll for the wave to raise the active count instead of guessing a frame count
+		var grew := await TestHelpers.poll_until(get_tree(), func(): return enemy_spawner.get_active_count() > _initial_enemy_count, 2.0)
 
 		var current_count = enemy_spawner.get_active_count()
 		print("Enemy count after section %s: %s" % [section_index, current_count])
 
 		# Check if new enemies were spawned (wave occurred)
 		# Section 1 should spawn 2 stationary + 1 patrol = 3 new enemies
-		if current_count > _initial_enemy_count:
+		if grew:
 			_wave_spawned = true
 			print("Wave spawned! New enemies: %s" % (current_count - _initial_enemy_count))
 			_pass()

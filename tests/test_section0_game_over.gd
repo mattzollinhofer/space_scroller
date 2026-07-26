@@ -2,10 +2,12 @@ extends Node2D
 ## Integration test: Player dies in section 0, game over screen is shown
 ## Run this scene to verify game over still works when there's no checkpoint.
 
+const TestHelpers = preload("res://tests/test_helpers.gd")
+
 var _test_passed: bool = false
 var _test_failed: bool = false
 var _failure_reason: String = ""
-var _test_timeout: float = 10.0
+var _test_timeout: float = 8.0
 var _timer: float = 0.0
 
 var level_manager: Node = null
@@ -51,7 +53,7 @@ func _ready() -> void:
 		scroll_controller.scroll_speed = 0.0
 
 	# Wait for scene to fully initialize (section change to 0 should happen)
-	await get_tree().create_timer(0.5).timeout
+	await TestHelpers.poll_until(get_tree(), func(): return level_manager.get_current_section() == 0, 3.0)
 
 	var current_section = level_manager.get_current_section()
 	var has_checkpoint = level_manager.has_checkpoint()
@@ -77,21 +79,19 @@ func _trigger_player_death() -> void:
 	var initial_lives = player.get_lives()
 	print("Player has %s lives" % initial_lives)
 
-	# Deal damage, waiting for invincibility to wear off between hits
-	while player.get_lives() > 0:
-		# Wait until not invincible
-		while player.is_invincible():
-			await get_tree().create_timer(0.1).timeout
+	# Reach game over fast: set the player to its last life with 1 health so a
+	# single hit is fatal, instead of spacing many hits past 1.5s invincibility
+	# windows (which took ~14s). Death transition itself is still exercised.
+	player._lives = 1
+	player._health = 1
+	await get_tree().process_frame
 
-		player.take_damage()
-		print("Dealt damage, lives: %s" % player.get_lives())
-		await get_tree().create_timer(0.1).timeout
-
+	player.take_damage()
 	_player_died = true
 	print("Player death triggered, lives: %s" % player.get_lives())
 
-	# Wait for game over screen to appear
-	await get_tree().create_timer(0.5).timeout
+	# Wait for the game over screen to appear (poll instead of a blind sleep)
+	await TestHelpers.poll_until(get_tree(), func(): return game_over_screen.visible, 3.0)
 	_check_game_over()
 
 

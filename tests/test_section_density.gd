@@ -5,7 +5,7 @@ extends Node2D
 var _test_passed: bool = false
 var _test_failed: bool = false
 var _failure_reason: String = ""
-var _test_timeout: float = 15.0  # Longer timeout for section transition
+var _test_timeout: float = 8.0  # Section transition happens within ~1s at boosted scroll
 var _timer: float = 0.0
 
 var level_manager: Node = null

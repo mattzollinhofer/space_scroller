@@ -2,10 +2,12 @@ extends Node2D
 ## Integration test: Defeating boss shows victory sequence
 ## Run this scene to verify boss defeat triggers screen shake, explosion, and level complete.
 
+const TestHelpers = preload("res://tests/test_helpers.gd")
+
 var _test_passed: bool = false
 var _test_failed: bool = false
 var _failure_reason: String = ""
-var _test_timeout: float = 25.0
+var _test_timeout: float = 8.0
 var _timer: float = 0.0
 
 var main: Node = null
@@ -58,8 +60,19 @@ func _on_boss_spawned() -> void:
 	print("Boss spawned signal received")
 	_boss_spawned = true
 
-	# Wait for boss entrance to complete
-	await get_tree().create_timer(2.5).timeout
+	# Locate the boss, then poll for its entrance to finish (it ignores damage
+	# until then) instead of a fixed sleep.
+	_boss = level_manager.get_boss() if level_manager.has_method("get_boss") else null
+	if not _boss:
+		_boss = _find_boss_in_tree(main)
+	if not _boss:
+		_fail("Boss not found in scene tree")
+		return
+
+	var entered := await TestHelpers.poll_until(get_tree(), func(): return _boss and _boss._entrance_complete, 5.0)
+	if not entered:
+		_fail("Boss entrance never completed")
+		return
 
 	_verify_boss_and_defeat()
 
@@ -124,8 +137,11 @@ func _start_effect_monitoring() -> void:
 		if not _health_bar_hidden:
 			_check_health_bar_hidden()
 
-	# Wait additional time for level complete screen
-	await get_tree().create_timer(1.5).timeout
+	# Poll for the level complete screen (shown ~2.5s after boss defeat) instead
+	# of a fixed wait.
+	var screen = main.get_node_or_null("LevelCompleteScreen")
+	if screen:
+		await TestHelpers.poll_until(get_tree(), func(): return screen.visible, 4.0)
 
 	# Check for level complete screen
 	_check_level_complete_screen()

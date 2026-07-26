@@ -2,6 +2,8 @@ extends Node2D
 ## Integration test: Boss Square Movement (attack type 10) executes correctly
 ## Verifies boss moves in rectangular path during attack and returns to battle position.
 
+const TestHelpers = preload("res://tests/test_helpers.gd")
+
 var _test_passed: bool = false
 var _test_failed: bool = false
 var _failure_reason: String = ""
@@ -48,28 +50,11 @@ func _ready() -> void:
 	# Start attack cycle
 	_boss.start_attack_cycle()
 
-	# Monitor position changes during movement - square movement takes 3s + 0.5s return + 0.5s wind-up
-	var monitoring_duration = 2.5  # Monitor for first 2.5 seconds
-	var monitor_interval = 0.1
-	var elapsed = 0.0
-
+	# Phase 1: poll until the boss has moved significantly away from its start
+	# position. Only the square-movement attack moves it, so this confirms the
+	# attack is underway (replaces a fixed 2.5s monitor window).
 	print("Monitoring position during square movement...")
-	while elapsed < monitoring_duration:
-		await get_tree().create_timer(monitor_interval).timeout
-		elapsed += monitor_interval
-
-		# Check if position has changed significantly
-		var current_pos = _boss.position
-		if current_pos.distance_to(_initial_position) > 50:
-			_position_changed = true
-
-		# Check if boss is_square_moving (if method exists)
-		if _boss.has_method("is_square_moving") and _boss.is_square_moving():
-			print("Boss is actively square moving at %.1fs, position: %s" % [elapsed, str(current_pos)])
-
-	# Wait for attack to fully complete (remaining square time + return + cooldown start)
-	print("Waiting for attack to complete and boss to return...")
-	await get_tree().create_timer(2.5).timeout
+	_position_changed = await TestHelpers.poll_until(get_tree(), func(): return _boss.position.distance_to(_initial_position) > 50, 4.0)
 
 	# Verify position changed during attack
 	if not _position_changed:
@@ -78,10 +63,17 @@ func _ready() -> void:
 
 	print("Position changed during attack - PASS")
 
+	# Phase 2: poll until the attack completes and the boss is back at its battle
+	# position. Catch it the instant the square path finishes, before idle drift
+	# during cooldown can push it away again - the old fixed 2.5s wait was flaky
+	# because drift had already moved the boss past tolerance by the time it checked.
+	print("Waiting for attack to complete and boss to return...")
+	var returned := await TestHelpers.poll_until(get_tree(), func(): return not _boss.is_square_moving() and _boss.position.distance_to(_battle_position) <= 100, 6.0)
+
 	# Verify boss returned to battle position (with some tolerance)
 	var final_pos = _boss.position
 	var distance_from_battle = final_pos.distance_to(_battle_position)
-	print("Final position: %s, distance from battle position: %.1f" % [str(final_pos), distance_from_battle])
+	print("Final position: %s, distance from battle position: %.1f, returned=%s" % [str(final_pos), distance_from_battle, str(returned)])
 
 	if distance_from_battle > 100:
 		_fail("Boss did not return to battle position. Distance: %.1f" % distance_from_battle)

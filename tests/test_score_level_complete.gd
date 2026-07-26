@@ -2,10 +2,12 @@ extends Node2D
 ## Integration test: Score increases when level is completed
 ## Verifies that completing a level awards 5,000 bonus points.
 
+const TestHelpers = preload("res://tests/test_helpers.gd")
+
 var _test_passed: bool = false
 var _test_failed: bool = false
 var _failure_reason: String = ""
-var _test_timeout: float = 10.0
+var _test_timeout: float = 8.0
 var _timer: float = 0.0
 
 var _main: Node = null
@@ -80,16 +82,10 @@ func _run_level_complete_test() -> void:
 	# Set scroll to end of level (scroll_offset.x is negative)
 	_scroll_controller.scroll_offset.x = -total_distance
 
-	# Wait for level manager to process and detect completion
-	await get_tree().process_frame
-	await get_tree().process_frame
-	await get_tree().process_frame
-
-	# Give extra time for signal to propagate
-	await get_tree().create_timer(0.2).timeout
-
-	# Check if level completion was signaled
-	if not _level_completed_signaled:
+	# Poll for the level manager to detect completion and emit the signal, rather
+	# than padding a fixed number of frames plus a blind sleep.
+	var completed := await TestHelpers.poll_until(get_tree(), func(): return _level_completed_signaled, 4.0)
+	if not completed:
 		_fail("Level completed signal was not emitted")
 		return
 

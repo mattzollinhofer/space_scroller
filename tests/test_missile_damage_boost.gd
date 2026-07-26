@@ -2,6 +2,8 @@ extends Node2D
 ## Integration test: Boosted projectile deals extra damage to enemies
 ## Verifies that after collecting a missile pickup, player projectiles deal boosted damage.
 
+const TestHelpers = preload("res://tests/test_helpers.gd")
+
 var _test_passed: bool = false
 var _test_failed: bool = false
 var _failure_reason: String = ""
@@ -93,9 +95,9 @@ func _run_damage_boost_test() -> void:
 	print("Player shooting with x2 damage...")
 	_player.shoot(true)
 
-	# Wait for projectile to reach enemy (projectile speed is 900 px/s, distance is ~300 px)
-	# Should take about 0.33 seconds, waiting 0.5 to be safe
-	await get_tree().create_timer(0.5).timeout
+	# Poll for the enemy's died signal (set by _on_enemy_died) rather than guessing
+	# the projectile flight time (~0.33s at 900 px/s over ~300 px).
+	await TestHelpers.poll_until(get_tree(), func(): return _enemy_died, 2.0)
 
 	# Check results
 	if not _enemy_died:
@@ -134,7 +136,8 @@ func _run_damage_boost_test() -> void:
 	print("Player shooting with x3 damage...")
 	_player.shoot(true)
 
-	await get_tree().create_timer(0.5).timeout
+	# Poll for the second enemy's died signal instead of a fixed flight-time sleep.
+	await TestHelpers.poll_until(get_tree(), func(): return _enemy_died, 2.0)
 
 	if not _enemy_died:
 		var remaining_health = _enemy.health if is_instance_valid(_enemy) else -1

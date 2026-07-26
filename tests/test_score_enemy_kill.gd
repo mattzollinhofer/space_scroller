@@ -3,6 +3,8 @@ extends Node2D
 ## Verifies that destroying a stationary enemy (1 HP) awards 100 points
 ## and destroying a patrol enemy (2 HP) awards 200 points.
 
+const TestHelpers = preload("res://tests/test_helpers.gd")
+
 var _test_passed: bool = false
 var _test_failed: bool = false
 var _failure_reason: String = ""
@@ -67,25 +69,20 @@ func _run_stationary_enemy_test() -> void:
 	# This ensures proper signal connections are made
 	_enemy_spawner.spawn_wave([{"enemy_type": "stationary", "count": 1}])
 
-	# Wait for enemy to spawn and initialize
-	await get_tree().process_frame
-	await get_tree().process_frame
-
-	# Find the spawned enemy
-	var enemies = _enemy_spawner.get_children().filter(func(child): return child is BaseEnemy)
-	if enemies.is_empty():
+	# Poll for the enemy to spawn rather than guessing a fixed frame count
+	var spawned := await TestHelpers.poll_until(get_tree(), func(): return not _enemy_spawner.get_children().filter(func(child): return child is BaseEnemy).is_empty(), 2.0)
+	if not spawned:
 		_fail("No enemy was spawned")
 		return
 
-	var enemy = enemies[0]
+	var enemy = _enemy_spawner.get_children().filter(func(child): return child is BaseEnemy)[0]
 	print("Enemy spawned, health: %d" % enemy.health)
 
 	# Kill the enemy (set health to 0 to trigger death)
 	enemy.health = 0
 
-	# Wait for death to process and score to update
-	await get_tree().process_frame
-	await get_tree().process_frame
+	# Poll for the kill to award points
+	await TestHelpers.poll_until(get_tree(), func(): return _get_current_score() >= initial_score + 100, 2.0)
 
 	# Check score increased by 100 points
 	var new_score = _get_current_score()

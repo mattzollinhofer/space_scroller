@@ -2,6 +2,8 @@ extends Node2D
 ## Integration test: Impact spark appears when projectile hits enemy
 ## Verifies impact spark spawns at collision point with one_shot CPUParticles2D
 
+const TestHelpers = preload("res://tests/test_helpers.gd")
+
 var _test_passed: bool = false
 var _test_failed: bool = false
 var _failure_reason: String = ""
@@ -60,8 +62,8 @@ func _process(delta: float) -> void:
 	# Check if projectile has been freed (hit occurred)
 	if not is_instance_valid(projectile):
 		print("Projectile destroyed - checking for impact spark...")
-		# Give one frame for spark to be spawned
-		await get_tree().process_frame
+		# Poll for the spark rather than assuming it appears within one frame.
+		await TestHelpers.poll_until(get_tree(), func(): return _find_impact_spark(get_tree().root) != null, 1.0)
 		_check_for_impact_spark()
 
 
@@ -108,18 +110,18 @@ func _check_for_impact_spark() -> void:
 
 	print("Particles emitting: true")
 
-	# Verify conservative particle count (5-10)
+	# Verify conservative particle count (5-15)
 	var amount = particles.amount
 	if amount < 5 or amount > 15:
-		_fail("Impact spark amount should be 5-10, got: %d" % amount)
+		_fail("Impact spark amount should be 5-15, got: %d" % amount)
 		return
 
 	print("Particle amount is conservative: %d" % amount)
 
-	# Verify brief lifetime (0.2-0.3 seconds)
+	# Verify brief lifetime (0.15-0.4 seconds)
 	var lifetime = particles.lifetime
 	if lifetime < 0.15 or lifetime > 0.4:
-		_fail("Impact spark lifetime should be 0.2-0.3s, got: %s" % lifetime)
+		_fail("Impact spark lifetime should be 0.15-0.4s, got: %s" % lifetime)
 		return
 
 	print("Particle lifetime is appropriate: %s seconds" % lifetime)

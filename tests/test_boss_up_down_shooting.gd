@@ -47,7 +47,9 @@ func _ready() -> void:
 	# Track Y positions and count projectiles during attack
 	print("Waiting for attack to execute...")
 
-	# Check every 0.2 seconds for 3 seconds
+	# Sample periodically, but break early once both success conditions are met so
+	# the test finishes as soon as the behavior is observed instead of always
+	# burning the full window.
 	for i in range(15):
 		await get_tree().create_timer(0.2).timeout
 		_y_positions.append(_boss.position.y)
@@ -56,6 +58,11 @@ func _ready() -> void:
 		# Check if boss is in up/down shooting state
 		if _boss.has_method("is_up_down_shooting") and _boss.is_up_down_shooting():
 			print("Boss is in up/down shooting state at Y=%f" % _boss.position.y)
+
+		var y_travel_so_far = _y_positions.max() - _y_positions.min()
+		if y_travel_so_far > 200 and _projectiles_spawned.size() >= 3:
+			print("Success conditions met early at tick %d (y_travel=%f, projectiles=%d)" % [i, y_travel_so_far, _projectiles_spawned.size()])
+			break
 
 	# Final projectile count
 	_count_projectiles()

@@ -2,10 +2,12 @@ extends Node2D
 ## Integration test: Boss spawns instead of level complete screen at 100%
 ## Run this scene to verify boss appears when level progress reaches 100%.
 
+const TestHelpers = preload("res://tests/test_helpers.gd")
+
 var _test_passed: bool = false
 var _test_failed: bool = false
 var _failure_reason: String = ""
-var _test_timeout: float = 10.0
+var _test_timeout: float = 8.0
 var _timer: float = 0.0
 
 var level_manager: Node = null
@@ -61,10 +63,9 @@ func _on_level_completed() -> void:
 	print("level_completed signal emitted!")
 	_level_completed_emitted = true
 
-	# Wait a couple frames for boss to spawn
-	await get_tree().process_frame
-	await get_tree().process_frame
-	await get_tree().process_frame
+	# Poll for the boss to be added to the scene (spawned right after this signal)
+	# instead of guessing a fixed number of frames.
+	await TestHelpers.poll_until(get_tree(), func(): return main.get_node_or_null("Boss") != null, 3.0)
 
 	_check_boss_spawned()
 

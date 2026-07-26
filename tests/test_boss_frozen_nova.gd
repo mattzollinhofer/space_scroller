@@ -3,10 +3,12 @@ extends Node2D
 ## Verifies the delayed expanding burst fires slow projectiles in all directions.
 ## Level 3 "cold/expansive" theme - delayed telegraph then radial burst.
 
+const TestHelpers = preload("res://tests/test_helpers.gd")
+
 var _test_passed: bool = false
 var _test_failed: bool = false
 var _failure_reason: String = ""
-var _test_timeout: float = 15.0
+var _test_timeout: float = 8.0
 var _timer: float = 0.0
 
 var _boss: Node = null
@@ -53,8 +55,12 @@ func _ready() -> void:
 	_boss.start_attack_cycle()
 	print("Attack cycle started, waiting for Frozen Nova...")
 
-	# Wait for attack to fire (longer wait due to delay)
-	await get_tree().create_timer(2.0).timeout
+	# Poll for the Frozen Nova to actually fire instead of guessing with a fixed sleep.
+	# The wind-up telegraph delays the burst, so wait on the signal flag directly.
+	var fired := await TestHelpers.poll_until(get_tree(), func(): return _attack_fired_count > 0, 6.0)
+	if not fired:
+		_fail("Frozen Nova never fired (no attack_fired signal within timeout)")
+		return
 	_verify_frozen_nova()
 
 

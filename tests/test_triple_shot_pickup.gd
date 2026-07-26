@@ -1,7 +1,12 @@
 extends Node2D
 ## Test: Triple shot pickup grants temporary 3-projectile attack
 
+const TestHelpers = preload("res://tests/test_helpers.gd")
+
 var _test_passed: bool = false
+var _test_failed: bool = false
+var _test_timeout: float = 8.0
+var _timer: float = 0.0
 
 
 func _ready() -> void:
@@ -43,8 +48,8 @@ func _run_test() -> void:
 
 	print("Triple shot pickup spawned - OK")
 
-	# Wait for collection
-	await get_tree().create_timer(0.2).timeout
+	# Poll until the pickup is collected and triple shot activates
+	await TestHelpers.poll_until(get_tree(), func(): return player.is_triple_shot_active(), 3.0)
 
 	# Verify player now has triple shot
 	if not player.is_triple_shot_active():
@@ -56,7 +61,8 @@ func _run_test() -> void:
 	# Test that 3 projectiles are spawned when shooting
 	var projectile_count_before = _count_projectiles()
 	player.shoot()
-	await get_tree().process_frame
+	# Poll for the spawned projectiles rather than assuming a single frame settles them
+	await TestHelpers.poll_until(get_tree(), func(): return _count_projectiles() - projectile_count_before >= 3, 2.0)
 
 	var projectile_count_after = _count_projectiles()
 	var projectiles_spawned = projectile_count_after - projectile_count_before
@@ -75,12 +81,30 @@ func _run_test() -> void:
 func _count_projectiles() -> int:
 	var count = 0
 	for child in get_parent().get_children():
-		if child.has_method("_on_area_entered") and "damage" in child:
+		if _is_projectile(child):
 			count += 1
 	for child in get_children():
-		if child.has_method("_on_area_entered") and "damage" in child:
+		if _is_projectile(child):
 			count += 1
 	return count
+
+
+## Identify a player projectile. There is no dedicated projectile group in the
+## project, so fall back to duck typing; accept a group first in case one is added.
+func _is_projectile(node: Node) -> bool:
+	if node.is_in_group("projectile"):
+		return true
+	return node.has_method("_on_area_entered") and "damage" in node
+
+
+func _process(delta: float) -> void:
+	if _test_passed or _test_failed:
+		return
+
+	_timer += delta
+
+	if _timer >= _test_timeout:
+		_fail("Test timed out")
 
 
 func _pass() -> void:
@@ -91,5 +115,6 @@ func _pass() -> void:
 
 
 func _fail(reason: String) -> void:
+	_test_failed = true
 	print("=== TEST FAILED: %s ===" % reason)
 	get_tree().quit(1)

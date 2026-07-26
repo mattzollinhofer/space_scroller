@@ -2,10 +2,12 @@ extends Node2D
 ## Integration test: Boss Heat Wave attack (attack index 4)
 ## Verifies the sweeping arc pattern fires continuous stream of fast projectiles.
 
+const TestHelpers = preload("res://tests/test_helpers.gd")
+
 var _test_passed: bool = false
 var _test_failed: bool = false
 var _failure_reason: String = ""
-var _test_timeout: float = 15.0
+var _test_timeout: float = 8.0
 var _timer: float = 0.0
 
 var _boss: Node = null
@@ -50,8 +52,11 @@ func _ready() -> void:
 	_boss.start_attack_cycle()
 	print("Attack cycle started, waiting for Heat Wave...")
 
-	# Wait for attack to complete (sweep takes ~2 seconds)
-	await get_tree().create_timer(3.0).timeout
+	# Poll until continuous fire has built up and the boss has swept, instead of a
+	# fixed sleep. If the window elapses, still verify to emit a specific diagnostic.
+	var swept := await TestHelpers.poll_until(get_tree(), func(): return _attack_fired_count >= 3 and _boss_moved, 6.0)
+	if not swept:
+		print("Heat Wave conditions not fully met within poll window; verifying current state...")
 	_verify_heat_wave()
 
 

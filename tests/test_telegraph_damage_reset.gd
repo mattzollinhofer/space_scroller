@@ -2,6 +2,8 @@ extends Node2D
 ## Edge case test: Telegraph handles boss taking damage during wind-up
 ## Verifies hit flash and telegraph don't conflict, both tween effects work
 
+const TestHelpers = preload("res://tests/test_helpers.gd")
+
 var _test_passed: bool = false
 var _test_failed: bool = false
 var _failure_reason: String = ""
@@ -85,8 +87,6 @@ func _process(delta: float) -> void:
 	if _damage_dealt_during_windup and attack_state == boss.AttackState.COOLDOWN and not _verification_started:
 		_verification_started = true
 		print("Attack cycle completed after damage was dealt during wind-up")
-		# Wait a moment for any tween cleanup
-		await get_tree().create_timer(0.3).timeout
 		_verify_state()
 
 
@@ -95,16 +95,19 @@ func _verify_state() -> void:
 		_fail("Boss or sprite became invalid during verification")
 		return
 
-	# Check that modulate is back to normal (or close)
+	# Both the telegraph and the hit flash should settle the sprite modulate back
+	# to normal once the attack fires. Poll for the settled value instead of
+	# sleeping a fixed grace - these tweens drive the exact property under test.
+	var settled := await TestHelpers.poll_until(get_tree(), func(): return _modulate_is_reset(), 1.5)
+
 	var current_modulate = sprite.modulate
 	print("Final modulate state: %s" % current_modulate)
 
-	# Both telegraph and hit flash should have completed
-	# Modulate should be near normal (1,1,1,1)
-	var is_near_normal = current_modulate.r < 2.0 and current_modulate.g < 2.0 and current_modulate.b < 2.0
-
-	if not is_near_normal:
-		print("Warning: Modulate not fully reset, but checking if boss is functional...")
+	# Hard-assert the reset the test name promises actually happened (not stuck in
+	# the telegraph pulse or the hit-flash overbright).
+	if not settled:
+		_fail("Telegraph/flash did not reset modulate after damage during wind-up: %s" % current_modulate)
+		return
 
 	# Most importantly, verify boss is still functional
 	if boss.health <= 0:
@@ -119,6 +122,13 @@ func _verify_state() -> void:
 	print("Boss is still functional after taking damage during wind-up")
 	print("Telegraph and hit flash did not cause permanent state corruption")
 	_pass()
+
+
+func _modulate_is_reset() -> bool:
+	if not is_instance_valid(sprite):
+		return false
+	var m = sprite.modulate
+	return m.r <= 1.1 and m.g <= 1.1 and m.b <= 1.1
 
 
 func _pass() -> void:

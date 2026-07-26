@@ -2,10 +2,12 @@ extends Node2D
 ## Integration test: Boss fires projectiles that can hit player
 ## Run this scene to verify boss attack patterns work correctly.
 
+const TestHelpers = preload("res://tests/test_helpers.gd")
+
 var _test_passed: bool = false
 var _test_failed: bool = false
 var _failure_reason: String = ""
-var _test_timeout: float = 20.0
+var _test_timeout: float = 8.0
 var _timer: float = 0.0
 
 var main: Node = null
@@ -15,6 +17,7 @@ var _player: Node = null
 var _boss_spawned: bool = false
 var _projectiles_detected: Array = []
 var _initial_player_lives: int = 3
+var _player_hit: bool = false
 
 
 func _ready() -> void:
@@ -60,8 +63,19 @@ func _on_boss_spawned() -> void:
 	print("Boss spawned signal received")
 	_boss_spawned = true
 
-	# Wait for boss entrance to complete
-	await get_tree().create_timer(2.5).timeout
+	# Locate the boss, then poll for its entrance animation to finish (it is
+	# invincible and cannot attack until then) instead of a fixed sleep.
+	_boss = level_manager.get_boss() if level_manager.has_method("get_boss") else null
+	if not _boss:
+		_boss = _find_boss_in_tree(main)
+	if not _boss:
+		_fail("Boss not found in scene tree")
+		return
+
+	var entered := await TestHelpers.poll_until(get_tree(), func(): return _boss and _boss._entrance_complete, 5.0)
+	if not entered:
+		_fail("Boss entrance never completed")
+		return
 
 	_verify_boss_and_test_attacks()
 
@@ -94,8 +108,12 @@ func _verify_boss_and_test_attacks() -> void:
 	print("Triggering boss attack...")
 	_boss.start_attack_cycle()
 
-	# Wait for attack to fire
-	await get_tree().create_timer(2.0).timeout
+	# Poll until the attack actually fires projectiles rather than guessing a
+	# fixed wait (the wind-up delay varies under load).
+	var fired := await TestHelpers.poll_until(get_tree(), func(): return not _find_boss_projectiles_in_tree(main).is_empty(), 4.0)
+	if not fired:
+		_fail("No boss projectiles found after attack")
+		return
 
 	# Check for projectiles in scene
 	_check_for_projectiles()
@@ -142,42 +160,45 @@ func _test_projectile_damage() -> void:
 	if _test_passed or _test_failed:
 		return
 
-	# Reset player to ensure not invincible
+	# Reset player to full health and clear invincibility so a hit registers.
 	if _player.has_method("reset_lives"):
 		_player.reset_lives()
+	if "_is_invincible" in _player:
+		_player._is_invincible = false
 
-	# Find a fresh projectile or spawn one manually for damage test
+	# Detect the hit via the player's damage_taken signal: a single boss
+	# projectile costs health, not a life, so get_lives() would not change.
+	if _player.has_signal("damage_taken") and not _player.damage_taken.is_connected(_on_player_hit):
+		_player.damage_taken.connect(_on_player_hit)
+
+	# Find a live boss projectile (trigger another barrage if none remain).
 	var projectile = _find_closest_boss_projectile()
 	if not projectile:
-		# Trigger another attack
 		print("Triggering another attack for damage test...")
 		_boss.start_attack_cycle()
-		await get_tree().create_timer(1.5).timeout
+		await TestHelpers.poll_until(get_tree(), func(): return _find_closest_boss_projectile() != null, 4.0)
 		projectile = _find_closest_boss_projectile()
 
 	if not projectile:
-		# Test passes if projectiles spawn - damage test is bonus
-		print("No projectile available for damage test - passing based on projectile spawn")
-		_pass()
+		_fail("No boss projectile available to test player damage")
 		return
 
-	# Move player to projectile path
-	_player.position = projectile.position + Vector2(-100, 0)
-	print("Moving player to projectile path: %s" % _player.position)
+	# Overlap the player with the projectile so contact is unavoidable.
+	_player.position = projectile.position
+	print("Placing player on projectile at: %s" % _player.position)
 
-	# Wait for collision
-	var lives_before = _player.get_lives() if _player.has_method("get_lives") else _initial_player_lives
-	await get_tree().create_timer(0.5).timeout
+	var health_before = _player.get_health() if _player.has_method("get_health") else 3
+	var hit := await TestHelpers.poll_until(get_tree(), func(): return _player_hit or (_player.has_method("get_health") and _player.get_health() < health_before), 2.0)
+	if not hit:
+		_fail("Boss projectile did not damage player on contact")
+		return
 
-	var lives_after = _player.get_lives() if _player.has_method("get_lives") else lives_before
-	print("Player lives before: %d, after: %d" % [lives_before, lives_after])
-
-	if lives_after < lives_before:
-		print("Player took damage from boss projectile!")
-	else:
-		print("No damage taken (player may have dodged or invincible)")
-
+	print("Player took damage from boss projectile")
 	_pass()
+
+
+func _on_player_hit() -> void:
+	_player_hit = true
 
 
 func _find_closest_boss_projectile() -> Node:

@@ -2,6 +2,8 @@ extends Node2D
 ## Integration test: Boss displays visual telegraph before attacks
 ## Verifies boss modulate changes during WIND_UP state and resets before attack fires
 
+const TestHelpers = preload("res://tests/test_helpers.gd")
+
 var _test_passed: bool = false
 var _test_failed: bool = false
 var _failure_reason: String = ""
@@ -100,29 +102,28 @@ func _verify_modulate_reset() -> void:
 		_fail("Sprite became invalid before verification")
 		return
 
+	# The telegraph is cleared (and modulate reset to normal) when the attack
+	# fires. Poll for the settled modulate rather than sleeping a fixed grace,
+	# then hard-assert that the reset actually happened.
+	var settled := await TestHelpers.poll_until(get_tree(), func(): return _modulate_is_normal(), 1.0)
+
 	var current_modulate = sprite.modulate
-
-	# Modulate should be back to normal (or very close)
-	# Allow for flash effects which may still be active
-	var is_normal = abs(current_modulate.r - _original_modulate.r) < 0.2 and \
-					abs(current_modulate.g - _original_modulate.g) < 0.2 and \
-					abs(current_modulate.b - _original_modulate.b) < 0.2
-
-	if not is_normal:
-		# Give more time for tween to complete
-		await get_tree().create_timer(0.3).timeout
-		current_modulate = sprite.modulate
-		is_normal = abs(current_modulate.r - _original_modulate.r) < 0.2 and \
-					abs(current_modulate.g - _original_modulate.g) < 0.2 and \
-					abs(current_modulate.b - _original_modulate.b) < 0.2
-
 	print("Modulate after attack: %s (original: %s)" % [current_modulate, _original_modulate])
 
-	if not is_normal:
-		print("Warning: Modulate not fully reset, but telegraph was detected")
-		# Still pass if telegraph was detected - cleanup timing may vary
+	if not settled:
+		_fail("Modulate did not reset to normal after attack fired: %s (original: %s)" % [current_modulate, _original_modulate])
+		return
 
 	_pass()
+
+
+func _modulate_is_normal() -> bool:
+	if not is_instance_valid(sprite):
+		return false
+	var m = sprite.modulate
+	return abs(m.r - _original_modulate.r) < 0.2 and \
+			abs(m.g - _original_modulate.g) < 0.2 and \
+			abs(m.b - _original_modulate.b) < 0.2
 
 
 func _pass() -> void:

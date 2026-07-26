@@ -2,6 +2,8 @@ extends Node2D
 ## Integration test: Sidekick fires when player fires
 ## Verifies that when player shoots, sidekick simultaneously fires its own projectile.
 
+const TestHelpers = preload("res://tests/test_helpers.gd")
+
 var _test_passed: bool = false
 var _test_failed: bool = false
 var _failure_reason: String = ""
@@ -100,9 +102,10 @@ func _run_sidekick_shooting_test() -> void:
 	print("Triggering player shoot...")
 	_player.shoot(true)
 
-	# Wait a frame for projectiles to spawn
-	await get_tree().process_frame
-	await get_tree().process_frame
+	# Poll until both projectiles (player + sidekick) have appeared. The player
+	# projectile is added immediately and the sidekick fires via the
+	# projectile_fired signal; a fixed 2-frame wait raced the spawn under load.
+	await TestHelpers.poll_until(get_tree(), func(): return _count_projectiles() - projectiles_before >= 2, 2.0)
 
 	# Count projectiles after shooting
 	var projectiles_after = _count_projectiles()
@@ -117,7 +120,7 @@ func _run_sidekick_shooting_test() -> void:
 		_fail("Expected 2 projectiles (player + sidekick), but only %d were spawned" % projectiles_spawned)
 		return
 
-	# Verify projectiles are at different positions (player vs sidekick)
+	# Verify projectiles are at different positions (player vs sidekick offset)
 	var projectiles = _get_projectiles()
 	if projectiles.size() >= 2:
 		var pos1 = projectiles[0].position
@@ -125,9 +128,12 @@ func _run_sidekick_shooting_test() -> void:
 		print("Projectile 1 position: %s" % str(pos1))
 		print("Projectile 2 position: %s" % str(pos2))
 
-		# Projectiles should be at different Y positions (sidekick offset)
+		# The sidekick follows the player at a (-50, -30) offset, so its projectile
+		# must spawn at a different position than the player's. Same-position shots
+		# would mean the sidekick isn't firing from its own location.
 		if abs(pos1.y - pos2.y) < 1.0 and abs(pos1.x - pos2.x) < 1.0:
-			print("Warning: Projectiles are at same position, expected different positions")
+			_fail("Player and sidekick projectiles spawned at the same position %s - expected the sidekick's follow offset to separate them" % str(pos1))
+			return
 
 	print("Sidekick successfully fires when player fires!")
 	_pass()

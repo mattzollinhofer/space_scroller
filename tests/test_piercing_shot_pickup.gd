@@ -1,7 +1,12 @@
 extends Node2D
 ## Test: Piercing shot pickup grants temporary piercing projectiles
 
+const TestHelpers = preload("res://tests/test_helpers.gd")
+
 var _test_passed: bool = false
+var _test_failed: bool = false
+var _test_timeout: float = 8.0
+var _timer: float = 0.0
 
 
 func _ready() -> void:
@@ -43,8 +48,8 @@ func _run_test() -> void:
 
 	print("Piercing shot pickup spawned - OK")
 
-	# Wait for collection
-	await get_tree().create_timer(0.2).timeout
+	# Poll until the pickup is collected and piercing activates
+	await TestHelpers.poll_until(get_tree(), func(): return player.is_piercing_shots_active(), 3.0)
 
 	# Verify player now has piercing shots
 	if not player.is_piercing_shots_active():
@@ -73,9 +78,23 @@ func _run_test() -> void:
 				found_piercing_projectile = true
 				break
 
+	if not found_piercing_projectile:
+		_fail("No piercing projectile found after shooting with piercing active")
+		return
+
 	print("Piercing projectile check complete - OK")
 
 	_pass()
+
+
+func _process(delta: float) -> void:
+	if _test_passed or _test_failed:
+		return
+
+	_timer += delta
+
+	if _timer >= _test_timeout:
+		_fail("Test timed out")
 
 
 func _pass() -> void:
@@ -86,5 +105,6 @@ func _pass() -> void:
 
 
 func _fail(reason: String) -> void:
+	_test_failed = true
 	print("=== TEST FAILED: %s ===" % reason)
 	get_tree().quit(1)

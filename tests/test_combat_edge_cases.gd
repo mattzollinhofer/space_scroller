@@ -6,7 +6,7 @@ var _test_passed: bool = false
 var _test_failed: bool = false
 var _failure_reason: String = ""
 var _timer: float = 0.0
-var _test_timeout: float = 10.0
+var _test_timeout: float = 8.0
 var _current_phase: int = 0
 var _phase_timer: float = 0.0
 
@@ -137,12 +137,9 @@ func _test_multiple_projectiles(delta: float) -> void:
 		# At 0.12s cooldown over 0.6s, we should fire ~5 shots
 		# Multiple projectiles should definitely be on screen
 		if _max_simultaneous_projectiles < 2:
-			# This might fail in headless mode where delta is larger
-			# Accept it as a pass if we fired multiple times (checked in phase 1)
-			print("NOTE: Only saw %s projectile(s) - may be timing issue in headless mode" % _max_simultaneous_projectiles)
-			print("PASS: Multiple projectiles handled (rapid fire test verified cooldown works)")
-		else:
-			print("PASS: Multiple projectiles on screen simultaneously (%s)" % _max_simultaneous_projectiles)
+			_fail("Expected multiple projectiles on screen at once, saw %s" % _max_simultaneous_projectiles)
+			return
+		print("PASS: Multiple projectiles on screen simultaneously (%s)" % _max_simultaneous_projectiles)
 
 		# Move to next phase
 		_current_phase = 3
@@ -192,7 +189,10 @@ func _test_edge_screen_hit(delta: float) -> void:
 
 		print("Starting Phase 4: Player death stops firing...")
 
-		# Kill the player
+		# Kill the player - set to last life with 1 health so a single hit is fatal.
+		# Spacing hits past the 1.5s invincibility window would make this test slow,
+		# so set state directly (test_star_pickup pattern).
+		player._health = 1
 		player._lives = 1
 		player.take_damage()
 
@@ -236,9 +236,13 @@ func _finalize_tests() -> void:
 
 
 func _count_projectiles() -> int:
+	# Match by script file rather than node name: Godot auto-renames duplicate
+	# sibling nodes ("Projectile" -> "@Projectile@2" ...), which a name prefix
+	# check misses, so every projectile after the first would go uncounted.
 	var count = 0
 	for child in get_children():
-		if child.name.begins_with("Projectile"):
+		var script = child.get_script()
+		if script and script.resource_path.get_file() == "projectile.gd":
 			count += 1
 	return count
 

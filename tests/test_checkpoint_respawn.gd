@@ -1,6 +1,8 @@
 extends Node2D
-## Integration test: Player dies in section 1+, respawns instead of game over
-## Run this scene to verify checkpoint respawn works.
+## Integration test: Player death after passing a checkpoint (section 1+) shows
+## game over. The old "respawn at checkpoint" behavior was intentionally removed
+## ("No infinite respawns regardless of boss fight or checkpoint status"), so
+## death always ends the run.
 
 const TestHelpers = preload("res://tests/test_helpers.gd")
 
@@ -16,11 +18,10 @@ var game_over_screen: Node = null
 var scroll_controller: Node = null
 var _reached_section_1: bool = false
 var _player_died: bool = false
-var _respawn_triggered: bool = false
 
 
 func _ready() -> void:
-	print("=== Test: Checkpoint Respawn ===")
+	print("=== Test: Death After Checkpoint Shows Game Over ===")
 
 	# Load and setup main scene
 	var main_scene = load("res://scenes/main.tscn")
@@ -37,11 +38,6 @@ func _ready() -> void:
 		_fail("LevelManager node not found")
 		return
 
-	# Check for respawn_player method
-	if not level_manager.has_method("respawn_player"):
-		_fail("LevelManager does not have 'respawn_player' method")
-		return
-
 	# Connect to section changed
 	level_manager.section_changed.connect(_on_section_changed)
 
@@ -53,8 +49,11 @@ func _ready() -> void:
 
 	# Find game over screen
 	game_over_screen = main.get_node_or_null("GameOverScreen")
+	if not game_over_screen:
+		_fail("GameOverScreen node not found")
+		return
 
-	# Speed up scroll to reach section 1 quickly
+	# Speed up scroll to cross the first checkpoint boundary (section 1) quickly
 	scroll_controller = main.get_node_or_null("ParallaxBackground")
 	if scroll_controller:
 		scroll_controller.scroll_speed = 1800.0
@@ -71,8 +70,6 @@ func _on_section_changed(section_index: int) -> void:
 		# Stop scrolling and kill the player
 		if scroll_controller:
 			scroll_controller.scroll_speed = 0.0
-
-		# Reduce player lives to 0 to trigger death
 		_trigger_player_death()
 
 
@@ -80,43 +77,31 @@ func _trigger_player_death() -> void:
 	if not player:
 		return
 
-	# Store initial lives
-	var initial_lives = player.get_lives()
-	print("Player has %s lives" % initial_lives)
+	# Reach game over fast: put the player on its last life with 1 health so a
+	# single hit is fatal, rather than spacing many hits past invincibility windows.
+	player._lives = 1
+	player._health = 1
+	await get_tree().process_frame
 
-	# Deal damage until dead
-	for i in range(initial_lives + 1):
-		player.take_damage()
-		await get_tree().create_timer(0.1).timeout
-		if player.get_lives() <= 0:
-			break
-
+	player.take_damage()
 	_player_died = true
-	print("Player death triggered")
+	print("Player death triggered, lives: %s" % player.get_lives())
 
-	# Poll the respawn outcome instead of a blind sleep: give the engine a window
-	# to either show the game over screen (failure) or leave the player alive
-	# (respawn). Returns early the instant a game over screen appears.
-	await TestHelpers.poll_until(get_tree(), func(): return game_over_screen != null and game_over_screen.visible, 1.0)
-	_check_respawn()
+	# Death past a checkpoint must still end the run: poll for the game over screen
+	# rather than a blind sleep.
+	await TestHelpers.poll_until(get_tree(), func(): return game_over_screen.visible, 3.0)
+	_check_game_over()
 
 
-func _check_respawn() -> void:
+func _check_game_over() -> void:
 	if _test_passed or _test_failed:
 		return
 
-	# Check if game over screen is visible (should NOT be if checkpoint respawn worked)
 	if game_over_screen and game_over_screen.visible:
-		_fail("Game over screen shown instead of checkpoint respawn")
-		return
-
-	# Check if player is still alive (respawned)
-	if player and player.get_lives() > 0:
-		_respawn_triggered = true
-		print("Player respawned with %s lives" % player.get_lives())
+		print("Game over screen is visible (no checkpoint respawn, as intended)")
 		_pass()
 	else:
-		_fail("Player did not respawn (lives: %s)" % (player.get_lives() if player else "null"))
+		_fail("Game over screen not shown after death past checkpoint (visible: %s)" % (game_over_screen.visible if game_over_screen else "null"))
 
 
 func _process(delta: float) -> void:
@@ -131,14 +116,14 @@ func _process(delta: float) -> void:
 		elif not _player_died:
 			_fail("Test timed out - player death not triggered")
 		else:
-			_fail("Test timed out - respawn not verified")
+			_fail("Test timed out - game over not verified")
 		return
 
 
 func _pass() -> void:
 	_test_passed = true
 	print("=== TEST PASSED ===")
-	print("Player respawns at checkpoint instead of game over.")
+	print("Dying after a checkpoint shows game over (no respawn).")
 	get_tree().quit(0)
 
 

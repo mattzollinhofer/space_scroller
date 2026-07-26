@@ -31,17 +31,18 @@ func _ready() -> void:
 	print("  - AudioManager has crossfade_to_boss_music method: OK")
 	print("  - AudioManager has is_boss_music_playing method: OK")
 
-	# Verify boss music tracks exist for all 3 levels (OGG or WAV)
+	# Verify a boss music track exists for each level. Tracks ship as .mp3 (the
+	# format AudioManager loads); accept .ogg/.wav too so a future re-encode passes.
 	for level in [1, 2, 3]:
-		var ogg_track = "res://assets/audio/music/boss_%d.ogg" % level
-		var wav_track = "res://assets/audio/music/boss_%d.wav" % level
-
-		if ResourceLoader.exists(ogg_track):
-			print("  - Boss track exists: boss_%d.ogg" % level)
-		elif ResourceLoader.exists(wav_track):
-			print("  - Boss track exists: boss_%d.wav" % level)
-		else:
-			_fail("Boss music track not found for level %d (checked .ogg and .wav)" % level)
+		var found := false
+		for ext in ["mp3", "ogg", "wav"]:
+			var track = "res://assets/audio/music/boss_%d.%s" % [level, ext]
+			if ResourceLoader.exists(track):
+				print("  - Boss track exists: boss_%d.%s" % [level, ext])
+				found = true
+				break
+		if not found:
+			_fail("Boss music track not found for level %d (checked .mp3, .ogg, .wav)" % level)
 			return
 
 	# Test 1: Verify LevelManager connects to AudioManager for boss_spawned

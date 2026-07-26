@@ -10,6 +10,9 @@ const FIREBASE_CONFIG_PATH := "res://config/firebase_config.json"
 var _project_id: String = ""
 var _database_url: String = ""
 
+## Game namespace for the scores path, so multiple games can share one database.
+var _game_id: String = ""
+
 ## HTTPRequest node for submit operations
 var _submit_http_request: HTTPRequest = null
 
@@ -46,6 +49,15 @@ func _load_config() -> void:
 	if data is Dictionary:
 		_project_id = data.get("project_id", "")
 		_database_url = data.get("database_url", "")
+		_game_id = data.get("game_id", "")
+
+
+## Realtime Database path for this game's scores, namespaced by game_id so several
+## games can share one database. Empty game_id falls back to the root "scores" node.
+func _scores_path() -> String:
+	if _game_id.is_empty():
+		return "scores"
+	return "%s/scores" % _game_id
 
 
 ## Setup HTTPRequest nodes for network operations
@@ -82,7 +94,7 @@ func submit_score(score: int, initials: String = "AAA") -> void:
 		return
 
 	# Build the request URL
-	var url = "%s/scores.json" % _database_url
+	var url = "%s/%s.json" % [_database_url, _scores_path()]
 
 	# Build the payload
 	var timestamp = Time.get_unix_time_from_system()
@@ -132,7 +144,7 @@ func fetch_top_scores(count: int = 10, callback: Callable = Callable()) -> void:
 
 	# Build the request URL with query parameters
 	# Firebase REST API: orderBy="score" and limitToLast to get top scores
-	var url = '%s/scores.json?orderBy="score"&limitToLast=%d' % [_database_url, count]
+	var url = '%s/%s.json?orderBy="score"&limitToLast=%d' % [_database_url, _scores_path(), count]
 
 	# Send the GET request
 	var error = _fetch_http_request.request(url)

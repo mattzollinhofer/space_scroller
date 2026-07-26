@@ -1,4 +1,5 @@
 {
 	"project_id": "z-space-scroller",
-	"database_url": "https://z-space-scroller-default-rtdb.firebaseio.com"
+	"database_url": "https://z-space-scroller-default-rtdb.firebaseio.com",
+	"game_id": "space_scroller"
 }

@@ -3,6 +3,8 @@ extends Node2D
 ## Verifies that killing 5 enemies spawns either a star or sidekick pickup,
 ## and that the kill counter resets with threshold doubling.
 
+const TestHelpers = preload("res://tests/test_helpers.gd")
+
 var _test_passed: bool = false
 var _test_failed: bool = false
 var _failure_reason: String = ""
@@ -73,8 +75,8 @@ func _run_random_pickup_test() -> void:
 		await _spawn_and_kill_enemy(i + 1)
 		await get_tree().process_frame
 
-	# Wait for pickup to spawn
-	await get_tree().create_timer(0.2).timeout
+	# Poll for the pickup to appear rather than guessing a fixed settle time
+	await TestHelpers.poll_until(get_tree(), func(): return _find_pickup_in_scene() != null, 3.0)
 
 	# Check if a pickup was spawned
 	var pickup = _find_pickup_in_scene()
@@ -82,19 +84,11 @@ func _run_random_pickup_test() -> void:
 		_fail("No pickup was spawned after killing 5 enemies")
 		return
 
-	print("Pickup spawned: %s" % _get_pickup_type(pickup))
-
-	# Determine pickup type
-	var pickup_type = _get_pickup_type(pickup)
-	if pickup_type == "StarPickup":
-		_spawned_pickup_type = "star"
-		print("Spawned pickup type: Star Pickup")
-	elif pickup_type == "SidekickPickup":
-		_spawned_pickup_type = "sidekick"
-		print("Spawned pickup type: Sidekick Pickup")
-	else:
-		_fail("Unknown pickup type spawned: %s" % pickup_type)
-		return
+	# The spawner may legitimately produce any pickup type (star, sidekick,
+	# missile, triple_shot, special_gun, or level-specific), so record whatever
+	# spawned rather than restricting to star/sidekick.
+	_spawned_pickup_type = _get_pickup_type(pickup)
+	print("Spawned pickup type: %s" % _spawned_pickup_type)
 
 	# Verify kill counter was reset
 	var kill_count_after = _enemy_spawner._kill_count
@@ -144,10 +138,9 @@ func _spawn_and_kill_enemy(enemy_number: int) -> void:
 
 
 func _find_pickup_in_scene() -> Node:
-	# Look for star pickup or sidekick pickup in Main scene
+	# Look for any spawned pickup in the Main scene
 	for child in _main.get_children():
-		var pickup_type = _get_pickup_type(child)
-		if pickup_type == "StarPickup" or pickup_type == "SidekickPickup":
+		if child is BasePickup:
 			return child
 	return null
 

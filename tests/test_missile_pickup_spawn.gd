@@ -2,10 +2,12 @@ extends Node2D
 ## Integration test: Missile pickup spawns from enemy spawner
 ## Verifies that EnemySpawner can spawn missile pickups as part of the pickup pool.
 
+const TestHelpers = preload("res://tests/test_helpers.gd")
+
 var _test_passed: bool = false
 var _test_failed: bool = false
 var _failure_reason: String = ""
-var _test_timeout: float = 10.0
+var _test_timeout: float = 8.0
 var _timer: float = 0.0
 
 var _main: Node = null
@@ -103,8 +105,10 @@ func _run_missile_spawn_test() -> void:
 		_fail("_choose_pickup_type still returns bool, expected string pickup type")
 		return
 
-	# Verify it's a valid pickup type string
-	if pickup_type not in ["star", "sidekick", "missile"]:
+	# Verify it's a valid pickup type string. The spawner can legitimately return
+	# any of these depending on random rolls and current level.
+	var valid_pickup_types = ["star", "sidekick", "missile", "triple_shot", "special_gun", "rapid_fire", "screen_clear", "piercing_shot"]
+	if pickup_type not in valid_pickup_types:
 		_fail("_choose_pickup_type returned invalid type: %s" % pickup_type)
 		return
 
@@ -134,16 +138,17 @@ func _run_missile_spawn_test() -> void:
 	for i in range(5):
 		await _spawn_and_kill_enemy()
 
-	await get_tree().create_timer(0.3).timeout
+	# Poll for the pickup count to increase rather than guessing a settle time
+	await TestHelpers.poll_until(get_tree(), func(): return get_tree().get_nodes_in_group("pickups").size() + _count_pickups_in_main() > pickups_before, 3.0)
 
 	# Count pickups after - should have increased
 	var pickups_after = get_tree().get_nodes_in_group("pickups").size() + _count_pickups_in_main()
 	print("Pickups before: %d, after: %d" % [pickups_before, pickups_after])
 
-	# Note: We can't guarantee it's a missile pickup due to randomness,
-	# but we can verify the spawn system works
+	# Crossing the kill threshold always spawns a pickup (its exact type is random).
 	if pickups_after <= pickups_before:
-		print("Warning: Pickup count didn't increase, but this may be expected if pickup despawned")
+		_fail("Expected a pickup to spawn after 5 kills, but pickup count did not increase")
+		return
 
 	print("Spawn system successfully integrated with missile pickups")
 	_pass()

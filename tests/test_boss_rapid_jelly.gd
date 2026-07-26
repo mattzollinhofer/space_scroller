@@ -1,6 +1,6 @@
 extends Node2D
-## Integration test: Boss Rapid Jelly Attack (attack type 13) fires 6 projectiles straight forward
-## Verifies boss fires exactly 6 projectiles simultaneously, all traveling straight left.
+## Integration test: Boss Rapid Jelly Attack (attack type 13) fires 4 projectiles straight forward
+## Verifies boss fires exactly 4 projectiles simultaneously, all traveling straight left.
 
 const TestHelpers = preload("res://tests/test_helpers.gd")
 
@@ -63,12 +63,12 @@ func _ready() -> void:
 
 	print("Projectiles spawned: %d" % _projectiles_spawned.size())
 
-	# Verify exactly 6 projectiles were spawned
-	if _projectiles_spawned.size() != 6:
-		_fail("Expected exactly 6 projectiles, got: %d" % _projectiles_spawned.size())
+	# Verify exactly 4 projectiles were spawned (boss.gd _attack_rapid_jelly)
+	if _projectiles_spawned.size() != 4:
+		_fail("Expected exactly 4 projectiles, got: %d" % _projectiles_spawned.size())
 		return
 
-	print("Correct number of projectiles spawned (6)")
+	print("Correct number of projectiles spawned (4)")
 
 	# Verify all projectiles are traveling straight left (direction Vector2(-1, 0))
 	for i in range(_projectiles_spawned.size()):
@@ -84,7 +84,7 @@ func _ready() -> void:
 				return
 			print("Projectile %d direction: %s (correct)" % [i, str(dir)])
 
-	print("All 6 projectiles traveling straight left")
+	print("All 4 projectiles traveling straight left")
 
 	# All checks passed
 	_pass()

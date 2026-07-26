@@ -49,11 +49,16 @@ func _load_config() -> void:
 	if data is Dictionary:
 		_project_id = data.get("project_id", "")
 		_database_url = data.get("database_url", "")
-		_game_id = data.get("game_id", "")
+		# game_id becomes a URL path segment, so guard against a non-string or a
+		# stray whitespace value that would silently split the leaderboard.
+		var game_id_value = data.get("game_id", "")
+		_game_id = game_id_value.strip_edges() if game_id_value is String else ""
 
 
 ## Realtime Database path for this game's scores, namespaced by game_id so several
 ## games can share one database. Empty game_id falls back to the root "scores" node.
+## game_id should be a simple slug (letters, digits, underscores) — it is not a
+## valid Realtime Database key if it contains "/", ".", "$", "#", "[" or "]".
 func _scores_path() -> String:
 	if _game_id.is_empty():
 		return "scores"

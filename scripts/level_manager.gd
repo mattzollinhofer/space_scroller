@@ -66,6 +66,12 @@ var _checkpoint_scroll_offset: float = 0.0
 ## Level completion state
 var _level_complete: bool = false
 
+## Whether the level has already ended (game over or level complete shown).
+## Guards the two terminal outcomes so at most one end screen ever shows,
+## first-outcome-wins. Distinct from _level_complete, which is set when level
+## progress reaches 100% (spawning the boss), not when the level actually ends.
+var _level_ended: bool = false
+
 ## Boss fight state
 var _boss_fight_active: bool = false
 var _boss: Node = null
@@ -340,6 +346,11 @@ func _connect_player_signals() -> void:
 
 
 func _on_player_died() -> void:
+	# The level has already ended (e.g. boss victory claimed it) - ignore.
+	if _level_ended:
+		return
+	_level_ended = true
+
 	# Player has run out of lives - always show game over
 	# No infinite respawns regardless of boss fight or checkpoint status
 	if _game_over_screen and _game_over_screen.has_method("show_game_over"):
@@ -696,6 +707,11 @@ func _on_boss_entered() -> void:
 
 
 func _on_boss_defeated() -> void:
+	# The level has already ended (e.g. player death claimed it) - ignore.
+	if _level_ended:
+		return
+	_level_ended = true
+
 	_boss_fight_active = false
 
 	# Hide health bar
